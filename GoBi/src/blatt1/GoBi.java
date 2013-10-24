@@ -1,8 +1,5 @@
 package blatt1;
 
-import blatt1.ParamException;
-import blatt1.Parser;
-import blatt1.SeqPair;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,14 +43,12 @@ public class GoBi {
         long timeAfter = new Date().getTime();
         System.out.println("run: "+(timeAfter-timeBefore)+" ms");
     }
-    /**
-     * @TODO
-     * #####################################################################
-    */
-    private static void seqLib() throws IOException{//TODO!!
+    
+    private static void seqLib(String file) throws IOException{
         long timeBefore = new Date().getTime();
         final String path = "/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/";
-        HashMap<String, String> map = new Parser().parseSeqlib(path+"domains.seqlib");
+        HashMap<String, String> map = new Parser().parseSeqlib(path+file);
+        System.out.println(map.get("11asB00"));
         long timeAfter = new Date().getTime();
         System.out.println("run: "+(timeAfter-timeBefore)+" ms");
     }
@@ -66,6 +61,7 @@ public class GoBi {
      */
     public static void main(String[] args) throws IOException, ParamException, InterruptedException  {
         //matrix("dayhoff.mat");
-        pairs("cathscop.outpairs", false);
+        //pairs("cathscop.outpairs", false);
+        seqLib("domains.seqlib");
     }
 }
