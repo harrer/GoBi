@@ -1,4 +1,4 @@
-package gobi;
+package blatt1;
 
 import blatt1.ParamException;
 import blatt1.Parser;
