@@ -62,6 +62,8 @@ public class GoBi {
     public static void main(String[] args) throws IOException, ParamException, InterruptedException  {
         //matrix("dayhoff.mat");
         //pairs("cathscop.outpairs", false);
-        seqLib("domains.seqlib");
+        //seqLib("domains.seqlib");
+        //above methods are TESTED!
+        HashMap<String, String> map = new Parser().parseParams(args);
     }
 }
