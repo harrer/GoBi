@@ -48,16 +48,16 @@ public class Parser {
         fReader.close();
         return matrix;
     }
-
+// ##################### UNTERSCHEIDEN, OB PATH ODER FILENAME ANGEGEBEN WIRD!!
     public HashMap<String, String> parseParams(String[] args) throws ParamException {
         HashMap<String, String> params = new HashMap<>();
-        if (args.length < 4 || args.length / 2 == 1 || !args[0].equals("-pairs") || !args[2].equals("-seqlib")) {// # of params needs to be even
+        if (args.length < 4 || !args[0].equals("-pairs") || !args[2].equals("-seqlib")) {// # of params needs to be even
             throw new ParamException("less than 4/wrong params");
         } else {
             if (args[1].matches("((/[a-zA-Z_0-9.]+)+)?\\.(in|out)?pairs")) {
                 params.put("-pairs", args[1]);
             } else {
-                throw new ParamException("provide a valid (.pairs file or path"); 
+                throw new ParamException("provide a valid .pairs file or path"); 
             }
             if (args[3].matches("((/[a-zA-Z_0-9.]+)+)?\\.seqlib")) {
                 params.put("-seqlib", args[3]);
