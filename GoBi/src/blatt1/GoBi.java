@@ -65,5 +65,6 @@ public class GoBi {
         //seqLib("domains.seqlib");
         //above methods are TESTED!
         HashMap<String, String> map = new Parser().parseParams(args);
+        System.out.println("done");
     }
 }
