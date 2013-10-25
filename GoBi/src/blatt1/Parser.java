@@ -13,7 +13,7 @@ public class Parser {
 
     public double[][] parseMatrix(String matrixName, boolean mirror) throws FileNotFoundException, IOException {
         String line;
-        FileReader fReader = new FileReader(matrixName);
+        FileReader fReader = new FileReader(path+matrixName+".mat");
         BufferedReader reader = new BufferedReader(fReader);
         double[][] matrix = new double[20][20];
         int ln = 0;
