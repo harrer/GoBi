@@ -68,6 +68,7 @@ public class GoBi {
         System.out.println(map.get("-pairs"));
         System.out.println(map.get("-seqlib"));
         System.out.println(map.get("-m"));
+        System.out.println(map.get("-printali"));
         System.out.println("done");
     }
 }
