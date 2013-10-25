@@ -67,6 +67,7 @@ public class GoBi {
         HashMap<String, String> map = new Parser().parseParams(args);
         System.out.println(map.get("-pairs"));
         System.out.println(map.get("-seqlib"));
+        System.out.println(map.get("-m"));
         System.out.println("done");
     }
 }
