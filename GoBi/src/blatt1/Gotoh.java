@@ -1,34 +1,73 @@
 package blatt1;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Gotoh {
 
-    private String seqlib;
-    private String pairfile;
-    private String matrix;
+    private HashMap seqlib;
+    private ArrayList pairfile;
+    private double[][] matrix;
     private double gapopen;
     private double gapextend;
     private String mode;
     private boolean printali;
     private String printmatrices;
     private boolean check;
+    
+    private double[][] A;
+    private double[][] I;
+    private double[][] D;
+    
+    private String seq1;
+    private String seq2;
 
-    public Gotoh(HashMap<String, String> params) {
-        seqlib = params.get("-seqlib");
-        pairfile = params.get("-pairs");
-        matrix = params.containsKey("-m") ? params.get("-m") : "dayhoff";
-        gapopen = params.containsKey("-go") ? Double.parseDouble(params.get("-go")) : -12;
-        gapextend = params.containsKey("-ge") ? Double.parseDouble(params.get("-ge")) : -1;
-        mode = params.containsKey("-mode") ? params.get("-mode") : "freeshift";
-        printali = params.containsKey("-printali") ? true : false;
-        printmatrices = params.containsKey("-printmatrices") ? "txt" : "";
-        check = params.containsKey("-check") ? true : false;
+    public Gotoh(HashMap<String, String> params) throws IOException {
+        initParams(params);
+        A = new double[seq1.length()+1][seq2.length()+1];
+        I = new double[seq1.length()+1][seq2.length()+1];
+        D = new double[seq1.length()+1][seq2.length()+1];
     }
-
+    
     public void fillMatrix() {
+        for (int i = 0; i < A.length; i++) {//init
+            A[i][0] = g(i);
+            A[0][i] = g(i);
+            I[0][i] = Double.NEGATIVE_INFINITY;
+            D[i][0] = Double.NEGATIVE_INFINITY;
+        }
+        for (int i = 1; i < A.length; i++) {
+            for (int j = 1; j < A.length; j++) {
+                I[i][j] = Math.max(A[i-1][j] + g(1), I[i-1][j] + gapextend);
+                D[i][j] = Math.max(A[i][j-1] + g(1), D[i][j-1] + gapextend);
+                A[i][j] = Math.max(A[i-1][j-1] + getCost(i, j), Math.max(D[i][j], I[i][j]));
+            }
+        }
     }
 
     public void backtracking() {
+    }
+    
+    private double g(int n){
+        return gapopen+n*gapextend;
+    }
+    
+    private double getCost(int i, int j){
+        //i = ;//map AA from s/t to matrix index
+        //j=6;
+    }
+    
+    private void initParams(HashMap<String, String> params) throws IOException{
+        Parser parser = new Parser();
+        seqlib = parser.parseSeqlib(params.get("-seqlib"));
+        pairfile = parser.parsePairFile(params.get("-pairs"));
+        matrix = params.containsKey("-m") ? parser.parseMatrix(params.get("-m"), true) : parser.parseMatrix("dayhoff", true);
+        gapopen = params.containsKey("-go") ? Double.parseDouble(params.get("-go")) : -12;
+        gapextend = params.containsKey("-ge") ? Double.parseDouble(params.get("-ge")) : -1;
+        mode = params.containsKey("-mode") ? params.get("-mode") : "freeshift";
+        printali = params.containsKey("-printali");
+        printmatrices = params.containsKey("-printmatrices") ? "txt" : "";
+        check = params.containsKey("-check");
     }
 }
