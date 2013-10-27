@@ -65,10 +65,8 @@ public class GoBi {
         //seqLib("domains.seqlib");
         //above methods are TESTED!
         HashMap<String, String> map = new Parser().parseParams(args);
-        System.out.println(map.get("-pairs"));
-        System.out.println(map.get("-seqlib"));
-        System.out.println(map.get("-m"));
-        System.out.println(map.get("-printali"));
-        System.out.println("done");
+        Gotoh g = new Gotoh(map);
+        g.fillMatrix();
+        System.out.println(g.printMatrix());
     }
 }

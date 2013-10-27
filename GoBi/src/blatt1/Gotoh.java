@@ -15,6 +15,7 @@ public class Gotoh {
     private boolean printali;
     private String printmatrices;
     private boolean check;
+    private HashMap<Character, Integer> aminoAcids;
     
     private double[][] A;
     private double[][] I;
@@ -41,7 +42,7 @@ public class Gotoh {
             for (int j = 1; j < A.length; j++) {
                 I[i][j] = Math.max(A[i-1][j] + g(1), I[i-1][j] + gapextend);
                 D[i][j] = Math.max(A[i][j-1] + g(1), D[i][j-1] + gapextend);
-                A[i][j] = Math.max(A[i-1][j-1] + getCost(i, j), Math.max(D[i][j], I[i][j]));
+                A[i][j] = Math.max(A[i-1][j-1] + getCost(i-1, j-1), Math.max(D[i][j], I[i][j]));
             }
         }
     }
@@ -54,8 +55,7 @@ public class Gotoh {
     }
     
     private double getCost(int i, int j){
-        //i = ;//map AA from s/t to matrix index
-        //j=6;
+        return matrix[aminoAcids.get(seq1.charAt(i))][aminoAcids.get(seq2.charAt(j))];
     }
     
     private void initParams(HashMap<String, String> params) throws IOException{
@@ -69,5 +69,21 @@ public class Gotoh {
         printali = params.containsKey("-printali");
         printmatrices = params.containsKey("-printmatrices") ? "txt" : "";
         check = params.containsKey("-check");
+        String aa = "ARNDCQEGHILKMFPSTWYV";
+        aminoAcids = new HashMap<>();
+        for (int i = 0; i < aa.length(); i++) {
+            aminoAcids.put(aa.charAt(i), i);
+        }
+    }
+    
+    public String printMatrix(){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix.length; j++) {
+                sb.append(matrix[i][j]).append("\t");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }
