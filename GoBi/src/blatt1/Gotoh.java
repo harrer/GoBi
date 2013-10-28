@@ -80,8 +80,8 @@ public class Gotoh {
     
     public String printMatrix(){
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < A.length; i++) {
-            for (int j = 0; j < A.length; j++) {
+        for (int i = 0; i < seq1.length(); i++) {
+            for (int j = 0; j < seq2.length(); j++) {
                 sb.append(A[i][j]).append("\t");
             }
             sb.append("\n");
