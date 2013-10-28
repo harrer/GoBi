@@ -17,9 +17,9 @@ public class Gotoh {
     private boolean check;
     private HashMap<Character, Integer> aminoAcids;
     
-    private double[][] A;
-    private double[][] I;
-    private double[][] D;
+    private final double[][] A;
+    private final double[][] I;
+    private final double[][] D;
     
     private String seq1 = "LLAYGLGLAAGLGA";
     private String seq2 = "ALGALGLGAYALYGAYLG";
@@ -32,7 +32,7 @@ public class Gotoh {
     }
     
     public void fillMatrix() {
-        for (int i = 0; i < A.length; i++) {//init
+        for (int i = 1; i < A.length; i++) {//init
             A[i][0] = g(i);
             A[0][i] = g(i);
             I[0][i] = Double.NEGATIVE_INFINITY;
