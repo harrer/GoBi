@@ -118,24 +118,24 @@ public class Gotoh {
                 s1.append(seq1.charAt(i));
                 s2.append(seq2.charAt(j));
             } else if (A[i][j] == I[i][j]) {
-                int k = 1;
-                s1.append(seq1.charAt(i-1));
-                s2.append('-');
-                while (!((A[i - k][j] + g(k)) == A[i][j])) {
+                int k = 0;
+//                s1.append(seq1.charAt(i-1));
+//                s2.append('-');
+                do {
                     k++;
                     s1.append(seq1.charAt(i - k));
                     s2.append('-');
-                }
+                }while (!((A[i - k][j] + g(k)) == A[i][j]));
                 i -= k;
             } else if (A[i][j] == D[i][j]) {
-                int k = 1;
-                s2.append(seq2.charAt(j - 1));
-                s1.append('-');
-                while (!((A[i][j - k] + g(k)) == A[i][j])) {
+                int k = 0;
+//                s2.append(seq2.charAt(j - 1));
+//                s1.append('-');
+                do {
                     k++;
                     s2.append(seq2.charAt(j - k));
                     s1.append('-');
-                }
+                }while (!((A[i][j - k] + g(k)) == A[i][j]));
                 j -= k;
             }
         }
