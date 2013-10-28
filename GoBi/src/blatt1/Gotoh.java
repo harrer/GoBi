@@ -119,7 +119,7 @@ public class Gotoh {
                 s2.append(seq2.charAt(j));
             } else if (A[i][j] == I[i][j]) {
                 int k = 1;
-                s1.append(seq1.charAt(i));
+                s1.append(seq1.charAt(i-1));
                 s2.append('-');
                 while (!((A[i - k][j] + g(k)) == A[i][j])) {
                     k++;
