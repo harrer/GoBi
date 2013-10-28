@@ -32,16 +32,16 @@ public class Gotoh {
     }
     
     public void fillMatrix() {
-        for (int i = 1; i < seq1.length(); i++) {//init
+        for (int i = 1; i < seq1.length()+1; i++) {//init
             A[i][0] = g(i);
             D[i][0] = Double.NEGATIVE_INFINITY;
         }
-        for (int i = 1; i < seq2.length(); i++) {
+        for (int i = 1; i < seq2.length()+1; i++) {
             A[0][i] = g(i);
             I[0][i] = Double.NEGATIVE_INFINITY;
         }
-        for (int i = 1; i < seq1.length(); i++) {
-            for (int j = 1; j < seq2.length(); j++) {
+        for (int i = 1; i < seq1.length()+1; i++) {
+            for (int j = 1; j < seq2.length()+1; j++) {
                 I[i][j] = Math.max(A[i-1][j] + g(1), I[i-1][j] + gapextend);
                 D[i][j] = Math.max(A[i][j-1] + g(1), D[i][j-1] + gapextend);
                 A[i][j] = Math.max(A[i-1][j-1] + getCost(i-1, j-1), Math.max(D[i][j], I[i][j]));
@@ -80,8 +80,8 @@ public class Gotoh {
     
     public String printMatrix(){
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < seq1.length(); i++) {
-            for (int j = 0; j < seq2.length(); j++) {
+        for (int i = 0; i < seq1.length()+1; i++) {
+            for (int j = 0; j < seq2.length()+1; j++) {
                 sb.append(A[i][j]).append("\t");
             }
             sb.append("\n");
