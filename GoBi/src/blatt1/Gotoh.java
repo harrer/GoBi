@@ -123,7 +123,7 @@ public class Gotoh {
                 i -= k;
             } else if (A[i][j] == D[i][j]) {
                 int k = 1;
-                s2.append(seq2.charAt(i - 1));
+                s2.append(seq2.charAt(j - 1));
                 s1.append('-');
                 while (!((A[i][j - k] + g(k)) == A[i][j])) {
                     k++;
