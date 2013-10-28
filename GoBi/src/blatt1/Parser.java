@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class Parser {
 
-    private String path = "/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/";
+    private final String path = "/home/tobias/Desktop/";//"/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/";
 
     public double[][] parseMatrix(String matrixName, boolean mirror) throws FileNotFoundException, IOException {
         String line;
