@@ -122,9 +122,9 @@ public class Gotoh {
 //                s1.append(seq1.charAt(i-1));
 //                s2.append('-');
                 do {
-                    k++;
                     s1.append(seq1.charAt(i - k));
                     s2.append('-');
+                    k++;
                 }while (!((A[i - k][j] + g(k)) == A[i][j]));
                 i -= k;
             } else if (A[i][j] == D[i][j]) {
