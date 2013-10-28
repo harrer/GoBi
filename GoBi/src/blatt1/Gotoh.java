@@ -36,7 +36,7 @@ public class Gotoh {
             A[i][0] = g(i);
             D[i][0] = Double.NEGATIVE_INFINITY;
         }
-        for (int i = 0; i < seq2.length(); i++) {
+        for (int i = 1; i < seq2.length(); i++) {
             A[0][i] = g(i);
             I[0][i] = Double.NEGATIVE_INFINITY;
         }
