@@ -2,8 +2,10 @@ package blatt1;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class Gotoh {
 
@@ -82,6 +84,7 @@ public class Gotoh {
     public String printMatrix(){
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("0.00");
+        df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
         for (int i = 0; i < seq2.length()+1; i++) {
             for (int j = 0; j < seq1.length()+1; j++) {
                 sb.append(df.format(A[j][i])).append("\t");
