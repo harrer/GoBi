@@ -116,7 +116,7 @@ public class Parser {
     public ArrayList<SeqPair> parsePairFile(String pairFile) throws FileNotFoundException, IOException {
         String line;
         ArrayList<SeqPair> list = new ArrayList<>();
-        FileReader fReader = new FileReader(pairFile);
+        FileReader fReader = new FileReader(path+pairFile);
         BufferedReader reader = new BufferedReader(fReader);
         //String pattern = "(\\d+)\\s(\\d+)";
         while ((line = reader.readLine()) != null) {
@@ -134,7 +134,7 @@ public class Parser {
     public HashMap<String, String> parseSeqlib(String seqlibFile) throws FileNotFoundException, IOException {
         String line;
         HashMap<String, String> map = new HashMap<>();
-        FileReader fReader = new FileReader(seqlibFile);
+        FileReader fReader = new FileReader(path+seqlibFile);
         BufferedReader reader = new BufferedReader(fReader);
         while ((line = reader.readLine()) != null) {
             if (line.trim().isEmpty()) {
