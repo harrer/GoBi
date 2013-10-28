@@ -17,9 +17,9 @@ public class Gotoh {
     private boolean check;
     private HashMap<Character, Integer> aminoAcids;
     
-    private final double[][] A;
-    private final double[][] I;
-    private final double[][] D;
+    private double[][] A;
+    private double[][] I;
+    private double[][] D;
     
     private String seq1 = "WTHGQA";
     private String seq2 = "WTHA";
@@ -32,14 +32,16 @@ public class Gotoh {
     }
     
     public void fillMatrix() {
-        for (int i = 1; i < A.length; i++) {//init
+        for (int i = 1; i < seq1.length(); i++) {//init
             A[i][0] = g(i);
-            A[0][i] = g(i);
-            I[0][i] = Double.NEGATIVE_INFINITY;
             D[i][0] = Double.NEGATIVE_INFINITY;
         }
-        for (int i = 1; i < A.length; i++) {
-            for (int j = 1; j < A.length; j++) {
+        for (int i = 0; i < seq2.length(); i++) {
+            A[0][i] = g(i);
+            I[0][i] = Double.NEGATIVE_INFINITY;
+        }
+        for (int i = 1; i < seq1.length(); i++) {
+            for (int j = 1; j < seq2.length(); j++) {
                 I[i][j] = Math.max(A[i-1][j] + g(1), I[i-1][j] + gapextend);
                 D[i][j] = Math.max(A[i][j-1] + g(1), D[i][j-1] + gapextend);
                 A[i][j] = Math.max(A[i-1][j-1] + getCost(i-1, j-1), Math.max(D[i][j], I[i][j]));
