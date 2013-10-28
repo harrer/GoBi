@@ -34,7 +34,7 @@ public class Gotoh {
         D = new double[seq1.length() + 1][seq2.length() + 1];
     }
 
-    public void fillMatrix() {
+    public double fillMatrix() {
         for (int i = 1; i < seq1.length() + 1; i++) {//init
             A[i][0] = mode.equals("global") ? g(i) : 0;
             D[i][0] = Double.NEGATIVE_INFINITY;
@@ -50,13 +50,21 @@ public class Gotoh {
                 A[i][j] = mode.equals("local") ? Math.max(0, Math.max(A[i - 1][j - 1] + getCost(i - 1, j - 1), Math.max(D[i][j], I[i][j]))) : Math.max(A[i - 1][j - 1] + getCost(i - 1, j - 1), Math.max(D[i][j], I[i][j]));
             }
         }
+        switch (mode) {
+            case "global":
+                return A[seq1.length()][seq2.length()];
+            case "local":
+                break;
+            case "freeshift":
+                break;
+        }
     }
 
     public String[] backtrackingGlobal() {
         StringBuilder s1 = new StringBuilder();
         StringBuilder s2 = new StringBuilder();
         int i = seq1.length(), j = seq2.length();
-        while (!(i > 0 && j > 0)) {
+        while (i > 0 && j > 0) {
             if (A[i][j] == (A[i - 1][j - 1] + getCost(i - 1, j - 1))) {
                 i--;
                 j--;
@@ -68,7 +76,7 @@ public class Gotoh {
                 s2.append('-');
                 while (!((A[i - k][j] + g(k)) == A[i][j])) {
                     k++;
-                    s1.append(seq1.charAt(i - 1));
+                    s1.append(seq1.charAt(i - k));
                     s2.append('-');
                 }
                 i -= k;
@@ -78,7 +86,7 @@ public class Gotoh {
                 s1.append('-');
                 while (!((A[i][j - k] + g(k)) == A[i][j])) {
                     k++;
-                    s2.append(seq2.charAt(i - 1));
+                    s2.append(seq2.charAt(i - k));
                     s1.append('-');
                 }
                 j -= k;
