@@ -25,6 +25,9 @@ public class Gotoh {
     private double[][] A;
     private double[][] I;
     private double[][] D;
+    private boolean[][] up;
+    private boolean[][] left;
+    private boolean[][] upLeft;
 
     private String seq1 = "WTHGQA";
     private String seq2 = "WTHA";
@@ -67,13 +70,16 @@ public class Gotoh {
     }
 
     private AlignmentMax fillMatrix() {
+        up[0][0] = false; upLeft[0][0] = false; left[0][0] = false;
         for (int i = 1; i < seq1.length() + 1; i++) {//init
             A[i][0] = mode.equals("global") ? g(i) : 0;
             D[i][0] = Double.NEGATIVE_INFINITY;
+            up[i][0] = false; upLeft[i][0] = false; left[i][0] = false;
         }
         for (int i = 1; i < seq2.length() + 1; i++) {
             A[0][i] = mode.equals("global") ? g(i) : 0;
             I[0][i] = Double.NEGATIVE_INFINITY;
+            up[0][i] = false; upLeft[0][i] = false; left[0][i] = false;
         }
         AlignmentMax lMax = new AlignmentMax(0, 0, Double.NEGATIVE_INFINITY, "local");
         AlignmentMax fMax = new AlignmentMax(0, 0, Double.NEGATIVE_INFINITY, "freeshift");
@@ -113,7 +119,7 @@ public class Gotoh {
                 s2.append(seq2.charAt(j));
             } else if (A[i][j] == I[i][j]) {
                 int k = 1;
-                s1.append(seq1.charAt(i - 1));
+                s1.append(seq1.charAt(i));
                 s2.append('-');
                 while (!((A[i - k][j] + g(k)) == A[i][j])) {
                     k++;
