@@ -68,5 +68,6 @@ public class GoBi {
         Gotoh g = new Gotoh(map);
         g.fillMatrix();
         System.out.println(g.printMatrix());
+        g.backtrackingGlobal();
     }
 }

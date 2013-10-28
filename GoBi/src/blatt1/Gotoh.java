@@ -19,52 +19,98 @@ public class Gotoh {
     private String printmatrices;
     private boolean check;
     private HashMap<Character, Integer> aminoAcids;
-    
+
     private double[][] A;
     private double[][] I;
     private double[][] D;
-    
+
     private String seq1 = "WTHGQA";
     private String seq2 = "WTHA";
 
     public Gotoh(HashMap<String, String> params) throws IOException {
         initParams(params);
-        A = new double[seq1.length()+1][seq2.length()+1];
-        I = new double[seq1.length()+1][seq2.length()+1];
-        D = new double[seq1.length()+1][seq2.length()+1];
+        A = new double[seq1.length() + 1][seq2.length() + 1];
+        I = new double[seq1.length() + 1][seq2.length() + 1];
+        D = new double[seq1.length() + 1][seq2.length() + 1];
     }
-    
+
     public void fillMatrix() {
-        for (int i = 1; i < seq1.length()+1; i++) {//init
-            A[i][0] = mode.equals("global")? g(i) : 0;
+        for (int i = 1; i < seq1.length() + 1; i++) {//init
+            A[i][0] = mode.equals("global") ? g(i) : 0;
             D[i][0] = Double.NEGATIVE_INFINITY;
         }
-        for (int i = 1; i < seq2.length()+1; i++) {
-            A[0][i] = mode.equals("global")? g(i) : 0;
+        for (int i = 1; i < seq2.length() + 1; i++) {
+            A[0][i] = mode.equals("global") ? g(i) : 0;
             I[0][i] = Double.NEGATIVE_INFINITY;
         }
-        for (int i = 1; i < seq1.length()+1; i++) {
-            for (int j = 1; j < seq2.length()+1; j++) {
-                I[i][j] = Math.max(A[i-1][j] + g(1), I[i-1][j] + gapextend);
-                D[i][j] = Math.max(A[i][j-1] + g(1), D[i][j-1] + gapextend);
-                A[i][j] = mode.equals("local")? Math.max(0,Math.max(A[i-1][j-1] + getCost(i-1, j-1), Math.max(D[i][j], I[i][j]))) : Math.max(A[i-1][j-1] + getCost(i-1, j-1), Math.max(D[i][j], I[i][j]));
+        for (int i = 1; i < seq1.length() + 1; i++) {
+            for (int j = 1; j < seq2.length() + 1; j++) {
+                I[i][j] = Math.max(A[i - 1][j] + g(1), I[i - 1][j] + gapextend);
+                D[i][j] = Math.max(A[i][j - 1] + g(1), D[i][j - 1] + gapextend);
+                A[i][j] = mode.equals("local") ? Math.max(0, Math.max(A[i - 1][j - 1] + getCost(i - 1, j - 1), Math.max(D[i][j], I[i][j]))) : Math.max(A[i - 1][j - 1] + getCost(i - 1, j - 1), Math.max(D[i][j], I[i][j]));
             }
         }
     }
 
-    public void backtracking() {
-        
+    public String[] backtrackingGlobal() {
+        StringBuilder s1 = new StringBuilder();
+        StringBuilder s2 = new StringBuilder();
+        int i = seq1.length(), j = seq2.length();
+        while (!(i > 0 && j > 0)) {
+            if (A[i][j] == (A[i - 1][j - 1] + getCost(i - 1, j - 1))) {
+                i--;
+                j--;
+                s1.append(seq1.charAt(i));
+                s2.append(seq2.charAt(j));
+            } else if (A[i][j] == I[i][j]) {
+                int k = 1;
+                s1.append(seq1.charAt(i - 1));
+                s2.append('-');
+                while (!((A[i - k][j] + g(k)) == A[i][j])) {
+                    k++;
+                    s1.append(seq1.charAt(i - 1));
+                    s2.append('-');
+                }
+                i -= k;
+            } else if (A[i][j] == D[i][j]) {
+                int k = 1;
+                s2.append(seq2.charAt(i - 1));
+                s1.append('-');
+                while (!((A[i][j - k] + g(k)) == A[i][j])) {
+                    k++;
+                    s2.append(seq2.charAt(i - 1));
+                    s1.append('-');
+                }
+                j -= k;
+            }
+        }
+        if(i==0){
+            while(j>0){
+                s2.append(seq2.charAt(j-1));
+                s1.append('-');
+                j--;
+            }
+        }
+        else if(j==0){
+            while(i>0){
+                s1.append(seq1.charAt(i-1));
+                s2.append('-');
+                i--;
+            }
+        }
+        String[] out = {s1.reverse().toString(), s2.reverse().toString()};
+        return out;
     }
-    
-    private double g(int n){
-        return gapopen+n*gapextend;
+
+    private double g(int n) {
+        return gapopen + n * gapextend;
     }
-    
-    private double getCost(int i, int j){
+
+    private double getCost(int i, int j) {
         return matrix[aminoAcids.get(seq1.charAt(i))][aminoAcids.get(seq2.charAt(j))];
     }
-    
-    private void initParams(HashMap<String, String> params) throws IOException{
+
+    private void initParams(HashMap<String, String> params) throws IOException {
         Parser parser = new Parser();
         seqlib = parser.parseSeqlib(params.get("-seqlib"));
         pairfile = parser.parsePairFile(params.get("-pairs"));
@@ -81,13 +127,13 @@ public class Gotoh {
             aminoAcids.put(aa.charAt(i), i);
         }
     }
-    
-    public String printMatrix(){
+
+    public String printMatrix() {
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("0.00");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
-        for (int i = 0; i < seq2.length()+1; i++) {
-            for (int j = 0; j < seq1.length()+1; j++) {
+        for (int i = 0; i < seq2.length() + 1; i++) {
+            for (int j = 0; j < seq1.length() + 1; j++) {
                 sb.append(df.format(A[j][i])).append("\t");
             }
             sb.append("\n");
