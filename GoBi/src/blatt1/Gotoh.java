@@ -84,7 +84,7 @@ public class Gotoh {
         DecimalFormat df = new DecimalFormat("#.##");
         for (int i = 0; i < seq2.length()+1; i++) {
             for (int j = 0; j < seq1.length()+1; j++) {
-                sb.append(df.format(A[i][j])).append("\t");
+                sb.append(df.format(A[j][i])).append("\t");
             }
             sb.append("\n");
         }
