@@ -21,8 +21,8 @@ public class Gotoh {
     private final double[][] I;
     private final double[][] D;
     
-    private String seq1 = "LLAYGLGLAAGLGA";
-    private String seq2 = "ALGALGLGAYALYGAYLG";
+    private String seq1 = "WTHGQA";
+    private String seq2 = "WTHA";
 
     public Gotoh(HashMap<String, String> params) throws IOException {
         initParams(params);
