@@ -23,7 +23,7 @@ public class Parser {
                 double[] d = new double[20];
                 int column = 0;
                 for (int i = 0; i < split.length; i++) {
-                    if(split[i].matches("-?[0-9]+\\.[0-9]+")){
+                    if(split[i].matches("-?[0-9]+(\\.)?([0-9]+)?")){
                         d[column] = Double.parseDouble(split[i]);
                         column++;
                     }
