@@ -46,7 +46,12 @@ public class Gotoh {
                 break;
         }
         System.out.println("Alignment completed! Writing to file");
-        FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
+        if(printali){
+            FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.alignments"));
+        }
+        else{
+            FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
+        }
         writer.write(sb.toString());
         writer.close();
         long end = new Date().getTime();
