@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -35,6 +36,7 @@ public class Gotoh {
     }
 
     private void startAlignment() throws IOException {
+        long start = new Date().getTime();
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("0.0000");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
@@ -70,7 +72,9 @@ public class Gotoh {
         FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
         writer.write(sb.toString());
         writer.close();
-        System.out.println("Done!");
+        long end = new Date().getTime();
+        long time = end-start;
+        System.out.println("Done! "+time/60000+" min");
     }
 
     private AlignmentMax fillMatrix() {
