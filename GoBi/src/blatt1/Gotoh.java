@@ -111,17 +111,17 @@ public class Gotoh {
                 j--;
                 s1.append(seq1.charAt(i));
                 s2.append(seq2.charAt(j));
-            } else if (A[i][j] == D[i][j]) {
+            } else if (A[i][j] == I[i][j]) {
                 int k = 1;
                 s1.append(seq1.charAt(i - 1));
                 s2.append('-');
-                while (!((A[i - k][j] + g(k)) == A[i][j])) {
+                while (!(Math.abs((A[i - k][j] + g(k)) - A[i][j])< 0.0001)) {
                     k++;
                     s1.append(seq1.charAt(i - k));
                     s2.append('-');
                 }
                 i -= k;
-            } else if (A[i][j] == I[i][j]) {
+            } else if (A[i][j] == D[i][j]) {
                 int k = 1;
                 s2.append(seq2.charAt(j - 1));
                 s1.append('-');
