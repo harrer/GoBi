@@ -38,10 +38,10 @@ public class Gotoh {
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("0.0000");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
-        float c=0;
+        double c=0.0;
         int f=1;
         for (SeqPair pair : pairfile) {
-            if(c/100 >= f*0.01){System.out.println(f+"% completed");f++;}
+            if(c/pairfile.size() >= f*0.01){System.out.println(f+"% completed");f++;}
             c++;
             seq1 = seqlib.get(pair.getS1());
             seq2 = seqlib.get(pair.getS2());
