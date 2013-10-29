@@ -57,6 +57,7 @@ public class Gotoh {
         writer.close();
         long end = new Date().getTime();
         long time = end - start;
+        System.out.println(checkScore("GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK-", "----MEEAKQKVVDFLNSKSK-SKFYFNDFTDLFPDMKQREVKKILTALVNDEVLEYWSSGSTTMYGLKG"));
         System.out.println("Done! " + time / 60000 + " min, " + (time / 1000) % 60 + " s.\nTotal: " + time + " ms");
     }
 
@@ -257,6 +258,32 @@ public class Gotoh {
         }
         String[] out = {s1.reverse().toString(), s2.reverse().toString()};
         return out;
+    }
+    
+    private double checkScore(String s1, String s2){
+        int score = 0;
+        for (int i = 0; i < s1.length(); i++) {
+            if(s1.charAt(i) == '-'){
+                int k=1;
+                while((i+k)<s1.length() && s1.charAt(i+k) == '-'){
+                    k++;
+                }
+                score += g(k);
+                i += (k-1);
+            }
+            else if(s2.charAt(i) == '-'){
+                int k=1;
+                while((i+k)<s1.length() && s1.charAt(i+k) == '-'){
+                    k++;
+                }
+                score += g(k);
+                i += (k-1);
+            }
+            else{
+                score += getCost(s1.charAt(i), s2.charAt(i));
+            }
+        }
+        return score/10.0;
     }
 
     private int g(int n) {
