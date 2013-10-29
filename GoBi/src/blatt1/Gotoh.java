@@ -62,9 +62,9 @@ public class Gotoh {
             c++;
             seq1 = seqlib.get(pair.getS1());
             seq2 = seqlib.get(pair.getS2());
-            if (printali) {
-                sb.append(">");
-            }
+//            if (printali) {
+//                sb.append(">");
+//            }
             sb.append(pair.getS1());
             sb.append(" ");
             sb.append(pair.getS2());
@@ -72,26 +72,26 @@ public class Gotoh {
             //AlignmentMax result = fillMatrix();
             sb.append(df.format(fillMatrixGlobal()/10.0));
             sb.append("\n");
-            if (printali) {
-                String[] backtrack = {};
-                switch (mode) {
-                    case "global":
-                        backtrack = backtrackingGlobal();
-                        break;
-                    case "local":
-                        break;
-                    case "freeshift":
-                        break;
-                }
-                sb.append(pair.getS1());
-                sb.append(": ");
-                sb.append(backtrack[0]);
-                sb.append("\n");
-                sb.append(pair.getS2());
-                sb.append(": ");
-                sb.append(backtrack[1]);
-                sb.append("\n");
-            }
+//            if (printali) {
+//                String[] backtrack = {};
+//                switch (mode) {
+//                    case "global":
+//                        backtrack = backtrackingGlobal();
+//                        break;
+//                    case "local":
+//                        break;
+//                    case "freeshift":
+//                        break;
+//                }
+//                sb.append(pair.getS1());
+//                sb.append(": ");
+//                sb.append(backtrack[0]);
+//                sb.append("\n");
+//                sb.append(pair.getS2());
+//                sb.append(": ");
+//                sb.append(backtrack[1]);
+//                sb.append("\n");
+//            }
         }
         System.out.println("Alignment completed! Writing to file");
         FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
