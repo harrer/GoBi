@@ -38,7 +38,11 @@ public class Gotoh {
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("0.0000");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
+        float c=0;
+        int f=1;
         for (SeqPair pair : pairfile) {
+            if(c/100 >= f*0.01){System.out.println(f+"% completed");f++;}
+            c++;
             seq1 = seqlib.get(pair.getS1());
             seq2 = seqlib.get(pair.getS2());
             if(printali){sb.append(">");}
@@ -62,9 +66,11 @@ public class Gotoh {
                 sb.append(pair.getS1()).append(": ").append(backtrack[0]).append("\n").append(pair.getS2()).append(": ").append(backtrack[1]).append("\n");
             }
         }
+        System.out.println("Alignment completed! Writing to file");
         FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
         writer.write(sb.toString());
         writer.close();
+        System.out.println("Done!");
     }
 
     private AlignmentMax fillMatrix() {
