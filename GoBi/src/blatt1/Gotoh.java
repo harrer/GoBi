@@ -70,7 +70,7 @@ public class Gotoh {
             sb.append(pair.getS2());
             sb.append(" ");
             //AlignmentMax result = fillMatrix();
-            sb.append(df.format(fillMatrixGlobal()/100.0));
+            sb.append(df.format(fillMatrixGlobal()/10.0));
             sb.append("\n");
             if (printali) {
                 String[] backtrack = {};
@@ -94,7 +94,7 @@ public class Gotoh {
             }
         }
         System.out.println("Alignment completed! Writing to file");
-        FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.alignments"));
+        FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
         writer.write(sb.toString());
         writer.close();
         long end = new Date().getTime();
@@ -200,8 +200,8 @@ public class Gotoh {
         seqlib = parser.parseSeqlib(params.get("-seqlib"));
         pairfile = parser.parsePairFile(params.get("-pairs"));
         matrix = params.containsKey("-m") ? parser.parseMatrix(params.get("-m"), true) : parser.parseMatrix("dayhoff", true);
-        gapopen = params.containsKey("-go") ? (new Double(Double.parseDouble(params.get("-go"))*100)).intValue() : -1200;
-        gapextend = params.containsKey("-ge") ? (new Double(Double.parseDouble(params.get("-ge"))*100)).intValue() : -100;
+        gapopen = params.containsKey("-go") ? (new Double(Double.parseDouble(params.get("-go"))*10)).intValue() : -120;
+        gapextend = params.containsKey("-ge") ? (new Double(Double.parseDouble(params.get("-ge"))*10)).intValue() : -10;
         mode = params.containsKey("-mode") ? params.get("-mode") : "freeshift";
         printali = params.containsKey("-printali");
         printmatrices = params.containsKey("-printmatrices") ? "txt" : "";

@@ -51,7 +51,7 @@ public class Parser {
         String aa = "ARNDCQEGHILKMFPSTWYV";
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix.length; j++) {
-                mOut[aa.charAt(i)-65][aa.charAt(j)-65] = new Double(matrix[i][j]*100).intValue();
+                mOut[aa.charAt(i)-65][aa.charAt(j)-65] = new Double(matrix[i][j]*10).intValue();
             }
         }
         return mOut;
