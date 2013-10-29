@@ -69,12 +69,7 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());
-                sb.append(" ");
-                sb.append(pair.getS2());
-                sb.append(" ");
-                sb.append(df.format(fillMatrixGlobal() / 10.0));
-                sb.append("\n");
+                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
             }
         } else {
             for (SeqPair pair : pairfile) {
@@ -85,23 +80,10 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(">");
-                sb.append(pair.getS1());
-                sb.append(" ");
-                sb.append(pair.getS2());
-                sb.append(" ");
-                sb.append(df.format(fillMatrixGlobal() / 10.0));
-                sb.append("\n");
+                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
                 String[] backtrack = {};
                 backtrack = backtrackingGlobal();
-                sb.append(pair.getS1());
-                sb.append(": ");
-                sb.append(backtrack[0]);
-                sb.append("\n");
-                sb.append(pair.getS2());
-                sb.append(": ");
-                sb.append(backtrack[1]);
-                sb.append("\n");
+                sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
             }
         }
         return sb;
@@ -122,12 +104,7 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());
-                sb.append(" ");
-                sb.append(pair.getS2());
-                sb.append(" ");
-                sb.append(df.format(fillMatrixGlobal() / 10.0));
-                sb.append("\n");
+                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
             }
         } else {
             for (SeqPair pair : pairfile) {
@@ -138,23 +115,9 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(">");
-                sb.append(pair.getS1());
-                sb.append(" ");
-                sb.append(pair.getS2());
-                sb.append(" ");
-                sb.append(df.format(fillMatrixGlobal() / 10.0));
-                sb.append("\n");
+                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
                 String[] backtrack = {};
-                backtrack = backtrackingGlobal();
-                sb.append(pair.getS1());
-                sb.append(": ");
-                sb.append(backtrack[0]);
-                sb.append("\n");
-                sb.append(pair.getS2());
-                sb.append(": ");
-                sb.append(backtrack[1]);
-                sb.append("\n");
+                backtrack = backtrackingGlobal();sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
             }
         }
         return sb;
@@ -175,12 +138,7 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());
-                sb.append(" ");
-                sb.append(pair.getS2());
-                sb.append(" ");
-                sb.append(df.format(fillMatrixGlobal() / 10.0));
-                sb.append("\n");
+                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
             }
         } else {
             for (SeqPair pair : pairfile) {
@@ -191,23 +149,10 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(">");
-                sb.append(pair.getS1());
-                sb.append(" ");
-                sb.append(pair.getS2());
-                sb.append(" ");
-                sb.append(df.format(fillMatrixGlobal() / 10.0));
-                sb.append("\n");
+                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
                 String[] backtrack = {};
                 backtrack = backtrackingGlobal();
-                sb.append(pair.getS1());
-                sb.append(": ");
-                sb.append(backtrack[0]);
-                sb.append("\n");
-                sb.append(pair.getS2());
-                sb.append(": ");
-                sb.append(backtrack[1]);
-                sb.append("\n");
+                sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
             }
         }
         return sb;
@@ -338,11 +283,11 @@ public class Gotoh {
         D = new int[size + 1][size + 1];
         for (int i = 1; i < size + 1; i++) {//init
             A[i][0] = g(i);
-            D[i][0] = Integer.MIN_VALUE;
+            D[i][0] = -99999999;
         }
         for (int i = 1; i < size + 1; i++) {
             A[0][i] = g(i);
-            I[0][i] = Integer.MIN_VALUE;
+            I[0][i] = -99999999;
         }
     }
 
