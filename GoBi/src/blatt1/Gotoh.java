@@ -61,9 +61,9 @@ public class Gotoh {
                 sb.append(pair.getS1()).append(": ").append(backtrack[0]).append("\n").append(pair.getS2()).append(": ").append(backtrack[1]).append("\n");
             }
         }
-//        FileWriter writer = new FileWriter(new File("/home/tobias/Desktop/out.scores"));
-//        writer.write(sb.toString());
-//        writer.close();
+        FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
+        writer.write(sb.toString());
+        writer.close();
     }
 
     private AlignmentMax fillMatrix() {
