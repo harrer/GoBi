@@ -111,7 +111,7 @@ public class Gotoh {
                 j--;
                 s1.append(seq1.charAt(i));
                 s2.append(seq2.charAt(j));
-            } else if (A[i][j] == I[i][j]) {
+            } else if (A[i][j] == D[i][j]) {
                 int k = 1;
                 s1.append(seq1.charAt(i - 1));
                 s2.append('-');
@@ -121,7 +121,7 @@ public class Gotoh {
                     s2.append('-');
                 }
                 i -= k;
-            } else if (A[i][j] == D[i][j]) {
+            } else if (A[i][j] == I[i][j]) {
                 int k = 1;
                 s2.append(seq2.charAt(j - 1));
                 s1.append('-');
