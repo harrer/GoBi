@@ -69,12 +69,12 @@ public class Gotoh {
             }
         }
         System.out.println("Alignment completed! Writing to file");
-        FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
+        FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.alignments"));
         writer.write(sb.toString());
         writer.close();
         long end = new Date().getTime();
         long time = end-start;
-        System.out.println("Done! "+time/60000+" min");
+        System.out.println("Done! "+time/60000+" min, "+time/1000+" s.\nTotal: "+time+" ms");
     }
 
     private AlignmentMax fillMatrix() {
