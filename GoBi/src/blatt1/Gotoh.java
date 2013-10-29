@@ -224,7 +224,7 @@ public class Gotoh {
                 int k = 1;
                 s1.append(seq1.charAt(i - 1));
                 s2.append('-');
-                while (!(Math.abs((A[i - k][j] + g(k)) - A[i][j]) < 0.0001)) {
+                while (!((A[i - k][j] + g(k)) == A[i][j])) {
                     k++;
                     s1.append(seq1.charAt(i - k));
                     s2.append('-');
@@ -234,7 +234,7 @@ public class Gotoh {
                 int k = 1;
                 s2.append(seq2.charAt(j - 1));
                 s1.append('-');
-                while (!((Math.abs(A[i][j - k] + g(k) - A[i][j])) < 0.0001)) {
+                while (!((A[i][j - k] + g(k)) == A[i][j])) {
                     k++;
                     s2.append(seq2.charAt(j - k));
                     s1.append('-');
