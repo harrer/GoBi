@@ -41,7 +41,8 @@ public class Gotoh {
         for (SeqPair pair : pairfile) {
             seq1 = seqlib.get(pair.getS1());
             seq2 = seqlib.get(pair.getS2());
-            sb.append(">").append(pair.getS1()).append(" ").append(pair.getS2()).append(" ");
+            if(printali){sb.append(">");}
+            sb.append(pair.getS1()).append(" ").append(pair.getS2()).append(" ");
             A = new double[seq1.length() + 1][seq2.length() + 1];
             I = new double[seq1.length() + 1][seq2.length() + 1];
             D = new double[seq1.length() + 1][seq2.length() + 1];
