@@ -192,7 +192,7 @@ public class Gotoh {
     }
 
     private double getCost(char i, char j) {
-        return matrix[i-64][j-64];
+        return matrix[i-65][j-65];
     }
 
     private void initParams(HashMap<String, String> params) throws IOException {
@@ -200,8 +200,8 @@ public class Gotoh {
         seqlib = parser.parseSeqlib(params.get("-seqlib"));
         pairfile = parser.parsePairFile(params.get("-pairs"));
         matrix = params.containsKey("-m") ? parser.parseMatrix(params.get("-m"), true) : parser.parseMatrix("dayhoff", true);
-        gapopen = params.containsKey("-go") ? (new Double(Double.parseDouble(params.get("-go"))*100)).intValue() : -12;
-        gapextend = params.containsKey("-ge") ? (new Double(Double.parseDouble(params.get("-ge"))*100)).intValue() : -1;
+        gapopen = params.containsKey("-go") ? (new Double(Double.parseDouble(params.get("-go"))*100)).intValue() : -1200;
+        gapextend = params.containsKey("-ge") ? (new Double(Double.parseDouble(params.get("-ge"))*100)).intValue() : -100;
         mode = params.containsKey("-mode") ? params.get("-mode") : "freeshift";
         printali = params.containsKey("-printali");
         printmatrices = params.containsKey("-printmatrices") ? "txt" : "";
