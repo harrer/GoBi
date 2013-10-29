@@ -46,18 +46,18 @@ public class Gotoh {
                 break;
         }
         System.out.println("Alignment completed! Writing to file");
-        FileWriter writer = null;
-        if(printali){
-            writer = new FileWriter(new File("/home/h/harrert/Desktop/out.alignments"));
-        }
-        else{
-            writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
-        }
-        writer.write(sb.toString());
-        writer.close();
+//        FileWriter writer = null;
+//        if(printali){
+//            writer = new FileWriter(new File("/home/h/harrert/Desktop/out.alignments"));
+//        }
+//        else{
+//            writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
+//        }
+//        writer.write(sb.toString());
+//        writer.close();
         long end = new Date().getTime();
         long time = end - start;
-        System.out.println(checkScore("GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK-", "----MEEAKQKVVDFLNSKSK-SKFYFNDFTDLFPDMKQREVKKILTALVNDEVLEYWSSGSTTMYGLKG"));
+        System.out.println(checkScoreLocal("GVVHDDMECSHYMKNFD--------------VGHVPIRLPRTKHLLNVINENFGTLAFCRRWLDR-LGESKYLMALKNLCDLGIVDPYPPLCD--", "-----------------GQVIEVPPTLIYMYVRDVPVRVAQARFLLAKIKREYGTLPFAYRWLQNDMPEGQLKLALKTLEKAGAIYGYPVL--KE"));
         System.out.println("Done! " + time / 60000 + " min, " + (time / 1000) % 60 + " s.\nTotal: " + time + " ms");
     }
 
@@ -260,7 +260,7 @@ public class Gotoh {
         return out;
     }
     
-    private double checkScore(String s1, String s2){
+    private double checkScoreGlobal(String s1, String s2){
         int score = 0;
         for (int i = 0; i < s1.length(); i++) {
             if(s1.charAt(i) == '-'){
@@ -281,6 +281,36 @@ public class Gotoh {
             }
             else{
                 score += getCost(s1.charAt(i), s2.charAt(i));
+            }
+        }
+        return score/10.0;
+    }
+    
+    private double checkScoreLocal(String s1, String s2){
+        int end = -1, start = -1, score = 0;
+        for (int i = 0; i < s1.length(); i++) {
+            if(s1.charAt(i) != '-' && s2.charAt(i) != '-'){
+                start = i;
+                break;
+            }
+        }
+        for (int i = s1.length()-1; i >= 0; i--) {
+            if(s1.charAt(i) != '-' && s2.charAt(i) != '-'){
+                end = i;
+                break;
+            }
+        }
+        for (int i = start; i <= end; i++) {
+            if(s1.charAt(i) != '-' && s2.charAt(i) != '-'){
+                score += getCost(s1.charAt(i), s2.charAt(i));
+            }
+            else{
+                int k=1;
+                while((i+k)< s1.length() && (s1.charAt(i+k) == '-' || s2.charAt(i+k) == '-')){
+                    k++;
+                }
+                score += g(k);
+                i += (k-1);
             }
         }
         return score/10.0;
