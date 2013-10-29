@@ -46,15 +46,15 @@ public class Gotoh {
                 break;
         }
         System.out.println("Alignment completed! Writing to file");
-        FileWriter writer = null;
-        if(printali){
-            writer = new FileWriter(new File("/home/h/harrert/Desktop/out.alignments"));
-        }
-        else{
-            writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
-        }
-        writer.write(sb.toString());
-        writer.close();
+//        FileWriter writer = null;
+//        if(printali){
+//            writer = new FileWriter(new File("/home/h/harrert/Desktop/out.alignments"));
+//        }
+//        else{
+//            writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
+//        }
+//        writer.write(sb.toString());
+//        writer.close();
         long end = new Date().getTime();
         long time = end - start;
         System.out.println(checkScore("GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK-", "----MEEAKQKVVDFLNSKSK-SKFYFNDFTDLFPDMKQREVKKILTALVNDEVLEYWSSGSTTMYGLKG"));
