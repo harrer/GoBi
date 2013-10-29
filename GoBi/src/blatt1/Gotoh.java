@@ -70,16 +70,15 @@ public class Gotoh {
     }
 
     private AlignmentMax fillMatrix() {
-        //up[0][0] = false; upLeft[0][0] = false; left[0][0] = false;
         for (int i = 1; i < seq1.length() + 1; i++) {//init
             A[i][0] = mode.equals("global") ? g(i) : 0;
             D[i][0] = Double.NEGATIVE_INFINITY;
-            //up[i][0] = false; upLeft[i][0] = false; left[i][0] = false;
+            up[i-1][0] = true;
         }
         for (int i = 1; i < seq2.length() + 1; i++) {
             A[0][i] = mode.equals("global") ? g(i) : 0;
             I[0][i] = Double.NEGATIVE_INFINITY;
-            //up[0][i] = false; upLeft[0][i] = false; left[0][i] = false;
+            left[0][i-1] = true;
         }
         AlignmentMax lMax = new AlignmentMax(0, 0, Double.NEGATIVE_INFINITY, "local");
         AlignmentMax fMax = new AlignmentMax(0, 0, Double.NEGATIVE_INFINITY, "freeshift");
@@ -88,6 +87,9 @@ public class Gotoh {
                 I[i][j] = Math.max(A[i - 1][j] + g(1), I[i - 1][j] + gapextend);
                 D[i][j] = Math.max(A[i][j - 1] + g(1), D[i][j - 1] + gapextend);
                 A[i][j] = mode.equals("local") ? Math.max(0, Math.max(A[i - 1][j - 1] + getCost(i - 1, j - 1), Math.max(D[i][j], I[i][j]))) : Math.max(A[i - 1][j - 1] + getCost(i - 1, j - 1), Math.max(D[i][j], I[i][j]));
+                upLeft[i-1][j-1] = ((A[i - 1][j - 1] + getCost(i - 1, j - 1)) >= Math.max(D[i][j], I[i][j]));
+                up[i-1][j-1] = (I[i][j] >= Math.max(D[i][j], A[i - 1][j - 1] + getCost(i - 1, j - 1)));
+                left[i-1][j-1] = (D[i][j] >= Math.max(I[i][j], A[i - 1][j - 1] + getCost(i - 1, j - 1)));
                 if (A[i][j] >= lMax.getMax()) {
                     lMax.setMax(i, j, A[i][j]);
                 }
@@ -112,31 +114,17 @@ public class Gotoh {
         StringBuilder s2 = new StringBuilder();
         int i = seq1.length(), j = seq2.length();
         while (i > 0 && j > 0) {
-            if (A[i][j] == (A[i - 1][j - 1] + getCost(i - 1, j - 1))) {
+            if (upLeft[i-1][j-1]) {
                 i--;
                 j--;
                 s1.append(seq1.charAt(i));
                 s2.append(seq2.charAt(j));
-            } else if (A[i][j] == I[i][j]) {
-                int k = 0;
-//                s1.append(seq1.charAt(i-1));
-//                s2.append('-');
-                do {
-                    s1.append(seq1.charAt(i - k));
-                    s2.append('-');
-                    k++;
-                }while (!((A[i - k][j] + g(k)) == A[i][j]));
-                i -= k;
-            } else if (A[i][j] == D[i][j]) {
-                int k = 0;
-//                s2.append(seq2.charAt(j - 1));
-//                s1.append('-');
-                do {
-                    k++;
-                    s2.append(seq2.charAt(j - k));
-                    s1.append('-');
-                }while (!((A[i][j - k] + g(k)) == A[i][j]));
-                j -= k;
+            } else if (up[i-1][j-1]) {
+                s1.append(seq1.charAt(i));
+                s2.append('-');
+            } else if (left[i-1][j-1]) {
+                s2.append(seq2.charAt(j));
+                s1.append('-');
             }
         }
         if (i == 0) {
@@ -180,6 +168,7 @@ public class Gotoh {
         for (int i = 0; i < aa.length(); i++) {
             aminoAcids.put(aa.charAt(i), i);
         }
+        up = new boolean[seq1.length()][seq1.length()]; left = new boolean[seq1.length()][seq1.length()]; upLeft = new boolean[seq1.length()][seq1.length()];
     }
 
     public String printMatrix() {
