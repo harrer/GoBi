@@ -11,7 +11,7 @@ public class Parser {
 
     private final String path = "/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/";//"/home/tobias/Desktop/";
 
-    public double[][] parseMatrix(String matrixName, boolean mirror) throws FileNotFoundException, IOException {
+    public int[][] parseMatrix(String matrixName, boolean mirror) throws FileNotFoundException, IOException {
         String line;
         FileReader fReader = new FileReader(path+"matrices/"+matrixName+".mat");
         BufferedReader reader = new BufferedReader(fReader);
@@ -46,7 +46,14 @@ public class Parser {
         }
         reader.close();
         fReader.close();
-        return matrix;
+        int[][] mOut = new int[26][26];
+        String aa = "ARNDCQEGHILKMFPSTWYV";
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix.length; j++) {
+                mOut[aa.charAt(i)-64][aa.charAt(j)-64] = new Double(matrix[i][j]*100).intValue();
+            }
+        }
+        return mOut;
     }
     
     public HashMap<String, String> parseParams(String[] args) throws ParamException {
@@ -136,13 +143,18 @@ public class Parser {
         HashMap<String, String> map = new HashMap<>();
         FileReader fReader = new FileReader(path+seqlibFile);
         BufferedReader reader = new BufferedReader(fReader);
+        int max = -1;
         while ((line = reader.readLine()) != null) {
-            if (line.trim().isEmpty()) {
-                continue;
-            }
+//            if (line.trim().isEmpty()) {
+//                continue;
+//            }
             String[] split = line.split(":");
             map.put(split[0], split[1]);
+            if(Math.max(split[0].length(), split[1].length()) > max){
+                max = Math.max(split[0].length(), split[1].length());
+            }
         }
+        map.put("_maxLength_", ""+max);
         reader.close();
         fReader.close();
         return map;

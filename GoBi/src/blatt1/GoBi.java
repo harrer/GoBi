@@ -14,7 +14,7 @@ public class GoBi {
     private static void matrix(String file) throws IOException, InterruptedException, ParamException {
         long timeBefore = new Date().getTime();
         final String path = "/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/matrices";
-        double[][] m = new Parser().parseMatrix(path + file, false);
+        int[][] m = new Parser().parseMatrix(path + file, false);
         String out = "";
         for (int i = 0; i < m.length; i++) {
             for (int j = 0; j < m.length; j++) {
