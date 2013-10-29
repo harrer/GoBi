@@ -73,12 +73,12 @@ public class Gotoh {
         for (int i = 1; i < seq1.length() + 1; i++) {//init
             A[i][0] = mode.equals("global") ? g(i) : 0;
             D[i][0] = Double.NEGATIVE_INFINITY;
-            up[i-1][0] = true;
+            if(i<seq1.length()){up[i-1][0] = true;}
         }
         for (int i = 1; i < seq2.length() + 1; i++) {
             A[0][i] = mode.equals("global") ? g(i) : 0;
             I[0][i] = Double.NEGATIVE_INFINITY;
-            left[0][i-1] = true;
+            if(i<seq1.length()){left[0][i-1] = true;}
         }
         AlignmentMax lMax = new AlignmentMax(0, 0, Double.NEGATIVE_INFINITY, "local");
         AlignmentMax fMax = new AlignmentMax(0, 0, Double.NEGATIVE_INFINITY, "freeshift");
