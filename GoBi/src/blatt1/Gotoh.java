@@ -168,7 +168,7 @@ public class Gotoh {
         for (int i = 0; i < aa.length(); i++) {
             aminoAcids.put(aa.charAt(i), i);
         }
-        up = new boolean[seq1.length()][seq1.length()]; left = new boolean[seq1.length()][seq1.length()]; upLeft = new boolean[seq1.length()][seq1.length()];
+        up = new boolean[seq1.length()][seq2.length()]; left = new boolean[seq1.length()][seq2.length()]; upLeft = new boolean[seq1.length()][seq2.length()];
     }
 
     public String printMatrix() {
