@@ -23,30 +23,91 @@ public class Gotoh {
     private boolean check;
     private HashMap<Character, Integer> aminoAcids;
 
-    private double[][] A;
-    private double[][] I;
-    private double[][] D;
+    private int[][] A;
+    private int[][] I;
+    private int[][] D;
 
     private String seq1 = "WTHGQA";
     private String seq2 = "WTHA";
 
     public Gotoh(HashMap<String, String> params) throws IOException {
+        long start = new Date().getTime();
         initParams(params);
+        StringBuilder sb = null;
         switch (mode) {
             case "global":
-                startAlignmentGlobal();
+                sb = startAlignmentGlobal();
                 break;
             case "local":
-                startAlignmentLocal();
+                sb = startAlignmentLocal();
                 break;
             case "freeshift":
-                startAlignmentFreeshift();
+                sb = startAlignmentFreeshift();
                 break;
         }
+        System.out.println("Alignment completed! Writing to file");
+        FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
+        writer.write(sb.toString());
+        writer.close();
+        long end = new Date().getTime();
+        long time = end - start;
+        System.out.println("Done! " + time / 60000 + " min, " + (time / 1000) % 60 + " s.\nTotal: " + time + " ms");
     }
 
-    private void startAlignmentFreeshift() throws IOException {
-        long start = new Date().getTime();
+    private StringBuilder startAlignmentFreeshift() throws IOException {
+        DecimalFormat df = new DecimalFormat("0.0000");
+        df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
+        StringBuilder sb = new StringBuilder();
+        double c = 0.0;
+        int f = 1;
+        if (!printali) {
+            for (SeqPair pair : pairfile) {
+                if (c / pairfile.size() >= f * 0.01) {
+                    System.out.println(f + "% completed");
+                    f++;
+                }
+                c++;
+                seq1 = seqlib.get(pair.getS1());
+                seq2 = seqlib.get(pair.getS2());
+                sb.append(pair.getS1());
+                sb.append(" ");
+                sb.append(pair.getS2());
+                sb.append(" ");
+                sb.append(df.format(fillMatrixGlobal() / 10.0));
+                sb.append("\n");
+            }
+        } else {
+            for (SeqPair pair : pairfile) {
+                if (c / pairfile.size() >= f * 0.01) {
+                    System.out.println(f + "% completed");
+                    f++;
+                }
+                c++;
+                seq1 = seqlib.get(pair.getS1());
+                seq2 = seqlib.get(pair.getS2());
+                sb.append(">");
+                sb.append(pair.getS1());
+                sb.append(" ");
+                sb.append(pair.getS2());
+                sb.append(" ");
+                sb.append(df.format(fillMatrixGlobal() / 10.0));
+                sb.append("\n");
+                String[] backtrack = {};
+                backtrack = backtrackingGlobal();
+                sb.append(pair.getS1());
+                sb.append(": ");
+                sb.append(backtrack[0]);
+                sb.append("\n");
+                sb.append(pair.getS2());
+                sb.append(": ");
+                sb.append(backtrack[1]);
+                sb.append("\n");
+            }
+        }
+        return sb;
+    }
+
+    private StringBuilder startAlignmentLocal() throws IOException {
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("0.0000");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
@@ -61,7 +122,12 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
+                sb.append(pair.getS1());
+                sb.append(" ");
+                sb.append(pair.getS2());
+                sb.append(" ");
+                sb.append(df.format(fillMatrixGlobal() / 10.0));
+                sb.append("\n");
             }
         } else {
             for (SeqPair pair : pairfile) {
@@ -72,23 +138,29 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
+                sb.append(">");
+                sb.append(pair.getS1());
+                sb.append(" ");
+                sb.append(pair.getS2());
+                sb.append(" ");
+                sb.append(df.format(fillMatrixGlobal() / 10.0));
+                sb.append("\n");
                 String[] backtrack = {};
                 backtrack = backtrackingGlobal();
-                sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
+                sb.append(pair.getS1());
+                sb.append(": ");
+                sb.append(backtrack[0]);
+                sb.append("\n");
+                sb.append(pair.getS2());
+                sb.append(": ");
+                sb.append(backtrack[1]);
+                sb.append("\n");
             }
         }
-        System.out.println("Alignment completed! Writing to file");
-        FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
-        writer.write(sb.toString());
-        writer.close();
-        long end = new Date().getTime();
-        long time = end - start;
-        System.out.println("Done! " + time / 60000 + " min, " + (time / 1000) % 60 + " s.\nTotal: " + time + " ms");
+        return sb;
     }
 
-    private void startAlignmentLocal() throws IOException {
-        long start = new Date().getTime();
+    private StringBuilder startAlignmentGlobal() throws IOException {
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("0.0000");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
@@ -103,7 +175,12 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
+                sb.append(pair.getS1());
+                sb.append(" ");
+                sb.append(pair.getS2());
+                sb.append(" ");
+                sb.append(df.format(fillMatrixGlobal() / 10.0));
+                sb.append("\n");
             }
         } else {
             for (SeqPair pair : pairfile) {
@@ -114,102 +191,71 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
+                sb.append(">");
+                sb.append(pair.getS1());
+                sb.append(" ");
+                sb.append(pair.getS2());
+                sb.append(" ");
+                sb.append(df.format(fillMatrixGlobal() / 10.0));
+                sb.append("\n");
                 String[] backtrack = {};
                 backtrack = backtrackingGlobal();
-                sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
+                sb.append(pair.getS1());
+                sb.append(": ");
+                sb.append(backtrack[0]);
+                sb.append("\n");
+                sb.append(pair.getS2());
+                sb.append(": ");
+                sb.append(backtrack[1]);
+                sb.append("\n");
             }
         }
-        System.out.println("Alignment completed! Writing to file");
-        FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
-        writer.write(sb.toString());
-        writer.close();
-        long end = new Date().getTime();
-        long time = end - start;
-        System.out.println("Done! " + time / 60000 + " min, " + (time / 1000) % 60 + " s.\nTotal: " + time + " ms");
+        return sb;
     }
 
-    private void startAlignmentGlobal() throws IOException {
-        long start = new Date().getTime();
-        StringBuilder sb = new StringBuilder();
-        DecimalFormat df = new DecimalFormat("0.0000");
-        df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
-        double c = 0.0;
-        int f = 1;
-        if (!printali) {
-            for (SeqPair pair : pairfile) {
-                if (c / pairfile.size() >= f * 0.01) {
-                    System.out.println(f + "% completed");
-                    f++;
-                }
-                c++;
-                seq1 = seqlib.get(pair.getS1());
-                seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
-            }
-        } else {
-            for (SeqPair pair : pairfile) {
-                if (c / pairfile.size() >= f * 0.01) {
-                    System.out.println(f + "% completed");
-                    f++;
-                }
-                c++;
-                seq1 = seqlib.get(pair.getS1());
-                seq2 = seqlib.get(pair.getS2());
-                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
-                String[] backtrack = {};
-                backtrack = backtrackingGlobal();
-                sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
-            }
-        }
-        System.out.println("Alignment completed! Writing to file");
-        FileWriter writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
-        writer.write(sb.toString());
-        writer.close();
-        long end = new Date().getTime();
-        long time = end - start;
-        System.out.println("Done! " + time / 60000 + " min, " + (time / 1000) % 60 + " s.\nTotal: " + time + " ms");
-    }
-    
-    
-
-    private double fillMatrixLocal() {
-        return 0.0;
-    }
-
-    private double fillMatrixGlobal() {
-//        AlignmentMax lMax = null;
-//        AlignmentMax fMax = null;
-//        if (printali) {
-//            lMax = new AlignmentMax(0, 0, Double.NEGATIVE_INFINITY, "local");
-//            fMax = new AlignmentMax(0, 0, Double.NEGATIVE_INFINITY, "freeshift");
-//        }
+    private AlignmentMax fillMatrixFreeshift() {
+        AlignmentMax max = null;
+        max = new AlignmentMax(0, 0, Integer.MIN_VALUE, "freeshift");
         for (int i = 1; i < seq1.length() + 1; i++) {
             for (int j = 1; j < seq2.length() + 1; j++) {
                 I[i][j] = Math.max(A[i - 1][j] + g(1), I[i - 1][j] + gapextend);
                 D[i][j] = Math.max(A[i][j - 1] + g(1), D[i][j - 1] + gapextend);
-                double a = Math.max(D[i][j], I[i][j]);
-                A[i][j] = Math.max(A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)), a);
-                //A[i][j] = mode.equals("local") ? Math.max(0, Math.max(A[i - 1][j - 1] + getCost(seq1.charAt(i-1), seq2.charAt(j-1)), Math.max(D[i][j], I[i][j]))) : Math.max(A[i - 1][j - 1] + getCost(seq1.charAt(i-1), seq2.charAt(j-1)), Math.max(D[i][j], I[i][j]));
-
-//                if (printali) {
-//                    if (A[i][j] >= lMax.getMax()) {
-//                        lMax.setMax(i, j, A[i][j]);
-//                    }
-//                    if ((i == seq1.length() || j == seq2.length()) && A[i][j] >= fMax.getMax()) {
-//                        fMax.setMax(i, j, A[i][j]);
-//                    }
-//                }
+                int a = Math.max(D[i][j], I[i][j]);
+                A[i][j] = Math.max(0, Math.max(A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)), a));
+                if (A[i][j] >= max.getMax()) {
+                    max.setMax(i, j, A[i][j]);
+                }
             }
         }
-//        switch (mode) {
-//            case "global":
-//                return new AlignmentMax(seq1.length(), seq2.length(), A[seq1.length()][seq2.length()], mode);
-//            case "local":
-//               // return lMax;
-//            case "freeshift":
-//               // return fMax;
-//        }
+        return max;
+    }
+
+    private AlignmentMax fillMatrixLocal() {
+        AlignmentMax max = null;
+        max = new AlignmentMax(0, 0, Integer.MIN_VALUE, "local");
+        for (int i = 1; i < seq1.length() + 1; i++) {
+            for (int j = 1; j < seq2.length() + 1; j++) {
+                I[i][j] = Math.max(A[i - 1][j] + g(1), I[i - 1][j] + gapextend);
+                D[i][j] = Math.max(A[i][j - 1] + g(1), D[i][j - 1] + gapextend);
+                int a = Math.max(D[i][j], I[i][j]);
+                A[i][j] = Math.max(0, Math.max(A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)), a));
+                if (A[i][j] >= max.getMax()) {
+                    max.setMax(i, j, A[i][j]);
+                }
+            }
+        }
+        return max;
+    }
+
+    private int fillMatrixGlobal() {
+        for (int i = 1; i < seq1.length() + 1; i++) {
+            for (int j = 1; j < seq2.length() + 1; j++) {
+                I[i][j] = Math.max(A[i - 1][j] + g(1), I[i - 1][j] + gapextend);
+                D[i][j] = Math.max(A[i][j - 1] + g(1), D[i][j - 1] + gapextend);
+                int a = Math.max(D[i][j], I[i][j]);
+                A[i][j] = Math.max(A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)), a);
+            }
+        }
         return A[seq1.length()][seq2.length()];
     }
 
@@ -262,11 +308,11 @@ public class Gotoh {
         return out;
     }
 
-    private double g(int n) {
+    private int g(int n) {
         return gapopen + n * gapextend;
     }
 
-    private double getCost(char i, char j) {
+    private int getCost(char i, char j) {
         return matrix[i - 65][j - 65];
     }
 
@@ -287,16 +333,16 @@ public class Gotoh {
             aminoAcids.put(aa.charAt(i), i);
         }
         int size = Integer.parseInt(seqlib.get("_maxLength_"));
-        A = new double[size + 1][size + 1];
-        I = new double[size + 1][size + 1];
-        D = new double[size + 1][size + 1];
+        A = new int[size + 1][size + 1];
+        I = new int[size + 1][size + 1];
+        D = new int[size + 1][size + 1];
         for (int i = 1; i < size + 1; i++) {//init
             A[i][0] = g(i);
-            D[i][0] = Double.NEGATIVE_INFINITY;
+            D[i][0] = Integer.MIN_VALUE;
         }
         for (int i = 1; i < size + 1; i++) {
             A[0][i] = g(i);
-            I[0][i] = Double.NEGATIVE_INFINITY;
+            I[0][i] = Integer.MIN_VALUE;
         }
     }
 

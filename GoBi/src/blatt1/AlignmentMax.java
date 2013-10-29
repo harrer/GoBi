@@ -7,21 +7,21 @@ package blatt1;
 public class AlignmentMax {
     
     private int i,j;
-    private double max;
+    private int max;
     private final String mode;
     
-    public AlignmentMax(int i, int j, double max, String mode){
+    public AlignmentMax(int i, int j, int max, String mode){
         this.i = i;
         this.j = j;
         this.max = max;
         this.mode = mode;
     }
     
-    public double getMax(){
+    public int getMax(){
         return max;
     }
     
-    public void setMax(int i, int j, double max){
+    public void setMax(int i, int j, int max){
         this.i = i;
         this.j = j;
         this.max = max;
