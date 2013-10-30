@@ -64,7 +64,7 @@ public class Gotoh {
     private StringBuilder startAlignmentFreeshift() throws IOException {
         DecimalFormat df = new DecimalFormat("0.0000");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = printali ? new StringBuilder(59193000) : new StringBuilder(38000);
         double c = 0.0;
         int f = 1;
         if (!printali) {
@@ -220,8 +220,8 @@ public class Gotoh {
     }
 
     private String[] backtrackingGlobal() {
-        StringBuilder s1 = new StringBuilder();
-        StringBuilder s2 = new StringBuilder();
+        StringBuilder s1 = new StringBuilder(seq1.length()+seq2.length());
+        StringBuilder s2 = new StringBuilder(seq1.length()+seq2.length());
         int i = seq1.length(), j = seq2.length();
         while (i > 0 && j > 0) {
             if (A[i][j] == (A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)))) {
