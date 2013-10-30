@@ -88,10 +88,10 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                double result = fillMatrixFreeshift().getMax()/ 10.0;
-                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result));sb.append("\n");
-                String[] backtrack = backtrackingFreeshift();
-                if(check && !(Math.abs(result - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
+                AlignmentMax result = fillMatrixFreeshift();
+                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result.getMax()/ 10.0));sb.append("\n");
+                String[] backtrack = backtrackingFreeshift(result);
+                if(check && !(Math.abs(result.getMax()/ 10.0 - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
                 sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
             }
         }
@@ -232,14 +232,11 @@ public class Gotoh {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private String[] backtrackingFreeshift() {
+    private String[] backtrackingFreeshift(AlignmentMax max) {
         StringBuilder s1 = new StringBuilder();
         StringBuilder s2 = new StringBuilder();
         int i = seq1.length(), j = seq2.length();
-        int max = Integer.MIN_VALUE;
-        for (int k = 0; k < i; k++) {
-            //max = 
-        }
+        
         return new String[0];
     }
 

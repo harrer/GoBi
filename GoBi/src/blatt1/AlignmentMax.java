@@ -17,8 +17,8 @@ public class AlignmentMax {
         this.mode = mode;
     }
     
-    public int getMax(){
-        return max;
+    public int[] getMax(){
+        return new int[]{i,j,max};
     }
     
     public void setMax(int i, int j, int max){
