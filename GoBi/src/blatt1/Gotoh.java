@@ -129,7 +129,7 @@ public class Gotoh {
                 AlignmentMax result = fillMatrixLocal();
                 sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result.getMax()[2]/ 10.0));sb.append("\n");
                 String[] backtrack = backtrackingLocal(result);
-                if(check && !(Math.abs(result.getMax()[2]/ 10.0 - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
+                if(check && !(Math.abs(result.getMax()[2]/ 10.0 - checkScoreLocal(backtrack[1], backtrack[1])) < 0.0001)){checkFail++;}
                 sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
             }
         }
