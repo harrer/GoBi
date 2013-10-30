@@ -236,7 +236,57 @@ public class Gotoh {
         StringBuilder s1 = new StringBuilder();
         StringBuilder s2 = new StringBuilder();
         int i = seq1.length(), j = seq2.length();
-        
+        while(i > max.getMax()[0]){
+            i--;
+            s1.append(seq1.charAt(i));
+            s2.append('-');
+        }
+        while(j > max.getMax()[1]){
+            j--;
+            s1.append('-');
+            s2.append(seq2.charAt(j));
+        }
+        while (i > 0 && j > 0) {
+            if (A[i][j] == (A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)))) {
+                i--;
+                j--;
+                s1.append(seq1.charAt(i));
+                s2.append(seq2.charAt(j));
+            } else if (A[i][j] == I[i][j]) {
+                int k = 1;
+                s1.append(seq1.charAt(i - 1));
+                s2.append('-');
+                while (!((A[i - k][j] + g(k)) == A[i][j])) {
+                    k++;
+                    s1.append(seq1.charAt(i - k));
+                    s2.append('-');
+                }
+                i -= k;
+            } else if (A[i][j] == D[i][j]) {
+                int k = 1;
+                s2.append(seq2.charAt(j - 1));
+                s1.append('-');
+                while (!((A[i][j - k] + g(k)) == A[i][j])) {
+                    k++;
+                    s2.append(seq2.charAt(j - k));
+                    s1.append('-');
+                }
+                j -= k;
+            }
+        }
+        if (i == 0) {
+            while (j > 0) {
+                s2.append(seq2.charAt(j - 1));
+                s1.append('-');
+                j--;
+            }
+        } else if (j == 0) {
+            while (i > 0) {
+                s1.append(seq1.charAt(i - 1));
+                s2.append('-');
+                i--;
+            }
+        }
         return new String[0];
     }
 
@@ -285,8 +335,7 @@ public class Gotoh {
                 i--;
             }
         }
-        String[] out = {s1.reverse().toString(), s2.reverse().toString()};
-        return out;
+        return new String[] {s1.reverse().toString(), s2.reverse().toString()};
     }
     
     private double checkScoreGlobal(String s1, String s2){
