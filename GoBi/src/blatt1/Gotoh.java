@@ -415,11 +415,11 @@ public class Gotoh {
         I = new int[size + 1][size + 1];
         D = new int[size + 1][size + 1];
         for (int i = 1; i < size + 1; i++) {//init
-            A[i][0] = (mode.equals("local"))? 0 : g(i);
+            A[i][0] = (mode.equals("global"))? g(i) : 0;
             D[i][0] = -99999999;
         }
         for (int i = 1; i < size + 1; i++) {
-            A[0][i] = (mode.equals("local"))? 0 : g(i);
+            A[0][i] = (mode.equals("global"))? g(i) : 0;
             I[0][i] = -99999999;
         }
     }
