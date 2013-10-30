@@ -57,7 +57,7 @@ public class Gotoh {
         writer.close();
         long end = new Date().getTime();
         long time = end - start;
-        System.out.println(checkScoreLocal("GVVHDDMECSHYMKNFD--------------VGHVPIRLPRTKHLLNVINENFGTLAFCRRWLDR-LGESKYLMALKNLCDLGIVDPYPPLCD--", "-----------------GQVIEVPPTLIYMYVRDVPVRVAQARFLLAKIKREYGTLPFAYRWLQNDMPEGQLKLALKTLEKAGAIYGYPVL--KE"));
+        System.out.println(checkScoreFreeshift("-------GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK-----------------------------", "HISDEEANLFAMQLASASVLPMILKSALEL-DLLEIIA--KAGPGAQISPIEIASQLPTTNPDAPVMLDRMLRLLACYIILTCSVRTQQDGKVQRLYGLATVAKY"));
         System.out.println("Done! " + time / 60000 + " min, " + (time / 1000) % 60 + " s.\nTotal: " + time + " ms");
     }
 
@@ -311,6 +311,44 @@ public class Gotoh {
                 }
                 score += g(k);
                 i += (k-1);
+            }
+        }
+        return score/10.0;
+    }
+    
+    private double checkScoreFreeshift(String s1, String s2){
+        int left = 0, right = s1.length()-1, score = 0;
+        if(s1.startsWith("-")){
+            while(s1.charAt(left) == '-'){
+                left++;
+            }
+        }
+        else if(s2.startsWith("-")){
+            while(s2.charAt(left) == '-'){
+                left++;
+            }
+        }
+        if(s2.endsWith("-")){
+                while(s2.charAt(right) == '-'){
+                    right--;
+                }
+            }
+            else if(s1.endsWith("-")){
+                while(s1.charAt(right) == '-'){
+                    right--;
+                }
+            }
+        for (int i = left; i <= right; i++) {
+            if(s1.charAt(i) == '-' || s2.charAt(i) == '-'){
+                int k=1;
+                while((i+k)<s1.length() && (s1.charAt(i+k) == '-' || s2.charAt(i+k) == '-')){
+                    k++;
+                }
+                score += g(k);
+                i += (k-1);
+            }
+            else{
+                score += getCost(s1.charAt(i), s2.charAt(i));
             }
         }
         return score/10.0;
