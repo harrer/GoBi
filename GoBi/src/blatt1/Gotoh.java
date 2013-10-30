@@ -287,7 +287,7 @@ public class Gotoh {
                 i--;
             }
         }
-        return new String[0];
+        return new String[]{s1.reverse().toString(), s2.reverse().toString()};
     }
 
     private String[] backtrackingGlobal() {
