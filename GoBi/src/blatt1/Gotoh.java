@@ -67,6 +67,7 @@ public class Gotoh {
         StringBuilder sb = new StringBuilder();
         double c = 0.0;
         int f = 1;
+        int checkFail = 0;
         if (!printali) {
             for (SeqPair pair : pairfile) {
                 if (c / pairfile.size() >= f * 0.01) {
@@ -87,12 +88,14 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
-                String[] backtrack = {};
-                backtrack = backtrackingFreeshift();
+                double result = fillMatrixGlobal() / 10.0;
+                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result));sb.append("\n");
+                String[] backtrack = backtrackingFreeshift();
+                if(check && !(Math.abs(result - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
                 sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
             }
         }
+        System.out.println("checkfail: "+checkFail);
         return sb;
     }
 
@@ -102,6 +105,7 @@ public class Gotoh {
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
         double c = 0.0;
         int f = 1;
+        int checkFail = 0;
         if (!printali) {
             for (SeqPair pair : pairfile) {
                 if (c / pairfile.size() >= f * 0.01) {
@@ -122,11 +126,14 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
-                String[] backtrack = {};
-                backtrack = backtrackingLocal();sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
+                double result = fillMatrixGlobal() / 10.0;
+                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result));sb.append("\n");
+                String[] backtrack = backtrackingLocal();
+                if(check && !(Math.abs(result - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
+                sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
             }
         }
+        System.out.println("checkfail: "+checkFail);
         return sb;
     }
 
@@ -160,7 +167,7 @@ public class Gotoh {
                 double result = fillMatrixGlobal() / 10.0;
                 sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result));sb.append("\n");
                 String[] backtrack = backtrackingGlobal();
-                if(check && !(Math.abs(result - checkScoreGlobal(backtrack[1], backtrack[1])) < 0.0001)){checkFail++;}
+                if(check && !(Math.abs(result - checkScoreGlobal(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
                 sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
             }
         }
@@ -219,7 +226,14 @@ public class Gotoh {
     }
 
     private String[] backtrackingFreeshift() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        StringBuilder s1 = new StringBuilder();
+        StringBuilder s2 = new StringBuilder();
+        int i = seq1.length(), j = seq2.length();
+        int max = Integer.MIN_VALUE;
+        for (int k = 0; k < i; k++) {
+            //max = 
+        }
+        return new String[0];
     }
 
     private String[] backtrackingGlobal() {
