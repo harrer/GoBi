@@ -159,9 +159,8 @@ public class Gotoh {
                 seq2 = seqlib.get(pair.getS2());
                 double result = fillMatrixGlobal() / 10.0;
                 sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result));sb.append("\n");
-                String[] backtrack = {};
-                backtrack = backtrackingGlobal();
-                if(check && !(Math.abs(result - checkScoreGlobal(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
+                String[] backtrack = backtrackingGlobal();
+                if(check && !(Math.abs(result - checkScoreGlobal(backtrack[1], backtrack[1])) < 0.0001)){checkFail++;}
                 sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
             }
         }
