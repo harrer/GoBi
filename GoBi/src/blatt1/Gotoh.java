@@ -115,7 +115,7 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
+                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixLocal().getMax()/ 10.0));sb.append("\n");
             }
         } else {
             for (SeqPair pair : pairfile) {
@@ -126,7 +126,7 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                double result = fillMatrixGlobal() / 10.0;
+                double result = fillMatrixLocal().getMax()/ 10.0;
                 sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result));sb.append("\n");
                 String[] backtrack = backtrackingLocal();
                 if(check && !(Math.abs(result - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
