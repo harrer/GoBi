@@ -126,10 +126,10 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                double result = fillMatrixLocal().getMax()[2]/ 10.0;
-                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result));sb.append("\n");
-                String[] backtrack = backtrackingLocal();
-                if(check && !(Math.abs(result - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
+                AlignmentMax result = fillMatrixLocal();
+                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result.getMax()[2]/ 10.0));sb.append("\n");
+                String[] backtrack = backtrackingLocal(result);
+                if(check && !(Math.abs(result.getMax()[2]/ 10.0 - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
                 sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
             }
         }
@@ -228,8 +228,59 @@ public class Gotoh {
         return A[seq1.length()][seq2.length()];
     }
     
-    private String[] backtrackingLocal() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private String[] backtrackingLocal(AlignmentMax max) {
+        StringBuilder s1 = new StringBuilder();
+        StringBuilder s2 = new StringBuilder();
+        int i = seq1.length(), j = seq2.length();
+        while(i > max.getMax()[0]){
+            i--;
+            s1.append(seq1.charAt(i));
+            s2.append('-');
+        }
+        while(j > max.getMax()[1]){
+            j--;
+            s1.append('-');
+            s2.append(seq2.charAt(j));
+        }
+        while(A[i][j] != 0){
+            if(A[i][j] == (A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)))){
+                i--;j--;
+                s1.append(seq1.charAt(i));
+                s2.append(seq2.charAt(j));
+            }
+            else if (A[i][j] == I[i][j]) {
+                int k = 1;
+                s1.append(seq1.charAt(i - 1));
+                s2.append('-');
+                while (!((A[i - k][j] + g(k)) == A[i][j])) {
+                    k++;
+                    s1.append(seq1.charAt(i - k));
+                    s2.append('-');
+                }
+                i -= k;
+            } else if (A[i][j] == D[i][j]) {
+                int k = 1;
+                s2.append(seq2.charAt(j - 1));
+                s1.append('-');
+                while (!((A[i][j - k] + g(k)) == A[i][j])) {
+                    k++;
+                    s2.append(seq2.charAt(j - k));
+                    s1.append('-');
+                }
+                j -= k;
+            }
+        }
+        while(j>0){
+            j--;
+            s1.append('-');
+            s2.append(seq2.charAt(j));
+        }
+        while(i>0){
+            i--;
+            s1.append(seq1.charAt(i));
+            s2.append('-');
+        }
+        return new String[] {s1.reverse().toString(), s2.reverse().toString()};
     }
 
     private String[] backtrackingFreeshift(AlignmentMax max) {
