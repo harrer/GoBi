@@ -186,14 +186,14 @@ public class Gotoh {
                 A[i][j] = Math.max(A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)), a);
             }
         }
-        for (int i = 0; i < seq2.length(); i++) {
-            if(A[i][seq1.length()] >= max.getMax()){
-                max.setMax(i, seq1.length(), A[i][seq1.length()]);
+        for (int i = 0; i <= seq1.length(); i++) {
+            if(A[i][seq2.length()+1] >= max.getMax()){
+                max.setMax(i, seq2.length()+1, A[i][seq2.length()+1]);
             }
         }
-        for (int i = 0; i < seq1.length(); i++) {
-            if(A[seq2.length()][i] >= max.getMax()){
-                max.setMax(seq2.length(), i, A[seq2.length()][i]);
+        for (int i = 0; i <= seq2.length(); i++) {
+            if(A[seq1.length()+1][i] >= max.getMax()){
+                max.setMax(seq1.length()+1, i, A[seq1.length()+1][i]);
             }
         }
         return max;
