@@ -77,7 +77,7 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixFreeshift().getMax()/ 10.0));sb.append("\n");
+                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixFreeshift().getMax()[2]/ 10.0));sb.append("\n");
             }
         } else {
             for (SeqPair pair : pairfile) {
@@ -89,9 +89,9 @@ public class Gotoh {
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
                 AlignmentMax result = fillMatrixFreeshift();
-                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result.getMax()/ 10.0));sb.append("\n");
+                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result.getMax()[2]/ 10.0));sb.append("\n");
                 String[] backtrack = backtrackingFreeshift(result);
-                if(check && !(Math.abs(result.getMax()/ 10.0 - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
+                if(check && !(Math.abs(result.getMax()[2]/ 10.0 - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
                 sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
             }
         }
@@ -115,7 +115,7 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixLocal().getMax()/ 10.0));sb.append("\n");
+                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixLocal().getMax()[2]/ 10.0));sb.append("\n");
             }
         } else {
             for (SeqPair pair : pairfile) {
@@ -126,7 +126,7 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                double result = fillMatrixLocal().getMax()/ 10.0;
+                double result = fillMatrixLocal().getMax()[2]/ 10.0;
                 sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result));sb.append("\n");
                 String[] backtrack = backtrackingLocal();
                 if(check && !(Math.abs(result - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
@@ -187,12 +187,12 @@ public class Gotoh {
             }
         }
         for (int i = 1; i < seq1.length()+1; i++) {
-            if(A[i][seq2.length()] >= max.getMax()){
+            if(A[i][seq2.length()] >= max.getMax()[2]){
                 max.setMax(i, seq2.length(), A[i][seq2.length()]);
             }
         }
         for (int i = 1; i < seq2.length()+1; i++) {
-            if(A[seq1.length()][i] >= max.getMax()){
+            if(A[seq1.length()][i] >= max.getMax()[2]){
                 max.setMax(seq1.length(), i, A[seq1.length()][i]);
             }
         }
@@ -208,7 +208,7 @@ public class Gotoh {
                 D[i][j] = Math.max(A[i][j - 1] + g(1), D[i][j - 1] + gapextend);
                 int a = Math.max(D[i][j], I[i][j]);
                 A[i][j] = Math.max(0, Math.max(A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)), a));
-                if (A[i][j] >= max.getMax()) {
+                if (A[i][j] >= max.getMax()[2]) {
                     max.setMax(i, j, A[i][j]);
                 }
             }
