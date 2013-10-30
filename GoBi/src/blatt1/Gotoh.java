@@ -183,7 +183,7 @@ public class Gotoh {
                 I[i][j] = Math.max(A[i - 1][j] + g(1), I[i - 1][j] + gapextend);
                 D[i][j] = Math.max(A[i][j - 1] + g(1), D[i][j - 1] + gapextend);
                 int a = Math.max(D[i][j], I[i][j]);
-                A[i][j] = Math.max(0, Math.max(A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)), a));
+                A[i][j] = Math.max(A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)), a);
             }
         }
         for (int i = 0; i < seq1.length(); i++) {
