@@ -89,7 +89,7 @@ public class Gotoh {
                 seq2 = seqlib.get(pair.getS2());
                 sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
                 String[] backtrack = {};
-                backtrack = backtrackingGlobal();
+                backtrack = backtrackingFreeshift();
                 sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
             }
         }
@@ -124,7 +124,7 @@ public class Gotoh {
                 seq2 = seqlib.get(pair.getS2());
                 sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
                 String[] backtrack = {};
-                backtrack = backtrackingGlobal();sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
+                backtrack = backtrackingLocal();sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
             }
         }
         return sb;
@@ -209,6 +209,14 @@ public class Gotoh {
             }
         }
         return A[seq1.length()][seq2.length()];
+    }
+    
+    private String[] backtrackingLocal() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private String[] backtrackingFreeshift() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private String[] backtrackingGlobal() {
