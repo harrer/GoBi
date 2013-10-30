@@ -77,7 +77,7 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
+                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixFreeshift().getMax()/ 10.0));sb.append("\n");
             }
         } else {
             for (SeqPair pair : pairfile) {
@@ -88,7 +88,7 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                double result = fillMatrixGlobal() / 10.0;
+                double result = fillMatrixFreeshift().getMax()/ 10.0;
                 sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result));sb.append("\n");
                 String[] backtrack = backtrackingFreeshift();
                 if(check && !(Math.abs(result - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
@@ -184,9 +184,6 @@ public class Gotoh {
                 D[i][j] = Math.max(A[i][j - 1] + g(1), D[i][j - 1] + gapextend);
                 int a = Math.max(D[i][j], I[i][j]);
                 A[i][j] = Math.max(0, Math.max(A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)), a));
-                if (A[i][j] >= max.getMax()) {
-                    max.setMax(i, j, A[i][j]);
-                }
             }
         }
         return max;
@@ -201,9 +198,9 @@ public class Gotoh {
                 D[i][j] = Math.max(A[i][j - 1] + g(1), D[i][j - 1] + gapextend);
                 int a = Math.max(D[i][j], I[i][j]);
                 A[i][j] = Math.max(0, Math.max(A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)), a));
-                if (A[i][j] >= max.getMax()) {
-                    max.setMax(i, j, A[i][j]);
-                }
+//                if (A[i][j] >= max.getMax()) {
+//                    max.setMax(i, j, A[i][j]);
+//                }
             }
         }
         return max;
