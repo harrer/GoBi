@@ -57,7 +57,7 @@ public class Gotoh {
         writer.close();
         long end = new Date().getTime();
         long time = end - start;
-        System.out.println(checkScoreFreeshift("-------GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK-----------------------------", "HISDEEANLFAMQLASASVLPMILKSALEL-DLLEIIA--KAGPGAQISPIEIASQLPTTNPDAPVMLDRMLRLLACYIILTCSVRTQQDGKVQRLYGLATVAKY"));
+        //System.out.println(checkScoreFreeshift("-------GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK-----------------------------", "HISDEEANLFAMQLASASVLPMILKSALEL-DLLEIIA--KAGPGAQISPIEIASQLPTTNPDAPVMLDRMLRLLACYIILTCSVRTQQDGKVQRLYGLATVAKY"));
         System.out.println("Done! " + time / 60000 + " min, " + (time / 1000) % 60 + " s.\nTotal: " + time + " ms");
     }
 
@@ -135,6 +135,7 @@ public class Gotoh {
         DecimalFormat df = new DecimalFormat("0.0000");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
         double c = 0.0;
+        int checkFail = 0;
         int f = 1;
         if (!printali) {
             for (SeqPair pair : pairfile) {
@@ -156,12 +157,15 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
+                double result = fillMatrixGlobal() / 10.0;
+                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result));sb.append("\n");
                 String[] backtrack = {};
                 backtrack = backtrackingGlobal();
+                if(check && !(Math.abs(result - checkScoreGlobal(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
                 sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
             }
         }
+        System.out.println("checkfail: "+checkFail);
         return sb;
     }
 
