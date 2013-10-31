@@ -99,7 +99,7 @@ public class Gotoh {
                     sb.append(pair.getS2());
                     sb.append(" ");
                     sb.append(df.format(fillMatrixFreeshift().getMax()[2] / 10.0));
-                    sb.append(printMatrix(A,printmatrices));sb.append(printMatrix(D,printmatrices));sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                    sb.append("A:\n");sb.append(printMatrix(A,printmatrices));sb.append("D:\n");sb.append(printMatrix(D,printmatrices));sb.append("I:\n");sb.append(printMatrix(I,printmatrices)); sb.append("\n");
                 }
             }
         } else {
@@ -161,7 +161,7 @@ public class Gotoh {
                     sb.append(pair.getS2());
                     sb.append(": ");
                     sb.append(backtrack[1]);
-                    sb.append(printMatrix(A,printmatrices));sb.append(printMatrix(D,printmatrices));sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                    sb.append("A:\n");sb.append(printMatrix(A,printmatrices));sb.append("D:\n");sb.append(printMatrix(D,printmatrices));sb.append("I:\n");sb.append(printMatrix(I,printmatrices)); sb.append("\n");
                 }
             }
         }
@@ -199,7 +199,7 @@ public class Gotoh {
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
                 sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixLocal().getMax()[2]/ 10.0));
-                sb.append(printMatrix(A,printmatrices));sb.append(printMatrix(D,printmatrices));sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                sb.append("A:\n");sb.append(printMatrix(A,printmatrices));sb.append("D:\n");sb.append(printMatrix(D,printmatrices));sb.append("I:\n");sb.append(printMatrix(I,printmatrices)); sb.append("\n");
             }
             }
         } else {
@@ -261,7 +261,7 @@ public class Gotoh {
                     sb.append(pair.getS2());
                     sb.append(": ");
                     sb.append(backtrack[1]);
-                    sb.append(printMatrix(A,printmatrices));sb.append(printMatrix(D,printmatrices));sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                    sb.append("A:\n");sb.append(printMatrix(A,printmatrices));sb.append("D:\n");sb.append(printMatrix(D,printmatrices));sb.append("I:\n");sb.append(printMatrix(I,printmatrices)); sb.append("\n");
                 }
             }
         }
@@ -307,7 +307,7 @@ public class Gotoh {
                     sb.append(pair.getS2());
                     sb.append(" ");
                     sb.append(df.format(fillMatrixGlobal() / 10.0));
-                    sb.append(printMatrix(A,printmatrices));sb.append(printMatrix(D,printmatrices));sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                    sb.append("A:\n");sb.append(printMatrix(A,printmatrices));sb.append("D:\n");sb.append(printMatrix(D,printmatrices));sb.append("I:\n");sb.append(printMatrix(I,printmatrices)); sb.append("\n");
                 }
             }
         } else {
@@ -369,7 +369,7 @@ public class Gotoh {
                     sb.append(pair.getS2());
                     sb.append(": ");
                     sb.append(backtrack[1]);
-                    sb.append(printMatrix(A,printmatrices));sb.append(printMatrix(D,printmatrices));sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                    sb.append("A:\n");sb.append(printMatrix(A,printmatrices));sb.append("D:\n");sb.append(printMatrix(D,printmatrices));sb.append("I:\n");sb.append(printMatrix(I,printmatrices)); sb.append("\n");
                 }
             }
         }
@@ -727,11 +727,25 @@ public class Gotoh {
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("0.00");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
-        for (int i = 0; i < seq2.length() + 1; i++) {
-            for (int j = 0; j < seq1.length() + 1; j++) {
-                sb.append(df.format(A[j][i])).append("\t");
+        if (format.equals("txt")) {
+            for (int i = 0; i < seq2.length() + 1; i++) {
+                for (int j = 0; j < seq1.length() + 1; j++) {
+                    sb.append(df.format(A[j][i])).append("\t");
+                }
+                sb.append("\n");
             }
-            sb.append("\n");
+        } else {
+            sb.append("<html><body><table border=\"1\">");
+            for (int i = 0; i < seq2.length() + 1; i++) {
+                sb.append("<tr>");
+                for (int j = 0; j < seq1.length() + 1; j++) {
+                    sb.append("<td>");
+                    sb.append(df.format(A[j][i]));
+                    sb.append("</td>");
+                }
+                sb.append("</tr>");
+            }
+            sb.append("</table></body></html>");
         }
         return sb.toString();
     }
