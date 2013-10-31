@@ -57,23 +57,35 @@ public class Gotoh {
                 for (SeqPair pair : pairfile) {
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
+                    AlignmentMax result = fillMatrixFreeshift();
                     sb.append(pair.getS1());
                     sb.append(" ");
                     sb.append(pair.getS2());
                     sb.append(" ");
-                    sb.append(df.format(fillMatrixFreeshift().getMax()[2] / 10.0));
+                    sb.append(df.format(result.getMax()[2] / 10.0));
                     sb.append("\n");
+                     String[] backtrack = backtrackingFreeshift(result);
+                    if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
+                    }
                 }
             } else {
                 for (SeqPair pair : pairfile) {
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
+                    AlignmentMax result = fillMatrixFreeshift();
                     sb.append(pair.getS1());
                     sb.append(" ");
                     sb.append(pair.getS2());
                     sb.append(" ");
-                    sb.append(df.format(fillMatrixFreeshift().getMax()[2] / 10.0));
+                    sb.append(df.format(result.getMax()[2] / 10.0));
                     sb.append("A:\n");sb.append(printMatrix(A,printmatrices));sb.append("D:\n");sb.append(printMatrix(D,printmatrices));sb.append("I:\n");sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                    String[] backtrack = backtrackingFreeshift(result);
+                    if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
+                    }
                 }
             }
         } else {
@@ -148,15 +160,27 @@ public class Gotoh {
                 for (SeqPair pair : pairfile) {
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixLocal().getMax()[2]/ 10.0));sb.append("\n");
+                AlignmentMax result = fillMatrixLocal();
+                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result.getMax()[2]/ 10.0));sb.append("\n");
+                String[] backtrack = backtrackingLocal(result);
+                    if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
+                    }
                 }
             }
             else{
                 for (SeqPair pair : pairfile) {
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixLocal().getMax()[2]/ 10.0));
+                AlignmentMax result = fillMatrixLocal();
+                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result.getMax()[2]/ 10.0));
                 sb.append("A:\n");sb.append(printMatrix(A,printmatrices));sb.append("D:\n");sb.append(printMatrix(D,printmatrices));sb.append("I:\n");sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                String[] backtrack = backtrackingLocal(result);
+                    if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
+                    }
             }
             }
         } else {
@@ -231,23 +255,35 @@ public class Gotoh {
                 for (SeqPair pair : pairfile) {
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
+                    double result = fillMatrixGlobal() / 10.0;
                     sb.append(pair.getS1());
                     sb.append(" ");
                     sb.append(pair.getS2());
                     sb.append(" ");
                     sb.append(df.format(fillMatrixGlobal() / 10.0));
                     sb.append("\n");
+                    String[] backtrack = backtrackingGlobal();
+                    if (check && !(Math.abs(result - checkScoreGlobal(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
+                    }
                 }
             } else {
                 for (SeqPair pair : pairfile) {
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
+                    double result = fillMatrixGlobal() / 10.0;
                     sb.append(pair.getS1());
                     sb.append(" ");
                     sb.append(pair.getS2());
                     sb.append(" ");
                     sb.append(df.format(fillMatrixGlobal() / 10.0));
                     sb.append("A:\n");sb.append(printMatrix(A,printmatrices));sb.append("D:\n");sb.append(printMatrix(D,printmatrices));sb.append("I:\n");sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                    String[] backtrack = backtrackingGlobal();
+                    if (check && !(Math.abs(result - checkScoreGlobal(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
+                    }
                 }
             }
         } else {
