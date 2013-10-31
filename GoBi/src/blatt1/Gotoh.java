@@ -69,30 +69,100 @@ public class Gotoh {
         int f = 1;
         int checkFail = 0;
         if (!printali) {
-            for (SeqPair pair : pairfile) {
-                if (c / pairfile.size() >= f * 0.01) {
-                    System.out.println(f + "% completed");
-                    f++;
+            if (!(printmatrices.equals("txt") || printmatrices.equals("html"))) {
+                for (SeqPair pair : pairfile) {
+                    if (c / pairfile.size() >= f * 0.01) {
+                        System.out.println(f + "% completed");
+                        f++;
+                    }
+                    c++;
+                    seq1 = seqlib.get(pair.getS1());
+                    seq2 = seqlib.get(pair.getS2());
+                    sb.append(pair.getS1());
+                    sb.append(" ");
+                    sb.append(pair.getS2());
+                    sb.append(" ");
+                    sb.append(df.format(fillMatrixFreeshift().getMax()[2] / 10.0));
+                    sb.append("\n");
                 }
-                c++;
-                seq1 = seqlib.get(pair.getS1());
-                seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixFreeshift().getMax()[2]/ 10.0));sb.append("\n");
+            } else {
+                for (SeqPair pair : pairfile) {
+                    if (c / pairfile.size() >= f * 0.01) {
+                        System.out.println(f + "% completed");
+                        f++;
+                    }
+                    c++;
+                    seq1 = seqlib.get(pair.getS1());
+                    seq2 = seqlib.get(pair.getS2());
+                    sb.append(pair.getS1());
+                    sb.append(" ");
+                    sb.append(pair.getS2());
+                    sb.append(" ");
+                    sb.append(df.format(fillMatrixFreeshift().getMax()[2] / 10.0));
+                    sb.append(printMatrix(A,printmatrices));sb.append(printMatrix(D,printmatrices));sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                }
             }
         } else {
-            for (SeqPair pair : pairfile) {
-                if (c / pairfile.size() >= f * 0.01) {
-                    System.out.println(f + "% completed");
-                    f++;
+            if (!(printmatrices.equals("txt") || printmatrices.equals("html"))) {
+                for (SeqPair pair : pairfile) {
+                    if (c / pairfile.size() >= f * 0.01) {
+                        System.out.println(f + "% completed");
+                        f++;
+                    }
+                    c++;
+                    seq1 = seqlib.get(pair.getS1());
+                    seq2 = seqlib.get(pair.getS2());
+                    AlignmentMax result = fillMatrixFreeshift();
+                    sb.append(">");
+                    sb.append(pair.getS1());
+                    sb.append(" ");
+                    sb.append(pair.getS2());
+                    sb.append(" ");
+                    sb.append(df.format(result.getMax()[2] / 10.0));
+                    sb.append("\n");
+                    String[] backtrack = backtrackingFreeshift(result);
+                    if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                    }
+                    sb.append(pair.getS1());
+                    sb.append(": ");
+                    sb.append(backtrack[0]);
+                    sb.append("\n");
+                    sb.append(pair.getS2());
+                    sb.append(": ");
+                    sb.append(backtrack[1]);
+                    sb.append("\n");
                 }
-                c++;
-                seq1 = seqlib.get(pair.getS1());
-                seq2 = seqlib.get(pair.getS2());
-                AlignmentMax result = fillMatrixFreeshift();
-                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result.getMax()[2]/ 10.0));sb.append("\n");
-                String[] backtrack = backtrackingFreeshift(result);
-                if(check && !(Math.abs(result.getMax()[2]/ 10.0 - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
-                sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
+            } else {
+                for (SeqPair pair : pairfile) {
+                    if (c / pairfile.size() >= f * 0.01) {
+                        System.out.println(f + "% completed");
+                        f++;
+                    }
+                    c++;
+                    seq1 = seqlib.get(pair.getS1());
+                    seq2 = seqlib.get(pair.getS2());
+                    AlignmentMax result = fillMatrixFreeshift();
+                    sb.append(">");
+                    sb.append(pair.getS1());
+                    sb.append(" ");
+                    sb.append(pair.getS2());
+                    sb.append(" ");
+                    sb.append(df.format(result.getMax()[2] / 10.0));
+                    sb.append("\n");
+                    String[] backtrack = backtrackingFreeshift(result);
+                    if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                    }
+                    sb.append(pair.getS1());
+                    sb.append(": ");
+                    sb.append(backtrack[0]);
+                    sb.append("\n");
+                    sb.append(pair.getS2());
+                    sb.append(": ");
+                    sb.append(backtrack[1]);
+                    sb.append(printMatrix(A,printmatrices));sb.append(printMatrix(D,printmatrices));sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                }
             }
         }
         System.out.println("checkfail: "+checkFail);
@@ -107,7 +177,8 @@ public class Gotoh {
         int f = 1;
         int checkFail = 0;
         if (!printali) {
-            for (SeqPair pair : pairfile) {
+            if(!(printmatrices.equals("txt") || printmatrices.equals("html"))){
+                for (SeqPair pair : pairfile) {
                 if (c / pairfile.size() >= f * 0.01) {
                     System.out.println(f + "% completed");
                     f++;
@@ -116,9 +187,10 @@ public class Gotoh {
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
                 sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixLocal().getMax()[2]/ 10.0));sb.append("\n");
+                }
             }
-        } else {
-            for (SeqPair pair : pairfile) {
+            else{
+                for (SeqPair pair : pairfile) {
                 if (c / pairfile.size() >= f * 0.01) {
                     System.out.println(f + "% completed");
                     f++;
@@ -126,11 +198,71 @@ public class Gotoh {
                 c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                AlignmentMax result = fillMatrixLocal();
-                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result.getMax()[2]/ 10.0));sb.append("\n");
-                String[] backtrack = backtrackingLocal(result);
-                if(check && !(Math.abs(result.getMax()[2]/ 10.0 - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
-                sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
+                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixLocal().getMax()[2]/ 10.0));
+                sb.append(printMatrix(A,printmatrices));sb.append(printMatrix(D,printmatrices));sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+            }
+            }
+        } else {
+            if (!(printmatrices.equals("txt") || printmatrices.equals("html"))) {
+                for (SeqPair pair : pairfile) {
+                    if (c / pairfile.size() >= f * 0.01) {
+                        System.out.println(f + "% completed");
+                        f++;
+                    }
+                    c++;
+                    seq1 = seqlib.get(pair.getS1());
+                    seq2 = seqlib.get(pair.getS2());
+                    AlignmentMax result = fillMatrixLocal();
+                    sb.append(">");
+                    sb.append(pair.getS1());
+                    sb.append(" ");
+                    sb.append(pair.getS2());
+                    sb.append(" ");
+                    sb.append(df.format(result.getMax()[2] / 10.0));
+                    sb.append("\n");
+                    String[] backtrack = backtrackingLocal(result);
+                    if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                    }
+                    sb.append(pair.getS1());
+                    sb.append(": ");
+                    sb.append(backtrack[0]);
+                    sb.append("\n");
+                    sb.append(pair.getS2());
+                    sb.append(": ");
+                    sb.append(backtrack[1]);
+                    sb.append("\n");
+                }
+            } else {
+                for (SeqPair pair : pairfile) {
+                    if (c / pairfile.size() >= f * 0.01) {
+                        System.out.println(f + "% completed");
+                        f++;
+                    }
+                    c++;
+                    seq1 = seqlib.get(pair.getS1());
+                    seq2 = seqlib.get(pair.getS2());
+                    AlignmentMax result = fillMatrixLocal();
+                    sb.append(">");
+                    sb.append(pair.getS1());
+                    sb.append(" ");
+                    sb.append(pair.getS2());
+                    sb.append(" ");
+                    sb.append(df.format(result.getMax()[2] / 10.0));
+                    sb.append("\n");
+                    String[] backtrack = backtrackingLocal(result);
+                    if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                    }
+                    sb.append(pair.getS1());
+                    sb.append(": ");
+                    sb.append(backtrack[0]);
+                    sb.append("\n");
+                    sb.append(pair.getS2());
+                    sb.append(": ");
+                    sb.append(backtrack[1]);
+                    sb.append(printMatrix(A,printmatrices));sb.append(printMatrix(D,printmatrices));sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                }
             }
         }
         System.out.println("checkfail: "+checkFail);
@@ -145,30 +277,100 @@ public class Gotoh {
         int checkFail = 0;
         int f = 1;
         if (!printali) {
-            for (SeqPair pair : pairfile) {
-                if (c / pairfile.size() >= f * 0.01) {
-                    System.out.println(f + "% completed");
-                    f++;
+            if (!(printmatrices.equals("txt") || printmatrices.equals("html"))) {
+                for (SeqPair pair : pairfile) {
+                    if (c / pairfile.size() >= f * 0.01) {
+                        System.out.println(f + "% completed");
+                        f++;
+                    }
+                    c++;
+                    seq1 = seqlib.get(pair.getS1());
+                    seq2 = seqlib.get(pair.getS2());
+                    sb.append(pair.getS1());
+                    sb.append(" ");
+                    sb.append(pair.getS2());
+                    sb.append(" ");
+                    sb.append(df.format(fillMatrixGlobal() / 10.0));
+                    sb.append("\n");
                 }
-                c++;
-                seq1 = seqlib.get(pair.getS1());
-                seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixGlobal() / 10.0));sb.append("\n");
+            } else {
+                for (SeqPair pair : pairfile) {
+                    if (c / pairfile.size() >= f * 0.01) {
+                        System.out.println(f + "% completed");
+                        f++;
+                    }
+                    c++;
+                    seq1 = seqlib.get(pair.getS1());
+                    seq2 = seqlib.get(pair.getS2());
+                    sb.append(pair.getS1());
+                    sb.append(" ");
+                    sb.append(pair.getS2());
+                    sb.append(" ");
+                    sb.append(df.format(fillMatrixGlobal() / 10.0));
+                    sb.append(printMatrix(A,printmatrices));sb.append(printMatrix(D,printmatrices));sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                }
             }
         } else {
-            for (SeqPair pair : pairfile) {
-                if (c / pairfile.size() >= f * 0.01) {
-                    System.out.println(f + "% completed");
-                    f++;
+            if (!(printmatrices.equals("txt") || printmatrices.equals("html"))) {
+                for (SeqPair pair : pairfile) {
+                    if (c / pairfile.size() >= f * 0.01) {
+                        System.out.println(f + "% completed");
+                        f++;
+                    }
+                    c++;
+                    seq1 = seqlib.get(pair.getS1());
+                    seq2 = seqlib.get(pair.getS2());
+                    double result = fillMatrixGlobal() / 10.0;
+                    sb.append(">");
+                    sb.append(pair.getS1());
+                    sb.append(" ");
+                    sb.append(pair.getS2());
+                    sb.append(" ");
+                    sb.append(df.format(result));
+                    sb.append("\n");
+                    String[] backtrack = backtrackingGlobal();
+                    if (check && !(Math.abs(result - checkScoreGlobal(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                    }
+                    sb.append(pair.getS1());
+                    sb.append(": ");
+                    sb.append(backtrack[0]);
+                    sb.append("\n");
+                    sb.append(pair.getS2());
+                    sb.append(": ");
+                    sb.append(backtrack[1]);
+                    sb.append("\n");
                 }
-                c++;
-                seq1 = seqlib.get(pair.getS1());
-                seq2 = seqlib.get(pair.getS2());
-                double result = fillMatrixGlobal() / 10.0;
-                sb.append(">");sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result));sb.append("\n");
-                String[] backtrack = backtrackingGlobal();
-                if(check && !(Math.abs(result - checkScoreGlobal(backtrack[0], backtrack[1])) < 0.0001)){checkFail++;}
-                sb.append(pair.getS1());sb.append(": ");sb.append(backtrack[0]);sb.append("\n");sb.append(pair.getS2());sb.append(": ");sb.append(backtrack[1]);sb.append("\n");
+            } else {
+                for (SeqPair pair : pairfile) {
+                    if (c / pairfile.size() >= f * 0.01) {
+                        System.out.println(f + "% completed");
+                        f++;
+                    }
+                    c++;
+                    seq1 = seqlib.get(pair.getS1());
+                    seq2 = seqlib.get(pair.getS2());
+                    double result = fillMatrixGlobal() / 10.0;
+                    sb.append(">");
+                    sb.append(pair.getS1());
+                    sb.append(" ");
+                    sb.append(pair.getS2());
+                    sb.append(" ");
+                    sb.append(df.format(result));
+                    sb.append("\n");
+                    String[] backtrack = backtrackingGlobal();
+                    if (check && !(Math.abs(result - checkScoreGlobal(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                    }
+                    sb.append(pair.getS1());
+                    sb.append(": ");
+                    sb.append(backtrack[0]);
+                    sb.append("\n");
+                    sb.append(pair.getS2());
+                    sb.append(": ");
+                    sb.append(backtrack[1]);
+                    sb.append(printMatrix(A,printmatrices));sb.append(printMatrix(D,printmatrices));sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                }
             }
         }
         System.out.println("checkfail: "+checkFail);
@@ -521,7 +723,7 @@ public class Gotoh {
         }
     }
 
-    public String printMatrix() {
+    public String printMatrix(int[][] matrix, String format) {
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("0.00");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
