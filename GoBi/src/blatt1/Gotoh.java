@@ -260,7 +260,7 @@ public class Gotoh {
                     sb.append(" ");
                     sb.append(pair.getS2());
                     sb.append(" ");
-                    sb.append(df.format(fillMatrixGlobal() / 10.0));
+                    sb.append(df.format(result));
                     sb.append("\n");
                     String[] backtrack = backtrackingGlobal();
                     if (check && !(Math.abs(result - checkScoreGlobal(backtrack[0], backtrack[1])) < 0.0001)) {
@@ -277,7 +277,7 @@ public class Gotoh {
                     sb.append(" ");
                     sb.append(pair.getS2());
                     sb.append(" ");
-                    sb.append(df.format(fillMatrixGlobal() / 10.0));
+                    sb.append(df.format(result));
                     sb.append("A:\n");sb.append(printMatrix(A,printmatrices));sb.append("D:\n");sb.append(printMatrix(D,printmatrices));sb.append("I:\n");sb.append(printMatrix(I,printmatrices)); sb.append("\n");
                     String[] backtrack = backtrackingGlobal();
                     if (check && !(Math.abs(result - checkScoreGlobal(backtrack[0], backtrack[1])) < 0.0001)) {
