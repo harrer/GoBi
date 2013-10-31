@@ -27,11 +27,10 @@ public class Gotoh {
     private int[][] I;
     private int[][] D;
 
-    private String seq1 = "WTHGQA";
-    private String seq2 = "WTHA";
+    private String seq1;
+    private String seq2;
 
     public Gotoh(HashMap<String, String> params) throws IOException {
-        long start = new Date().getTime();
         initParams(params);
         StringBuilder sb = null;
         switch (mode) {
@@ -45,37 +44,17 @@ public class Gotoh {
                 sb = startAlignmentFreeshift();
                 break;
         }
-        System.out.println("Alignment completed! Writing to file");
-        FileWriter writer = null;
-        if(printali){
-            writer = new FileWriter(new File("/home/h/harrert/Desktop/out.alignments"));
-        }
-        else{
-            writer = new FileWriter(new File("/home/h/harrert/Desktop/out.scores"));
-        }
-        writer.write(sb.toString());
-        writer.close();
-        long end = new Date().getTime();
-        long time = end - start;
-        //System.out.println(checkScoreFreeshift("-------GPLDVQVTEDAVRRYLTRKPMTTKDLLKKFQTKKTGLSSEQTVNVLAQILKRLNPERKMINDKMHFSLK-----------------------------", "HISDEEANLFAMQLASASVLPMILKSALEL-DLLEIIA--KAGPGAQISPIEIASQLPTTNPDAPVMLDRMLRLLACYIILTCSVRTQQDGKVQRLYGLATVAKY"));
-        System.out.println("Done! " + time / 60000 + " min, " + (time / 1000) % 60 + " s.\nTotal: " + time + " ms");
+        System.out.println(sb.toString());
     }
 
     private StringBuilder startAlignmentFreeshift() throws IOException {
         DecimalFormat df = new DecimalFormat("0.0000");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
         StringBuilder sb = new StringBuilder();
-        double c = 0.0;
-        int f = 1;
         int checkFail = 0;
         if (!printali) {
             if (!(printmatrices.equals("txt") || printmatrices.equals("html"))) {
                 for (SeqPair pair : pairfile) {
-                    if (c / pairfile.size() >= f * 0.01) {
-                        System.out.println(f + "% completed");
-                        f++;
-                    }
-                    c++;
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
                     sb.append(pair.getS1());
@@ -87,11 +66,6 @@ public class Gotoh {
                 }
             } else {
                 for (SeqPair pair : pairfile) {
-                    if (c / pairfile.size() >= f * 0.01) {
-                        System.out.println(f + "% completed");
-                        f++;
-                    }
-                    c++;
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
                     sb.append(pair.getS1());
@@ -105,11 +79,6 @@ public class Gotoh {
         } else {
             if (!(printmatrices.equals("txt") || printmatrices.equals("html"))) {
                 for (SeqPair pair : pairfile) {
-                    if (c / pairfile.size() >= f * 0.01) {
-                        System.out.println(f + "% completed");
-                        f++;
-                    }
-                    c++;
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
                     AlignmentMax result = fillMatrixFreeshift();
@@ -135,11 +104,6 @@ public class Gotoh {
                 }
             } else {
                 for (SeqPair pair : pairfile) {
-                    if (c / pairfile.size() >= f * 0.01) {
-                        System.out.println(f + "% completed");
-                        f++;
-                    }
-                    c++;
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
                     AlignmentMax result = fillMatrixFreeshift();
@@ -165,7 +129,7 @@ public class Gotoh {
                 }
             }
         }
-        System.out.println("checkfail: "+checkFail);
+        if(checkFail>0){System.out.println(checkFail+" wrong alignments");}
         return sb;
     }
 
@@ -173,17 +137,10 @@ public class Gotoh {
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("0.0000");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
-        double c = 0.0;
-        int f = 1;
         int checkFail = 0;
         if (!printali) {
             if(!(printmatrices.equals("txt") || printmatrices.equals("html"))){
                 for (SeqPair pair : pairfile) {
-                if (c / pairfile.size() >= f * 0.01) {
-                    System.out.println(f + "% completed");
-                    f++;
-                }
-                c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
                 sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixLocal().getMax()[2]/ 10.0));sb.append("\n");
@@ -191,11 +148,6 @@ public class Gotoh {
             }
             else{
                 for (SeqPair pair : pairfile) {
-                if (c / pairfile.size() >= f * 0.01) {
-                    System.out.println(f + "% completed");
-                    f++;
-                }
-                c++;
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
                 sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixLocal().getMax()[2]/ 10.0));
@@ -205,11 +157,6 @@ public class Gotoh {
         } else {
             if (!(printmatrices.equals("txt") || printmatrices.equals("html"))) {
                 for (SeqPair pair : pairfile) {
-                    if (c / pairfile.size() >= f * 0.01) {
-                        System.out.println(f + "% completed");
-                        f++;
-                    }
-                    c++;
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
                     AlignmentMax result = fillMatrixLocal();
@@ -235,11 +182,6 @@ public class Gotoh {
                 }
             } else {
                 for (SeqPair pair : pairfile) {
-                    if (c / pairfile.size() >= f * 0.01) {
-                        System.out.println(f + "% completed");
-                        f++;
-                    }
-                    c++;
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
                     AlignmentMax result = fillMatrixLocal();
@@ -265,7 +207,7 @@ public class Gotoh {
                 }
             }
         }
-        System.out.println("checkfail: "+checkFail);
+        if(checkFail>0){System.out.println(checkFail+" wrong alignments");}
         return sb;
     }
 
@@ -273,17 +215,10 @@ public class Gotoh {
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("0.0000");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
-        double c = 0.0;
         int checkFail = 0;
-        int f = 1;
         if (!printali) {
             if (!(printmatrices.equals("txt") || printmatrices.equals("html"))) {
                 for (SeqPair pair : pairfile) {
-                    if (c / pairfile.size() >= f * 0.01) {
-                        System.out.println(f + "% completed");
-                        f++;
-                    }
-                    c++;
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
                     sb.append(pair.getS1());
@@ -295,11 +230,6 @@ public class Gotoh {
                 }
             } else {
                 for (SeqPair pair : pairfile) {
-                    if (c / pairfile.size() >= f * 0.01) {
-                        System.out.println(f + "% completed");
-                        f++;
-                    }
-                    c++;
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
                     sb.append(pair.getS1());
@@ -313,11 +243,6 @@ public class Gotoh {
         } else {
             if (!(printmatrices.equals("txt") || printmatrices.equals("html"))) {
                 for (SeqPair pair : pairfile) {
-                    if (c / pairfile.size() >= f * 0.01) {
-                        System.out.println(f + "% completed");
-                        f++;
-                    }
-                    c++;
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
                     double result = fillMatrixGlobal() / 10.0;
@@ -343,11 +268,6 @@ public class Gotoh {
                 }
             } else {
                 for (SeqPair pair : pairfile) {
-                    if (c / pairfile.size() >= f * 0.01) {
-                        System.out.println(f + "% completed");
-                        f++;
-                    }
-                    c++;
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
                     double result = fillMatrixGlobal() / 10.0;
@@ -373,7 +293,7 @@ public class Gotoh {
                 }
             }
         }
-        System.out.println("checkfail: "+checkFail);
+        if(checkFail>0){System.out.println(checkFail+" wrong alignments");}
         return sb;
     }
 
