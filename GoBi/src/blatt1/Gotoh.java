@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -51,29 +50,42 @@ public class Gotoh {
         DecimalFormat df = new DecimalFormat("0.0000");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
         StringBuilder sb = new StringBuilder();
+        StringBuilder fail = new StringBuilder("faulty alignments:\n");
         int checkFail = 0;
         if (!printali) {
             if (!(printmatrices.equals("txt") || printmatrices.equals("html"))) {
                 for (SeqPair pair : pairfile) {
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
+                    AlignmentMax result = fillMatrixFreeshift();
                     sb.append(pair.getS1());
                     sb.append(" ");
                     sb.append(pair.getS2());
                     sb.append(" ");
-                    sb.append(df.format(fillMatrixFreeshift().getMax()[2] / 10.0));
+                    sb.append(df.format(result.getMax()[2] / 10.0));
                     sb.append("\n");
+                     String[] backtrack = backtrackingFreeshift(result);
+                    if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
+                    }
                 }
             } else {
                 for (SeqPair pair : pairfile) {
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
+                    AlignmentMax result = fillMatrixFreeshift();
                     sb.append(pair.getS1());
                     sb.append(" ");
                     sb.append(pair.getS2());
                     sb.append(" ");
-                    sb.append(df.format(fillMatrixFreeshift().getMax()[2] / 10.0));
+                    sb.append(df.format(result.getMax()[2] / 10.0));
                     sb.append("A:\n");sb.append(printMatrix(A,printmatrices));sb.append("D:\n");sb.append(printMatrix(D,printmatrices));sb.append("I:\n");sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                    String[] backtrack = backtrackingFreeshift(result);
+                    if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
+                    }
                 }
             }
         } else {
@@ -92,6 +104,7 @@ public class Gotoh {
                     String[] backtrack = backtrackingFreeshift(result);
                     if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)) {
                         checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
                     }
                     sb.append(pair.getS1());
                     sb.append(": ");
@@ -117,6 +130,7 @@ public class Gotoh {
                     String[] backtrack = backtrackingFreeshift(result);
                     if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreFreeshift(backtrack[0], backtrack[1])) < 0.0001)) {
                         checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
                     }
                     sb.append(pair.getS1());
                     sb.append(": ");
@@ -129,7 +143,9 @@ public class Gotoh {
                 }
             }
         }
-        if(checkFail>0){System.out.println(checkFail+" wrong alignments");}
+        FileWriter writer = new FileWriter(new File("faults.log"));
+        writer.write(fail.toString());
+        writer.close();
         return sb;
     }
 
@@ -137,21 +153,34 @@ public class Gotoh {
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("0.0000");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
+        StringBuilder fail = new StringBuilder("faulty alignments:\n");
         int checkFail = 0;
         if (!printali) {
             if(!(printmatrices.equals("txt") || printmatrices.equals("html"))){
                 for (SeqPair pair : pairfile) {
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixLocal().getMax()[2]/ 10.0));sb.append("\n");
+                AlignmentMax result = fillMatrixLocal();
+                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result.getMax()[2]/ 10.0));sb.append("\n");
+                String[] backtrack = backtrackingLocal(result);
+                    if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
+                    }
                 }
             }
             else{
                 for (SeqPair pair : pairfile) {
                 seq1 = seqlib.get(pair.getS1());
                 seq2 = seqlib.get(pair.getS2());
-                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(fillMatrixLocal().getMax()[2]/ 10.0));
+                AlignmentMax result = fillMatrixLocal();
+                sb.append(pair.getS1());sb.append(" ");sb.append(pair.getS2());sb.append(" ");sb.append(df.format(result.getMax()[2]/ 10.0));
                 sb.append("A:\n");sb.append(printMatrix(A,printmatrices));sb.append("D:\n");sb.append(printMatrix(D,printmatrices));sb.append("I:\n");sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                String[] backtrack = backtrackingLocal(result);
+                    if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
+                    }
             }
             }
         } else {
@@ -170,6 +199,7 @@ public class Gotoh {
                     String[] backtrack = backtrackingLocal(result);
                     if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)) {
                         checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
                     }
                     sb.append(pair.getS1());
                     sb.append(": ");
@@ -195,6 +225,7 @@ public class Gotoh {
                     String[] backtrack = backtrackingLocal(result);
                     if (check && !(Math.abs(result.getMax()[2] / 10.0 - checkScoreLocal(backtrack[0], backtrack[1])) < 0.0001)) {
                         checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
                     }
                     sb.append(pair.getS1());
                     sb.append(": ");
@@ -207,7 +238,9 @@ public class Gotoh {
                 }
             }
         }
-        if(checkFail>0){System.out.println(checkFail+" wrong alignments");}
+        FileWriter writer = new FileWriter(new File("faults.log"));
+        writer.write(fail.toString());
+        writer.close();
         return sb;
     }
 
@@ -215,29 +248,42 @@ public class Gotoh {
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("0.0000");
         df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
+        StringBuilder fail = new StringBuilder("faulty alignments:\n");
         int checkFail = 0;
         if (!printali) {
             if (!(printmatrices.equals("txt") || printmatrices.equals("html"))) {
                 for (SeqPair pair : pairfile) {
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
+                    double result = fillMatrixGlobal() / 10.0;
                     sb.append(pair.getS1());
                     sb.append(" ");
                     sb.append(pair.getS2());
                     sb.append(" ");
-                    sb.append(df.format(fillMatrixGlobal() / 10.0));
+                    sb.append(df.format(result));
                     sb.append("\n");
+                    String[] backtrack = backtrackingGlobal();
+                    if (check && !(Math.abs(result - checkScoreGlobal(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
+                    }
                 }
             } else {
                 for (SeqPair pair : pairfile) {
                     seq1 = seqlib.get(pair.getS1());
                     seq2 = seqlib.get(pair.getS2());
+                    double result = fillMatrixGlobal() / 10.0;
                     sb.append(pair.getS1());
                     sb.append(" ");
                     sb.append(pair.getS2());
                     sb.append(" ");
-                    sb.append(df.format(fillMatrixGlobal() / 10.0));
+                    sb.append(df.format(result));
                     sb.append("A:\n");sb.append(printMatrix(A,printmatrices));sb.append("D:\n");sb.append(printMatrix(D,printmatrices));sb.append("I:\n");sb.append(printMatrix(I,printmatrices)); sb.append("\n");
+                    String[] backtrack = backtrackingGlobal();
+                    if (check && !(Math.abs(result - checkScoreGlobal(backtrack[0], backtrack[1])) < 0.0001)) {
+                        checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
+                    }
                 }
             }
         } else {
@@ -256,6 +302,7 @@ public class Gotoh {
                     String[] backtrack = backtrackingGlobal();
                     if (check && !(Math.abs(result - checkScoreGlobal(backtrack[0], backtrack[1])) < 0.0001)) {
                         checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
                     }
                     sb.append(pair.getS1());
                     sb.append(": ");
@@ -281,6 +328,7 @@ public class Gotoh {
                     String[] backtrack = backtrackingGlobal();
                     if (check && !(Math.abs(result - checkScoreGlobal(backtrack[0], backtrack[1])) < 0.0001)) {
                         checkFail++;
+                        fail.append(backtrack[0]).append("\n");fail.append(backtrack[1]);
                     }
                     sb.append(pair.getS1());
                     sb.append(": ");
@@ -293,7 +341,9 @@ public class Gotoh {
                 }
             }
         }
-        if(checkFail>0){System.out.println(checkFail+" wrong alignments");}
+        FileWriter writer = new FileWriter(new File("faults.log"));
+        writer.write(fail.toString());
+        writer.close();
         return sb;
     }
 
@@ -322,20 +372,19 @@ public class Gotoh {
     }
 
     private AlignmentMax fillMatrixLocal() {
-        AlignmentMax max = null;
-        max = new AlignmentMax(0, 0, Integer.MIN_VALUE, "local");
+        int max = Integer.MIN_VALUE, max_i = 0, max_j = 0;
         for (int i = 1; i < seq1.length() + 1; i++) {
             for (int j = 1; j < seq2.length() + 1; j++) {
                 I[i][j] = Math.max(A[i - 1][j] + g(1), I[i - 1][j] + gapextend);
                 D[i][j] = Math.max(A[i][j - 1] + g(1), D[i][j - 1] + gapextend);
                 int a = Math.max(D[i][j], I[i][j]);
                 A[i][j] = Math.max(0, Math.max(A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)), a));
-                if (A[i][j] >= max.getMax()[2]) {
-                    max.setMax(i, j, A[i][j]);
+                if (A[i][j] > max) {
+                    max = A[i][j]; max_i = i; max_j = j;
                 }
             }
         }
-        return max;
+        return new AlignmentMax(max_i, max_j, max, mode);
     }
 
     private int fillMatrixGlobal() {
