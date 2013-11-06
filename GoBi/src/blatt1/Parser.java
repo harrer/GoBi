@@ -70,7 +70,7 @@ public class Parser {
             }else {
                 throw new ParamException("provide a valid .pairs file or path"); 
             }
-            if (args[3].matches(".+\\.seqlib")) {
+            if (args[3].matches("[a-zA-Z0-9_]+\\.seqlib")) {
                 params.put("-seqlib", path + args[3]);
             }
             else if(args[3].matches("/([a-zA-Z0-9_]+/)*[a-zA-Z0-9_]+\\..*seqlib")){
