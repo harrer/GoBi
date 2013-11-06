@@ -62,14 +62,20 @@ public class Parser {
         if (args.length < 4 || !args[0].equals("-pairs") || !args[2].equals("-seqlib")) {
             throw new ParamException("less than 4/wrong params");
         } else {
-            if (args[1].matches(".+\\.(in|out)?pairs")) {
+            if (args[1].matches("[a-zA-Z0-9_]+\\..*pairs")) {//".+\\.(in|out)?pairs"
+                params.put("-pairs", path + args[1]);
+            }
+            else if(args[1].matches("/([a-zA-Z0-9_]+/)*[a-zA-Z0-9_]+\\..*pairs")){
                 params.put("-pairs", args[1]);
-            } else {
+            }else {
                 throw new ParamException("provide a valid .pairs file or path"); 
             }
             if (args[3].matches(".+\\.seqlib")) {
+                params.put("-seqlib", path + args[3]);
+            }
+            else if(args[3].matches("/([a-zA-Z0-9_]+/)*[a-zA-Z0-9_]+\\..*seqlib")){
                 params.put("-seqlib", args[3]);
-            } else {
+            }else {
                 throw new ParamException("provide a valid .seqlib file or path"); 
             }
             for (int i = 4; i < args.length; i++) {//store parameters
@@ -124,7 +130,7 @@ public class Parser {
     public ArrayList<SeqPair> parsePairFile(String pairFile) throws FileNotFoundException, IOException {
         String line;
         ArrayList<SeqPair> list = new ArrayList<>();
-        FileReader fReader = new FileReader(path+pairFile);
+        FileReader fReader = new FileReader(pairFile);
         BufferedReader reader = new BufferedReader(fReader);
         //String pattern = "(\\d+)\\s(\\d+)";
         while ((line = reader.readLine()) != null) {
@@ -142,7 +148,7 @@ public class Parser {
     public HashMap<String, String> parseSeqlib(String seqlibFile) throws FileNotFoundException, IOException {
         String line;
         HashMap<String, String> map = new HashMap<>();
-        FileReader fReader = new FileReader(path+seqlibFile);
+        FileReader fReader = new FileReader(seqlibFile);
         BufferedReader reader = new BufferedReader(fReader);
         int max = -1;
         while ((line = reader.readLine()) != null) {
