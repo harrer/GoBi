@@ -62,18 +62,18 @@ public class Parser {
         if (args.length < 4 || !args[0].equals("-pairs") || !args[2].equals("-seqlib")) {
             throw new ParamException("less than 4/wrong params");
         } else {
-            if (args[1].matches("[a-zA-Z0-9_-\\-]+\\..*pairs")) {//".+\\.(in|out)?pairs"
+            if (args[1].matches("[a-zA-Z0-9_\\-]+\\..*pairs")) {//".+\\.(in|out)?pairs"
                 params.put("-pairs", path + args[1]);
             }
-            else if(args[1].matches("/([a-zA-Z0-9_-\\-]+/)*[a-zA-Z0-9_\\-]+\\..*pairs")){
+            else if(args[1].matches("/([a-zA-Z0-9_\\-]+/)*[a-zA-Z0-9_\\-]+\\..*pairs")){
                 params.put("-pairs", args[1]);
             }else {
                 throw new ParamException("provide a valid .pairs file or path"); 
             }
-            if (args[3].matches("[a-zA-Z0-9_-\\-]+\\.seqlib")) {
+            if (args[3].matches("[a-zA-Z0-9_\\-]+\\.seqlib")) {
                 params.put("-seqlib", path + args[3]);
             }
-            else if(args[3].matches("/([a-zA-Z0-9_-\\-]+/)*[a-zA-Z0-9_\\-]+\\..*seqlib")){
+            else if(args[3].matches("/([a-zA-Z0-9_\\-]+/)*[a-zA-Z0-9_\\-]+\\..*seqlib")){
                 params.put("-seqlib", args[3]);
             }else {
                 throw new ParamException("provide a valid .seqlib file or path"); 
