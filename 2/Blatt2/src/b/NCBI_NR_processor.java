@@ -21,7 +21,7 @@ public class NCBI_NR_processor {
             line = br.readLine();
             System.out.println("asedfsdf");
             if(line.startsWith(">")){
-                sb.append(line).append("\n");
+                //sb.append(line).append("\n");
             }
             else{
                 sb.append(line).append("\n");
