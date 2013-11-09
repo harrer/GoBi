@@ -46,6 +46,6 @@ public class NCBI_NR_processor {
     }
     
     public static void main(String[] args) throws IOException {
-        new NCBI_NR_processor().readFile("/home/tobias/Dropbox/UNI/GoBi/Blatt 2/head");
+        new NCBI_NR_processor().readFile(args[0]);//"/home/tobias/Dropbox/UNI/GoBi/Blatt 2/head"
     }
 }
