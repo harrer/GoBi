@@ -1,4 +1,4 @@
-package b;
+package b_c;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -12,9 +12,9 @@ import java.util.HashMap;
  *
  * @author harrert
  */
-public class NCBI_NR_processor {
+public class NR_BLAST_processor {
     
-    private void readFile(String file) throws FileNotFoundException, IOException{
+    private void read_NR_File(String file) throws FileNotFoundException, IOException{
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         ArrayList<NR_Object> nr_objects = new ArrayList<>();
@@ -53,7 +53,27 @@ public class NCBI_NR_processor {
         System.out.println("finished in "+(runTime/60000)+" min "+(runTime/1000)+"s; "+runTime+" ms");
     }
     
+    private void read_BLAST_file(String file) throws FileNotFoundException, IOException{
+        FileReader fr = new FileReader(file);
+        BufferedReader br = new BufferedReader(fr);
+        String line;
+        String[] split_pipe, split_tab;
+        ArrayList<Match_Object> list = new ArrayList<>();
+        Match_Object match;
+        int round = 1;
+        while((line = br.readLine()) != null){
+            if(line.matches(".+|.+|.+")){
+                split_pipe = line.split("\\|");
+                split_tab = line.split("\t");
+                match = new Match_Object(split_pipe[1], split_pipe[0], Float.parseFloat(split_tab[1]), Integer.parseInt(split_tab[0]), round);
+            }
+            else if(line.matches("Results from round")){
+                round ++;
+            }
+        }
+    }
+    
     public static void main(String[] args) throws IOException {
-        new NCBI_NR_processor().readFile(args[0]);//"/home/tobias/Dropbox/UNI/GoBi/Blatt 2/head"
+        new NR_BLAST_processor().read_BLAST_file("/home/tobias/Dropbox/UNI/GoBi/Blatt 2/head");
     }
 }
