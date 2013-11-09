@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -21,6 +22,7 @@ public class NCBI_NR_processor {
         String line;
         String[] split;
         int index = -1 ,lines = 56096686, c=0, h=0;
+        long tStart = new Date().getTime();
         boolean newEntry = true;
         while ((line = br.readLine()) != null) {
             if(100.0*c/lines >= h){
@@ -47,7 +49,8 @@ public class NCBI_NR_processor {
                 }
             }
         }
-        System.out.println("");
+        long runTime = new Date().getTime() - tStart;
+        System.out.println("finished in "+(runTime/60000)+" min "+(runTime/60)+"s; "+runTime+" ms");
     }
     
     public static void main(String[] args) throws IOException {
