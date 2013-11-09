@@ -25,7 +25,7 @@ public class NCBI_NR_processor {
         long tStart = new Date().getTime();
         boolean newEntry = true;
         while ((line = br.readLine()) != null) {
-            if(100.0*c/lines >= h){
+            if(100.0*c/lines >= h){//time measuring
                 System.out.println(h+"% "+"completed");
                 h++;
             }
@@ -50,7 +50,7 @@ public class NCBI_NR_processor {
             }
         }
         long runTime = new Date().getTime() - tStart;
-        System.out.println("finished in "+(runTime/60000)+" min "+(runTime/60)+"s; "+runTime+" ms");
+        System.out.println("finished in "+(runTime/60000)+" min "+(runTime/1000)+"s; "+runTime+" ms");
     }
     
     public static void main(String[] args) throws IOException {
