@@ -19,9 +19,8 @@ public class NCBI_NR_processor {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 4; i++) {
             line = br.readLine();
-            System.out.println("asedfsdf");
             if(line.startsWith(">")){
-                //sb.append(line).append("\n");
+                sb.append(line).append("\n");
             }
             else{
                 sb.append(line).append("\n");
