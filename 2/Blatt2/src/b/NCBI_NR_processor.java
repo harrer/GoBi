@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -11,25 +13,39 @@ import java.io.IOException;
  */
 public class NCBI_NR_processor {
     
-    private static void readFile(String file) throws FileNotFoundException, IOException{
+    private void readFile(String file) throws FileNotFoundException, IOException{
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
-        NR_Object[] nr_objects;
+        ArrayList<NR_Object> nr_objects = new ArrayList<>();
+        HashMap<String,Integer> map = new HashMap();
         String line;
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 4; i++) {
-            line = br.readLine();
+        String[] split;
+        int index = -1;
+        boolean newEntry = true;
+        while ((line = br.readLine()) != null) {
             if(line.startsWith(">")){
-                sb.append(line).append("\n");
+                newEntry = true;
+                index++;
+                split = line.split(">");
+                for (int i = 1; i < split.length; i++) {
+                    String [] sa = split[i].split("\\|");
+                    map.put(sa[1], index);
+                }
             }
             else{
-                sb.append(line).append("\n");
+                if(newEntry){
+                    nr_objects.add(new NR_Object(line, "", ""));
+                    newEntry = false;
+                }
+                else{
+                    nr_objects.get(index).sequence += line;
+                }
             }
         }
-        System.out.println(sb.toString());
+        System.out.println("");
     }
     
     public static void main(String[] args) throws IOException {
-        readFile(args[0]);
+        new NCBI_NR_processor().readFile("/home/tobias/Dropbox/UNI/GoBi/Blatt 2/head");
     }
 }
