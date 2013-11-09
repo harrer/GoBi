@@ -23,7 +23,7 @@ public class NCBI_NR_processor {
         int index = -1 ,lines = 56096686, c=0, h=0;
         boolean newEntry = true;
         while ((line = br.readLine()) != null) {
-            if(100.0*c/lines <= h){
+            if(100.0*c/lines >= h){
                 System.out.println(h+"% "+"completed");
                 h++;
             }
