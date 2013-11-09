@@ -28,7 +28,7 @@ public class NCBI_NR_processor {
                 index++;
                 split = line.split(">");
                 for (int i = 1; i < split.length; i++) {
-                    String [] sa = split[i].split("\\|");
+                    String [] sa = split[i].split("|");
                     map.put(sa[1], index);
                 }
             }
