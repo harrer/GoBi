@@ -3,6 +3,7 @@ package b;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 /**
  *
@@ -10,16 +11,25 @@ import java.io.FileReader;
  */
 public class NCBI_NR_processor {
     
-    private static void readFile(String file) throws FileNotFoundException{
+    private static void readFile(String file) throws FileNotFoundException, IOException{
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         NR_Object[] nr_objects;
-        for (int i = 0; i < 200; i++) {
-            
+        String line;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 10; i++) {
+            line = br.readLine();
+            if(line.startsWith(">")){
+                sb.append(line);
+            }
+            else{
+                sb.append(line);
+            }
         }
+        System.out.println(sb.toString());
     }
     
-    public static void main(String[] args) {
-        
+    public static void main(String[] args) throws IOException {
+        readFile(args[0]);
     }
 }
