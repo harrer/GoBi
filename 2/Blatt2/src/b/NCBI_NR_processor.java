@@ -17,7 +17,7 @@ public class NCBI_NR_processor {
         NR_Object[] nr_objects;
         String line;
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 4; i++) {
             line = br.readLine();
             System.out.println("asedfsdf");
             if(line.startsWith(">")){
