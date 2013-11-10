@@ -64,7 +64,8 @@ public class NR_BLAST_processor {
             if(line.matches(".+\\|.+\\|.+")){
                 split_pipe = line.split("\\|");
                 split_tab = line.split("\\s{2,}");
-                list.add(new Match_Object(split_pipe[1], split_pipe[0], Float.parseFloat(split_tab[2]), Integer.parseInt(split_tab[1]), round));
+                double d = split_tab[2].matches("e-\\d+")? Double.parseDouble("1"+split_tab[2]) : Double.parseDouble(split_tab[2]);
+                list.add(new Match_Object(split_pipe[1], split_pipe[0], d, Integer.parseInt(split_tab[1]), round));
             }
             else if(line.matches("Results from round.+")){
                 round ++;
