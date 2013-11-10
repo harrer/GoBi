@@ -61,7 +61,7 @@ public class NR_BLAST_processor {
         ArrayList<Match_Object> list = new ArrayList<>();
         int round = 0;
         while((line = br.readLine()) != null){
-            if(!line.startsWith(">") && line.matches(".+\\|.+\\|.+")){
+            if(!line.startsWith(">") && !line.startsWith(" ") && line.matches(".+\\|.+\\|.+")){
                 split_pipe = line.split("\\|");
                 split_tab = line.split("\\s{2,}");
                 double d = 0;
