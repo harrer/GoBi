@@ -63,7 +63,7 @@ public class NR_BLAST_processor {
         while((line = br.readLine()) != null){
             if(line.matches(".+\\|.+\\|.+")){
                 split_pipe = line.split("\\|");
-                split_tab = line.split("\\s{2,}");
+                split_tab = line.split(Character.SPACE_SEPARATOR+"{2,}");
                 double d = 0;
                 try {
                     d = split_tab[2].matches("e-\\d+") ? Double.parseDouble("1" + split_tab[2]) : Double.parseDouble(split_tab[2]);
