@@ -64,28 +64,20 @@ public class NR_BLAST_processor {
             if(!line.startsWith(">") && !line.startsWith(" ") && line.matches(".+\\|.+\\|.+")){
                 split_pipe = line.split("\\|");
                 split_tab = line.split("\\s{2,}");
-                double d = 0;
-                int i = 0;
-                try {
-                    d = split_tab[2].matches("e-\\d+") ? Double.parseDouble("1" + split_tab[2]) : Double.parseDouble(split_tab[2]);
-                    i = Integer.parseInt(split_tab[1]);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    System.out.println(line+"\n l= "+split_tab.length);
-                    for (String s : split_tab) {
-                        System.out.println(s+"\n");
-                    }
-                }
-                list.add(new Match_Object(split_pipe[1], split_pipe[0], d, i, round));
+                Double d = split_tab[2].matches("e-\\d+") ? Double.parseDouble("1" + split_tab[2]) : Double.parseDouble(split_tab[2]);
+                list.add(new Match_Object(split_pipe[1], split_pipe[0], d, Integer.parseInt(split_tab[1]), round));
             }
             else if(line.matches("Results from round.+")){
                 round ++;
             }
         }
-        System.out.println("");
+        for (Object s : list.get(2).getInfo()) {
+            System.out.println(s.toString());
+        }
     }
     
     public static void main(String[] args) throws IOException {
-        //new NR_BLAST_processor().read_BLAST_file("/home/tobias/Dropbox/UNI/GoBi/Blatt 2/blast");
-        new NR_BLAST_processor().read_BLAST_file(args[0]);
+        new NR_BLAST_processor().read_BLAST_file("/home/tobias/Dropbox/UNI/GoBi/Blatt 2/blast");
+        //new NR_BLAST_processor().read_BLAST_file(args[0]);
     }
 }

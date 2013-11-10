@@ -21,6 +21,6 @@ public class Match_Object {
     }
     
     public Object[] getInfo(){
-        return new Object[] {protein_ID, source_DB, e_value, round};
+        return new Object[] {protein_ID, source_DB, e_value, score, round};
     }
 }
