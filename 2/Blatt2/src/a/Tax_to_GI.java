@@ -11,7 +11,7 @@ import java.util.HashMap;
  *
  * @author harrert
  */
-public class Blatt2 {
+public class Tax_to_GI {
 
     public static void readFileWithArray(String file) throws FileNotFoundException, IOException{
         FileReader fr = new FileReader(file);
@@ -46,7 +46,7 @@ public class Blatt2 {
         }
     }
     
-    public static void readFile_HashMap(String file) throws FileNotFoundException, IOException{
+    public HashMap readFile_HashMap(String file) throws FileNotFoundException, IOException{
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         String[] split;
@@ -70,6 +70,7 @@ public class Blatt2 {
         for (Object s : l) {
             System.out.println(s);
         }
+        return map;
     }
     
     /**
@@ -77,7 +78,7 @@ public class Blatt2 {
      */
     public static void main(String[] args) throws IOException {
         //readFileWithArray("/home/proj/biosoft/PROTEINS/NR/gi_taxid_prot.dmp");
-        readFile_HashMap("/home/proj/biosoft/PROTEINS/NR/gi_taxid_prot.dmp");
+        new Tax_to_GI().readFile_HashMap("/home/proj/biosoft/PROTEINS/NR/gi_taxid_prot.dmp");
         //readFile("/home/h/harrert/Dropbox/UNI/GoBi/Blatt 2/1289135");
     }
     

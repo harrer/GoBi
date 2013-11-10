@@ -14,11 +14,11 @@ import java.util.HashMap;
  */
 public class NR_BLAST_processor {
     
-    private void read_NR_File(String file) throws FileNotFoundException, IOException{
+    private Object[] read_NR_File(String file) throws FileNotFoundException, IOException{
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
-        ArrayList<NR_Object> nr_objects = new ArrayList<>();
-        HashMap<String,Integer> map = new HashMap();
+        ArrayList<String> sequences = new ArrayList<>();
+        HashMap<String,NR_Object> map = new HashMap();
         String line;
         String[] split;
         int index = -1 ,lines = 56096686, c=0, h=0;
@@ -34,23 +34,35 @@ public class NR_BLAST_processor {
                 newEntry = true;
                 index++;
                 split = line.split(">");
+                //>gi|29788996|ref|NP_000931.1| paraoxonase 3 [Homo sapiens]
                 for (int i = 1; i < split.length; i++) {
                     String [] sa = split[i].split("|");
-                    map.put(sa[1], index);
+                    map.put(sa[1], new NR_Object("", sa[3], sa[2], index));
                 }
             }
             else{
                 if(newEntry){
-                    nr_objects.add(new NR_Object(line, "", ""));
+                    sequences.add(line);
                     newEntry = false;
                 }
                 else{
-                    nr_objects.get(index).sequence += line;
+                    sequences.set(index, sequences.get(index) + line);
                 }
             }
         }
         long runTime = new Date().getTime() - tStart;
-        System.out.println("finished in "+(runTime/60000)+" min "+(runTime/1000)+"s; "+runTime+" ms");
+        System.out.println("finished readFile in "+(runTime/60000)+" min "+(runTime/1000)+"s; "+runTime+" ms");
+        return new Object[]{map, sequences};
+    }
+    
+    private ArrayList<NR_Object> nr_objects_list(HashMap<String,NR_Object> nr_map, ArrayList sequences, ArrayList<Integer> gi){
+        ArrayList<NR_Object> list = new ArrayList();
+        Object[] nro;
+        for (int id : gi) {
+            nro = nr_map.get(""+id).getVars();
+            list.add(new NR_Object(nro[0].toString(), nro[1].toString(), nro[2].toString(), Integer.parseInt(nro[3].toString())));
+        }
+        return list;
     }
     
     private void read_BLAST_file(String file) throws FileNotFoundException, IOException{
