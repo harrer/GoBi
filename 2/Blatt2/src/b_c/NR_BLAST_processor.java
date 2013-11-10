@@ -61,8 +61,8 @@ public class NR_BLAST_processor {
         ArrayList<Match_Object> list = new ArrayList<>();
         int round = 0;
         while((line = br.readLine()) != null){
-            if(line.matches(".+|.+|.+")){
-                split_pipe = line.split("|");
+            if(line.matches(".+\\|.+\\|.+")){
+                split_pipe = line.split("\\|");
                 split_tab = line.split("\\s{2,}");
                 double d = 0;
                 int i = 0;
@@ -81,9 +81,10 @@ public class NR_BLAST_processor {
                 round ++;
             }
         }
+        System.out.println("");
     }
     
     public static void main(String[] args) throws IOException {
-        new NR_BLAST_processor().read_BLAST_file(args[0]);//"/home/tobias/Dropbox/UNI/GoBi/Blatt 2/blast"
+        new NR_BLAST_processor().read_BLAST_file("/home/tobias/Dropbox/UNI/GoBi/Blatt 2/blast");
     }
 }
