@@ -65,7 +65,7 @@ public class NR_BLAST_processor {
         return list;
     }
     
-    private void read_BLAST_file(String file) throws FileNotFoundException, IOException{
+    private ArrayList read_BLAST_file(String file) throws FileNotFoundException, IOException{
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         String line;
@@ -83,9 +83,7 @@ public class NR_BLAST_processor {
                 round ++;
             }
         }
-        for (Object s : list.get(2).getInfo()) {
-            System.out.println(s.toString());
-        }
+        return list;
     }
     
     public static void main(String[] args) throws IOException {
