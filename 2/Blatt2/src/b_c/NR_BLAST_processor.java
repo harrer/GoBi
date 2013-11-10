@@ -85,6 +85,7 @@ public class NR_BLAST_processor {
     }
     
     public static void main(String[] args) throws IOException {
-        new NR_BLAST_processor().read_BLAST_file("/home/tobias/Dropbox/UNI/GoBi/Blatt 2/blast");
+        //new NR_BLAST_processor().read_BLAST_file("/home/tobias/Dropbox/UNI/GoBi/Blatt 2/blast");
+        new NR_BLAST_processor().read_BLAST_file(args[0]);
     }
 }
