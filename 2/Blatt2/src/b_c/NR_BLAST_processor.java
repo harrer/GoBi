@@ -68,7 +68,7 @@ public class NR_BLAST_processor {
                 try {
                     d = split_tab[2].matches("e-\\d+") ? Double.parseDouble("1" + split_tab[2]) : Double.parseDouble(split_tab[2]);
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    System.out.println(line);
+                    System.out.println(line+"\n l= "+split_tab.length);
                     for (String s : split_tab) {
                         System.out.println(s+"\n");
                     }
