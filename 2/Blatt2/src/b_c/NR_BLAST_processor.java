@@ -59,21 +59,20 @@ public class NR_BLAST_processor {
         String line;
         String[] split_pipe, split_tab;
         ArrayList<Match_Object> list = new ArrayList<>();
-        Match_Object match;
-        int round = 1;
+        int round = 0;
         while((line = br.readLine()) != null){
-            if(line.matches(".+|.+|.+")){
+            if(line.matches(".+\\|.+\\|.+")){
                 split_pipe = line.split("\\|");
-                split_tab = line.split("\t");
-                match = new Match_Object(split_pipe[1], split_pipe[0], Float.parseFloat(split_tab[1]), Integer.parseInt(split_tab[0]), round);
+                split_tab = line.split("\\s{2,}");
+                list.add(new Match_Object(split_pipe[1], split_pipe[0], Float.parseFloat(split_tab[2]), Integer.parseInt(split_tab[1]), round));
             }
-            else if(line.matches("Results from round")){
+            else if(line.matches("Results from round.+")){
                 round ++;
             }
         }
     }
     
     public static void main(String[] args) throws IOException {
-        new NR_BLAST_processor().read_BLAST_file("/home/tobias/Dropbox/UNI/GoBi/Blatt 2/head");
+        new NR_BLAST_processor().read_BLAST_file(args[0]);//"/home/tobias/Dropbox/UNI/GoBi/Blatt 2/blast"
     }
 }
