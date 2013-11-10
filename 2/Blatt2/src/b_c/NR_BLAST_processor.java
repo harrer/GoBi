@@ -57,13 +57,17 @@ public class NR_BLAST_processor {
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         String line;
-        String[] split_pipe, split_tab;
+        String[] split_pipe, split_tab = new String[100];
         ArrayList<Match_Object> list = new ArrayList<>();
         int round = 0;
         while((line = br.readLine()) != null){
             if(line.matches(".+\\|.+\\|.+")){
                 split_pipe = line.split("\\|");
-                split_tab = line.split("\\s{2,}");
+                try {
+                    split_tab = line.split("\\s{2,}");
+                } catch (Exception e) {
+                    System.out.println(line);
+                }
                 double d = split_tab[2].matches("e-\\d+")? Double.parseDouble("1"+split_tab[2]) : Double.parseDouble(split_tab[2]);
                 list.add(new Match_Object(split_pipe[1], split_pipe[0], d, Integer.parseInt(split_tab[1]), round));
             }
