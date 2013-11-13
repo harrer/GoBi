@@ -14,7 +14,7 @@ import java.util.HashMap;
  */
 public class NR_BLAST_processor {
     
-    private Object[] read_NR_File(String file) throws FileNotFoundException, IOException{
+    private Object[] read_NR_File(String file) throws FileNotFoundException, IOException{   //############ b) ##########
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         ArrayList<String> sequences = new ArrayList<>();
@@ -34,11 +34,15 @@ public class NR_BLAST_processor {
                 newEntry = true;
                 index++;
                 split = line.split(">");
-                //>gi|29788996|ref|NP_000931.1| paraoxonase 3 [Homo sapiens]
+                 String [] sa;
                 for (int i = 1; i < split.length; i++) {
-                    String [] sa = split[i].split("|");
-                    map.put(sa[1], new NR_Object("", sa[3], sa[2], index));
+                    if(split[i].matches(".+\\|.+")){
+                        sa = split[i].split("|");
+                        map.put(sa[1], new NR_Object("", sa[3], sa[2], index));
+                        sa = null;// REGEX!1 #############################################
+                    }
                 }
+                split = null;
             }
             else{
                 if(newEntry){
@@ -65,7 +69,7 @@ public class NR_BLAST_processor {
         return list;
     }
     
-    private ArrayList read_BLAST_file(String file) throws FileNotFoundException, IOException{
+    private ArrayList read_BLAST_file(String file) throws FileNotFoundException, IOException{   //######### c) #########
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         String line;
@@ -87,7 +91,7 @@ public class NR_BLAST_processor {
     }
     
     public static void main(String[] args) throws IOException {
-        //new NR_BLAST_processor().read_BLAST_file("/home/tobias/Dropbox/UNI/GoBi/Blatt 2/blast");
-        new NR_BLAST_processor().read_BLAST_file(args[0]);
+        //new NR_BLAST_processor().read_BLAST_file(args[0]);
+        new NR_BLAST_processor().read_NR_File("/home/proj/biosoft/PROTEINS/NR/nrdump.fasta");//args[0]
     }
 }
