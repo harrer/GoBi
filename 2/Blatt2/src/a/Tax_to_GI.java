@@ -66,10 +66,11 @@ public class Tax_to_GI {
         }
         fr.close();
         br.close();
-        ArrayList l = map.get(1289135);
-        for (Object s : l) {
-            System.out.println(s);
-        }
+//        ArrayList l = map.get(1289135);
+//        for (Object s : l) {
+//            System.out.println(s);
+//        }
+//        System.out.println(map.get(9606).size());
         return map;
     }
     
