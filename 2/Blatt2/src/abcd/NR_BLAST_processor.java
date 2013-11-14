@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -16,7 +14,7 @@ import java.util.regex.Pattern;
  */
 public class NR_BLAST_processor {
 
-    private ArrayList read_NR_File(String file, HashMap gi_list) throws FileNotFoundException, IOException {   //############ b) ##########
+    public ArrayList read_NR_File(String file, HashMap gi_list) throws FileNotFoundException, IOException {   //############ b) ##########
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         ArrayList<NR_Object> results = new ArrayList<>();
@@ -45,7 +43,7 @@ public class NR_BLAST_processor {
         return results;
     }
 
-    private ArrayList read_BLAST_file(String file) throws FileNotFoundException, IOException {   //######### c) #########
+    public ArrayList read_BLAST_file(String file) throws FileNotFoundException, IOException {   //######### c) #########
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         String line;
