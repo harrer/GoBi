@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -46,7 +47,8 @@ public class Tax_to_GI {
         }
     }
     
-    public HashMap readFile_HashMap(String file) throws FileNotFoundException, IOException{
+    public HashMap<Integer, ArrayList<Integer>> readFile_HashMap(String file) throws FileNotFoundException, IOException{
+        long start = new Date().getTime();
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         String[] split;
@@ -66,11 +68,12 @@ public class Tax_to_GI {
         }
         fr.close();
         br.close();
-//        ArrayList l = map.get(1289135);
-//        for (Object s : l) {
-//            System.out.println(s);
-//        }
-//        System.out.println(map.get(9606).size());
+// ArrayList l = map.get(1289135);
+// for (Object s : l) {
+// System.out.println(s);
+// }
+// System.out.println(map.get(9606).size());
+        System.out.println("a): " + (new Date().getTime() - start) + " ms");
         return map;
     }
     
