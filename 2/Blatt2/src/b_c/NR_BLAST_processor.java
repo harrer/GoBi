@@ -22,10 +22,12 @@ public class NR_BLAST_processor {
         ArrayList<String> sequences = new ArrayList<>();
         HashMap<String, NR_Object> map = new HashMap();
         String line;
-        String[] split;
-        int index = -1, lines = 56096686, c = 0, h = 0;
+        StringBuilder sb = new StringBuilder();
+        int index = 0, lines = 56096686, c = 0, h = 0;
         long tStart = new Date().getTime();
-        boolean newEntry = true;
+        Pattern p1 = Pattern.compile("gi\\|(\\d+)\\|(\\w+)\\|(.*)\\|?.*"), p2 = Pattern.compile("([^>]+)");
+        Matcher m1, m2;
+        String[] split ,sa;
         while ((line = br.readLine()) != null) {
             if (100.0 * c / lines >= h) {//time measuring
                 System.out.println(h + "% " + "completed");
@@ -33,34 +35,25 @@ public class NR_BLAST_processor {
             }
             c++;
             if (line.startsWith(">")) {
-                newEntry = true;
+                //sequences.add(sb.toString());
+                //sb.delete(0, sb.length());
                 index++;
-                split = line.split(">");
-                String[] sa;
-                
-                //>1|2|3|4|5
-                //>gi|15674171|ref|NP_268346.1| 30S ribosomal protein S18 [Lactococcus lactis subsp. lactis Il1403]
-                String pattern = ">gi|(\\d+)|(\\w+)|([A-Za-z0-9_\\.]+)|.*";
-                Pattern p = Pattern.compile(pattern);
-                Matcher m;
-                for (int i = 1; i < split.length; i++) {
-                    m = p.matcher(split[i]);
-                    if (m.find()) {
-                        map.put(m.group(1), new NR_Object("", m.group(3), m.group(2), index));
+                m2 = p2.matcher(line);
+                while (m2.find()) {
+                    m1 = p1.matcher(m2.group(0));
+                    m1.find();
+                    try{
+                        map.put(m1.group(1), new NR_Object("", m1.group(3), m1.group(2), index));
+                    }catch(IllegalStateException e){
+                        
                     }
                 }
-                split = null;
-            } else {
-                if (newEntry) {
-                    sequences.add(line);
-                    newEntry = false;
-                } else {
-                    sequences.set(index, sequences.get(index) + line);
-                }
-            }
+            } //else {
+                //sb.append(line);
+            //}
         }
         long runTime = new Date().getTime() - tStart;
-        System.out.println("finished readFile in " + (runTime / 60000) + " min " + (runTime / 1000) + "s; " + runTime + " ms");
+        System.out.println("finished readFile in " + ((runTime / 60000) % 60) + " min " + ((runTime / 1000) % 60) + "s; " + runTime + " ms");
         return new Object[]{map, sequences};
     }
 
@@ -72,6 +65,22 @@ public class NR_BLAST_processor {
             list.add(new NR_Object(nro[0].toString(), nro[1].toString(), nro[2].toString(), Integer.parseInt(nro[3].toString())));
         }
         return list;
+    }
+
+    private void split(String[] sa, String in, char split, StringBuilder sb) {
+        sb.delete(0, sb.length());
+        int c = 0;
+        for (int i = 0; i < in.length(); i++) {
+            if (in.charAt(i) == split) {
+                sa[c] = sb.toString();
+                c++;
+                sb.delete(0, sb.length());
+            } else {
+                sb.append(in.charAt(i));
+            }
+        }
+        sa[c] = sb.toString();
+        sa[c + 1] = ">>>##END##<<<";
     }
 
     private ArrayList read_BLAST_file(String file) throws FileNotFoundException, IOException {   //######### c) #########
