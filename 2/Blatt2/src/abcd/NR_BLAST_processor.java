@@ -40,6 +40,7 @@ public class NR_BLAST_processor {
             }
         }
         long runTime = new Date().getTime() - tStart;
+        System.out.println(results.size());
         System.out.println("finished readFile in " + ((runTime / 60000) % 60) + " min " + ((runTime / 1000) % 60) + "s; " + runTime + " ms");
         return results;
     }

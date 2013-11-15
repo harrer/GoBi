@@ -32,7 +32,7 @@ public class Combine {
         HashMap<String, NR_Object> NR_map = new NR_BLAST_processor().read_NR_File(path_NR + "nrdump.fasta", gi_map);
         ArrayList b;
         ArrayList<Object[]> result = new ArrayList<>();
-        ArrayList<Match_Object> BLAST_list = new ArrayList();
+        ArrayList<Match_Object> BLAST_list;
         String[] files = new File(path_BLAST).list();
         long start = new Date().getTime();
         System.out.println("starting find pdb:");
