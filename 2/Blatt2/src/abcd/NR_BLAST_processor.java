@@ -56,7 +56,6 @@ public class NR_BLAST_processor {
         Pattern p = Pattern.compile(".+(\\.{3}|])\\s+(\\d+)\\s+(\\d?e-\\d+)");
         Matcher m;
         Double e_value;
-        Integer score;
         while ((line = br.readLine()) != null) {
             if (!line.startsWith(">") && !line.startsWith(" ") && line.matches(".+\\|.+\\|.+")) {
                 split_pipe = line.split("\\|");
@@ -69,6 +68,7 @@ public class NR_BLAST_processor {
                 round++;
             }
         }
+        fr.close(); br.close();
         return list;
     }
 
