@@ -14,17 +14,17 @@ import java.util.regex.Pattern;
  */
 public class Enrich_Ensembl {
 
-    public HashMap<String, Boolean> read_mart_export() throws FileNotFoundException, IOException {
-        HashMap<String, Boolean> map = new HashMap();
-        FileReader fr = new FileReader("/home/h/harrert/Dropbox/UNI/GoBi/Blatt2/mart_export_harrert.txt");
+    public HashMap<String, Object[]> read_mart_export() throws FileNotFoundException, IOException {
+        HashMap<String, Object[]> map = new HashMap();
+        FileReader fr = new FileReader("/home/h/harrert/Dropbox/UNI/GoBi/Blatt 2/mart_export_harrert.txt");
         BufferedReader br = new BufferedReader(fr);
         String line;
-        Pattern pattern = Pattern.compile("ENSG\\d+\\tENSP\\d+\\t(NP_\\d+)");
+        Pattern pattern = Pattern.compile("(ENSG\\d+)\\t(ENSP\\d+)\\t(NP_\\d+)");
         Matcher matcher;
         while ((line = br.readLine()) != null) {
             matcher = pattern.matcher(line);
             while (matcher.find()) {
-                map.put(matcher.group(1), true);
+                map.put(matcher.group(3), new Object[]{matcher.group(1), matcher.group(2)});
             }
         }
         fr.close();

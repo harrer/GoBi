@@ -32,6 +32,8 @@ public class Combine {
         }
         // b) #####
         HashMap<String, NR_Object> NR_map = new NR_BLAST_processor().read_NR_File(path_NR + "nrdump.fasta", gi_map);
+        // e) #####
+        HashMap<String, Object[]> ens_map;
         ArrayList b;
         ArrayList<Object[]> result = new ArrayList<>();
         ArrayList<Match_Object> BLAST_list;
@@ -40,7 +42,7 @@ public class Combine {
         System.out.println("starting find pdb:");
         int c=0,cc=0;
         // d) #####
-        for (int i=0;i<1000;i++) {//String file : files
+        for (int i=0;i<100;i++) {
             if(100*cc /files.length >= c){
                 System.out.println(c+"%");
                 c++;
@@ -95,7 +97,7 @@ public class Combine {
         ArrayList<Object[]> list = d.d();
         d.writeToFile(list, "/tmp/harrert_mapping_gobi_17_42");
         // e) #####
-        HashMap<String, Boolean> map = e.read_mart_export();
+        HashMap<String, Object[]> map = e.read_mart_export();
         System.out.println("total " + (new Date().getTime() - start) + "ms");
     }
 }
