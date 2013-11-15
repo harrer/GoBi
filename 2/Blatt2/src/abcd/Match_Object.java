@@ -1,10 +1,12 @@
 package abcd;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author tobias
  */
-public class Match_Object {
+public class Match_Object{
     
     private final String protein_ID;
     private final String source_DB;
@@ -20,7 +22,19 @@ public class Match_Object {
         this.round = round;
     }
     
-    public Object[] getInfo(){
-        return new Object[] {protein_ID, source_DB, e_value, score, round};
+    public ArrayList<Object> getInfo(){
+        ArrayList<Object> list = new ArrayList();
+        list.add(protein_ID);
+        list.add(source_DB);
+        list.add(e_value);
+        list.add(round);
+        return list;
     }
+
+    @Override
+    public String toString() {
+        return protein_ID+"\n"+source_DB+"\n"+e_value+"\n"+score+"\n"+round;
+    }
+    
+    
 }

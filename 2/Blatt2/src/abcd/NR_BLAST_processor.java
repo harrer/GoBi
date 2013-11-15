@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -14,10 +16,11 @@ import java.util.HashMap;
  */
 public class NR_BLAST_processor {
 
-    public ArrayList<NR_Object> read_NR_File(String file, HashMap gi_list) throws FileNotFoundException, IOException {   //############ b) ##########
+    public HashMap<String, NR_Object> read_NR_File(String file, HashMap gi_list) throws FileNotFoundException, IOException {   //############ b) ##########
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
-        ArrayList<NR_Object> results = new ArrayList();
+        //ArrayList<NR_Object> results = new ArrayList();
+        HashMap<String, NR_Object> results = new HashMap();
         String line;
         String[] split, sa;
         int index = 0, lines = 56096686, c = 0, h = 0;
@@ -33,11 +36,12 @@ public class NR_BLAST_processor {
                 for (String gi : split) {
                     sa = gi.split("\\|");
                     if (sa.length > 1) {
-                        try{
-                            if(gi_list.containsKey(Integer.parseInt(sa[1]))){
-                                results.add(new NR_Object("", sa[3], sa[2]));
+                        try {
+                            if (gi_list.containsKey(Integer.parseInt(sa[1]))) {
+                                results.put(sa[3], new NR_Object("", sa[3], sa[2]));
                             }
-                        }catch(NumberFormatException e){}
+                        } catch (NumberFormatException e) {
+                        }
                     }
                 }
             }
@@ -54,12 +58,18 @@ public class NR_BLAST_processor {
         String[] split_pipe, split_tab;
         ArrayList<Match_Object> list = new ArrayList<>();
         int round = 0;
+        Pattern p = Pattern.compile(".+(\\.{3}|])\\s+(\\d+)\\s+(\\d?e-\\d+)");
+        Matcher m;
+        Double e_value;
+        Integer score;
         while ((line = br.readLine()) != null) {
             if (!line.startsWith(">") && !line.startsWith(" ") && line.matches(".+\\|.+\\|.+")) {
                 split_pipe = line.split("\\|");
-                split_tab = line.split("\\s{2,}");
-                Double d = split_tab[2].matches("e-\\d+") ? Double.parseDouble("1" + split_tab[2]) : Double.parseDouble(split_tab[2]);
-                list.add(new Match_Object(split_pipe[1], split_pipe[0], d, Integer.parseInt(split_tab[1]), round));
+                m = p.matcher(line);
+                while(m.find()){
+                    e_value = m.group(3).matches("e-\\d+") ? Double.parseDouble("1" + m.group(3)) : Double.parseDouble(m.group(3));
+                list.add(new Match_Object(split_pipe[1], split_pipe[0], e_value, Integer.parseInt(m.group(2)), round));
+                }
             } else if (line.matches("Results from round.+")) {
                 round++;
             }
@@ -72,6 +82,6 @@ public class NR_BLAST_processor {
 //        map.put(23201, true);map.put(23691, true);map.put(13014, true);map.put(23907, true);
 //        new NR_BLAST_processor().read_NR_File("/home/proj/biosoft/PROTEINS/NR/nrdump.fasta", map);
         new NR_BLAST_processor().read_BLAST_file("/home/proj/biosoft/PROTEINS/PDB_REP_CHAINS/BLAST/7cat.A.blast");
-        
+
     }
 }
