@@ -37,17 +37,18 @@ public class Combine {
         long start = new Date().getTime();
         System.out.println("starting find pdb:");
         int c=0,cc=0;
-        for (int i=0;i<1000;i++) {//String file : files
+        for (String file : files) {
             if(100*cc /files.length >= c){
                 System.out.println(c+"%");
                 c++;
             }
             cc++;
-            BLAST_list = new NR_BLAST_processor().read_BLAST_file(path_BLAST + files[i]);
+            BLAST_list = new NR_BLAST_processor().read_BLAST_file(path_BLAST + file);
+            System.out.println(BLAST_list.size());
             for (Match_Object match : BLAST_list) {
                 b = match.getInfo();
                 if (NR_map.containsKey(b.get(0).toString())) {
-                    b.add(files[i]);//.substring(0,files[i].length()-6)
+                    b.add(file.substring(0,file.length()-6));
                     result.add(b.toArray());
                 }
             }
