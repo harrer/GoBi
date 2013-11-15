@@ -43,7 +43,7 @@ public class Combine {
         System.out.println("starting find pdb:");
         int c=0,cc=0;
         // d) #####
-        for (int i=0;i<100;i++) {
+        for (int i=0;i<1000;i++) {
             if(100*cc /files.length >= c){
                 System.out.println(c+"%");
                 c++;
@@ -53,7 +53,7 @@ public class Combine {
             BLAST_list = nr.read_BLAST_file(path_BLAST + files[i]);
             for (Match_Object match : BLAST_list) {
                 b = match.getInfo();
-                if (NR_map.containsKey(b.get(0).toString()) || ens_map.containsKey(b.get(0).toString())) {
+                if (NR_map.containsKey(b.get(0).toString()) ) {//|| ens_map.containsKey(b.get(0).toString())
                     b.add(files[i].substring(0,files[i].length()-6));
                     result.add(b.toArray());
                 }
