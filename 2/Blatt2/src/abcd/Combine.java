@@ -44,7 +44,6 @@ public class Combine {
             }
             cc++;
             BLAST_list = new NR_BLAST_processor().read_BLAST_file(path_BLAST + file);
-            System.out.println(BLAST_list.size());
             for (Match_Object match : BLAST_list) {
                 b = match.getInfo();
                 if (NR_map.containsKey(b.get(0).toString())) {
