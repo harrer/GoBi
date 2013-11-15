@@ -78,7 +78,7 @@ public class Combine {
     }
     
     public ArrayList<ArrayList<Object>> read_ArrayList(String path) throws FileNotFoundException, IOException{
-        FileReader fr = new FileReader(file);
+        FileReader fr = new FileReader(path);
         BufferedReader br = new BufferedReader(fr);
         ArrayList<ArrayList<Object>> list = new ArrayList();
         String line;
