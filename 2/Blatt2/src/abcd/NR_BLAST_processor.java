@@ -33,7 +33,7 @@ public class NR_BLAST_processor {
             }
             c++;
             if (line.startsWith(">")) {
-                sa = line.split(">")[0].split("\\|");
+                sa = line.split(">")[1].split("\\|");
                 if (sa.length > 1 && sa[1].matches("\\d+") && gi_list.containsKey(Integer.parseInt(sa[1]))) {
                     results.put(sa[3], new NR_Object("", sa[3], sa[2]));
                 }
