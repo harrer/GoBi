@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -23,7 +24,7 @@ public class Combine {
     private final String path_BLAST = "/home/proj/biosoft/PROTEINS/PDB_REP_CHAINS/BLAST/";
     private String file;
 
-    public ArrayList<Object[]> d() throws IOException {
+    public ArrayList<ArrayList<Object>> d() throws IOException {
         // a) #####
         ArrayList<Integer> gi_list = new Tax_to_GI().readFile_HashMap(path_NR + "gi_taxid_prot.dmp").get(9606);
         HashMap<Integer, Boolean> gi_map = new HashMap();
@@ -33,29 +34,27 @@ public class Combine {
         NR_BLAST_processor nr = new NR_BLAST_processor();
         // b) #####
         HashMap<String, NR_Object> NR_map = nr.read_NR_File(path_NR + "nrdump.fasta", gi_map);
-        // e) #####
-        HashMap<String, Object[]> ens_map = new Enrich_Ensembl().read_mart_export();
         ArrayList b;
-        ArrayList<Object[]> result = new ArrayList<>();
+        ArrayList<ArrayList<Object>> result = new ArrayList();
         ArrayList<Match_Object> BLAST_list;
         String[] files = new File(path_BLAST).list();
         long start = new Date().getTime();
         System.out.println("starting find pdb:");
         int c=0,cc=0;
         // d) #####
-        for (int i=0;i<1000;i++) {
+        for (String f : files) {
             if(100*cc /files.length >= c){
                 System.out.println(c+"%");
                 c++;
             }
             cc++;
             // c) #####
-            BLAST_list = nr.read_BLAST_file(path_BLAST + files[i]);
+            BLAST_list = nr.read_BLAST_file(path_BLAST + f);
             for (Match_Object match : BLAST_list) {
                 b = match.getInfo();
-                if (NR_map.containsKey(b.get(0).toString()) ) {//|| ens_map.containsKey(b.get(0).toString())
-                    b.add(files[i].substring(0,files[i].length()-6));
-                    result.add(b.toArray());
+                if (NR_map.containsKey(b.get(0).toString()) ) {
+                    b.add(f.substring(0,f.length()-6));
+                    result.add(b);
                 }
             }
         }
@@ -63,11 +62,11 @@ public class Combine {
         return result;
     }
     
-    public void writeToFile(ArrayList<Object[]> list, String path) throws FileNotFoundException, IOException{
+    public void writeToFile(ArrayList<ArrayList<Object>> list, String path) throws FileNotFoundException, IOException{
         StringBuilder sb = new StringBuilder();
         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path)));
         String tab = "\t", newline = "\n";
-        for (Object[] object : list) {
+        for (ArrayList<Object> object : list) {
             for (Object obj : object) {
                 sb.append(obj);
                 sb.append(tab);
@@ -78,13 +77,16 @@ public class Combine {
         writer.close();
     }
     
-    public ArrayList<String[]> read_ArrayList(String path) throws FileNotFoundException, IOException{
+    public ArrayList<ArrayList<Object>> read_ArrayList(String path) throws FileNotFoundException, IOException{
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
-        ArrayList<String[]> list = new ArrayList();
+        ArrayList<ArrayList<Object>> list = new ArrayList();
         String line;
         while ((line = br.readLine()) != null) {
-            list.add(line.split("\t"));
+            ArrayList<Object> l = new ArrayList();
+            String[] split = line.split("\t");
+            l.addAll(Arrays.asList(split));
+            list.add(l);
         }
         fr.close(); fr.close();
         return list;
@@ -95,10 +97,12 @@ public class Combine {
         Enrich_Ensembl e = new Enrich_Ensembl();
         System.out.println("combine, save mapping:");
         long start = new Date().getTime();
-        ArrayList<Object[]> list = d.d();
-        d.writeToFile(list, "/tmp/harrert_mapping_gobi_17_42");
+        //ArrayList<ArrayList<Object>> list = d.d();
+        //d.writeToFile(list, "/tmp/harrert_mapping_gobi_17_42");
         // e) #####
-        HashMap<String, Object[]> map = e.read_mart_export();
+        ArrayList<ArrayList<Object>> list = d.read_ArrayList("/home/h/harrert/Desktop/2_d_mapping");
+        e.enrich(list);
+        d.writeToFile(list, "/home/h/harrert/Desktop/2_e_enriched");
         System.out.println("total " + (new Date().getTime() - start) + "ms");
     }
 }
