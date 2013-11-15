@@ -37,15 +37,17 @@ public class Enrich_Ensembl {
         HashMap<String, String[]> ens_map = read_mart_export();
         Pattern pattern = Pattern.compile("(NP_\\d+)(\\.\\d+)?");
         Matcher matcher;
+        int c=0;
         for (ArrayList<Object> l : list) {
             matcher = pattern.matcher(l.get(0).toString());
             while(matcher.find()){
                 if(ens_map.containsKey(matcher.group(1))){
                     l.add(ens_map.get(matcher.group(1))[0]);
                     l.add(ens_map.get(matcher.group(1))[1]);
-                    System.out.println(matcher.group(1)+" enriched");
+                    c++;
                 }
             }
         }
+        System.out.println(c + " enriched");
     }
 }
