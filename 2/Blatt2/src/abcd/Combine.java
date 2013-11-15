@@ -53,10 +53,10 @@ public class Combine {
             BLAST_list = nr.read_BLAST_file(path_BLAST + files[i]);
             for (Match_Object match : BLAST_list) {
                 b = match.getInfo();
-//                if (NR_map.containsKey(b.get(0).toString()) || ens_map.containsKey(b.get(0).toString())) {
-//                    b.add(files[i].substring(0,files[i].length()-6));
-//                    result.add(b.toArray());
-//                }
+                if (NR_map.containsKey(b.get(0).toString()) || ens_map.containsKey(b.get(0).toString())) {
+                    b.add(files[i].substring(0,files[i].length()-6));
+                    result.add(b.toArray());
+                }
             }
         }
         System.out.println("find all pdb: " + (new Date().getTime() - start) + " ms");
