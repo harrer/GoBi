@@ -30,10 +30,11 @@ public class Combine {
         for (Integer gi : gi_list) {
             gi_map.put(gi, true);
         }
+        NR_BLAST_processor nr = new NR_BLAST_processor();
         // b) #####
-        HashMap<String, NR_Object> NR_map = new NR_BLAST_processor().read_NR_File(path_NR + "nrdump.fasta", gi_map);
+        HashMap<String, NR_Object> NR_map = nr.read_NR_File(path_NR + "nrdump.fasta", gi_map);
         // e) #####
-        HashMap<String, Object[]> ens_map;
+        HashMap<String, Object[]> ens_map = new Enrich_Ensembl().read_mart_export();
         ArrayList b;
         ArrayList<Object[]> result = new ArrayList<>();
         ArrayList<Match_Object> BLAST_list;
@@ -49,10 +50,14 @@ public class Combine {
             }
             cc++;
             // c) #####
-            BLAST_list = new NR_BLAST_processor().read_BLAST_file(path_BLAST + files[i]);
+            BLAST_list = nr.read_BLAST_file(path_BLAST + files[i]);
             for (Match_Object match : BLAST_list) {
                 b = match.getInfo();
                 if (NR_map.containsKey(b.get(0).toString())) {
+                    b.add(files[i].substring(0,files[i].length()-6));
+                    result.add(b.toArray());
+                }
+                else if(ens_map.containsKey(b.get(0).toString())){
                     b.add(files[i].substring(0,files[i].length()-6));
                     result.add(b.toArray());
                 }
