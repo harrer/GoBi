@@ -20,7 +20,7 @@ public class Combine {
     private final String path_NR = "/home/proj/biosoft/PROTEINS/NR/";
     private final String path_BLAST = "/home/proj/biosoft/PROTEINS/PDB_REP_CHAINS/BLAST/";
 
-    public ArrayList d() throws IOException {
+    public ArrayList<Object[]> d() throws IOException {
         ArrayList<Integer> gi_list = new Tax_to_GI().readFile_HashMap(path_NR + "gi_taxid_prot.dmp").get(9606);
         HashMap<Integer, Boolean> gi_map = new HashMap();
         for (Integer gi : gi_list) {
@@ -53,47 +53,14 @@ public class Combine {
         return result;
     }
     
-    public boolean serialize_al(String name, ArrayList<Match_Object> list){
-        boolean failure = false;
-        try {
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(name));
-            out.writeObject(list);
-            out.flush();
-            out.close();
-        } catch (IOException ex) {
-            failure = true;
-            System.out.println(ex);
-        }
-        if(!failure){
-            System.out.println("written to "+name);
-            return true;
-        }
-        else{
-            System.out.println("failed to write");
-            return false;
-        }
-    }
-    
-    public ArrayList<Match_Object> unserialize_al(String name){
-        ArrayList<Match_Object> list;
-        try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(name));
-            list = (ArrayList) in.readObject();
-            in.close();
-            return list;
-        } catch (FileNotFoundException ex) {
-            System.out.println("Speichersdatei (noch) nicht vorhanden!");
-        } catch (Exception ex) {
-            System.out.println(ex);
-        }
-        return null;
+    public void writeToFile(){
+        
     }
 
     public static void main(String[] args) throws IOException {
         System.out.println("combine with serialize:");
         long start = new Date().getTime();
-        ArrayList<Match_Object> list = new Combine().d();
-        new Combine().serialize_al("/tmp/harrert_d_run1", list);
+        ArrayList<Object[]> list = new Combine().d();
         System.out.println("total " + (new Date().getTime() - start) + "ms");
     }
 }
