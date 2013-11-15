@@ -16,7 +16,8 @@ import java.util.regex.Pattern;
  */
 public class NR_BLAST_processor {
 
-    public HashMap<String, NR_Object> read_NR_File(String file, HashMap gi_list) throws FileNotFoundException, IOException {   //############ b) ##########
+    //############ b) ##########
+    public HashMap<String, NR_Object> read_NR_File(String file, HashMap gi_list) throws FileNotFoundException, IOException {
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         //ArrayList<NR_Object> results = new ArrayList();
@@ -32,17 +33,9 @@ public class NR_BLAST_processor {
             }
             c++;
             if (line.startsWith(">")) {
-                split = line.split(">");
-                for (String gi : split) {
-                    sa = gi.split("\\|");
-                    if (sa.length > 1) {
-                        try {
-                            if (gi_list.containsKey(Integer.parseInt(sa[1]))) {
-                                results.put(sa[3], new NR_Object("", sa[3], sa[2]));
-                            }
-                        } catch (NumberFormatException e) {
-                        }
-                    }
+                sa = line.split(">")[0].split("\\|");
+                if (sa.length > 1 && sa[1].matches("\\d+") && gi_list.containsKey(Integer.parseInt(sa[1]))) {
+                    results.put(sa[3], new NR_Object("", sa[3], sa[2]));
                 }
             }
         }
@@ -51,7 +44,8 @@ public class NR_BLAST_processor {
         return results;
     }
 
-    public ArrayList read_BLAST_file(String file) throws FileNotFoundException, IOException {   //######### c) #########
+    //######### c) #########
+    public ArrayList read_BLAST_file(String file) throws FileNotFoundException, IOException {
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         String line;
@@ -66,9 +60,9 @@ public class NR_BLAST_processor {
             if (!line.startsWith(">") && !line.startsWith(" ") && line.matches(".+\\|.+\\|.+")) {
                 split_pipe = line.split("\\|");
                 m = p.matcher(line);
-                while(m.find()){
+                while (m.find()) {
                     e_value = m.group(3).matches("e-\\d+") ? Double.parseDouble("1" + m.group(3)) : Double.parseDouble(m.group(3));
-                list.add(new Match_Object(split_pipe[1], split_pipe[0], e_value, Integer.parseInt(m.group(2)), round));
+                    list.add(new Match_Object(split_pipe[1], split_pipe[0], e_value, Integer.parseInt(m.group(2)), round));
                 }
             } else if (line.matches("Results from round.+")) {
                 round++;

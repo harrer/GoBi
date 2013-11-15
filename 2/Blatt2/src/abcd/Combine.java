@@ -1,5 +1,6 @@
 package abcd;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,14 +56,27 @@ public class Combine {
         return result;
     }
     
-    public void writeToFile(){
-        
+    public void writeToFile(ArrayList<Object[]> list, String path) throws FileNotFoundException, IOException{
+        StringBuilder sb = new StringBuilder();
+        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path)));
+        String tab = "\t", newline = "\n";
+        for (Object[] object : list) {
+            for (Object obj : object) {
+                sb.append(obj);
+                sb.append(tab);
+            }
+            sb.append(newline);
+        }
+        writer.write(sb.toString());
+        writer.close();
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println("combine with serialize:");
+        Combine d = new Combine();
+        System.out.println("combine, save mapping:");
         long start = new Date().getTime();
-        ArrayList<Object[]> list = new Combine().d();
+        ArrayList<Object[]> list = d.d();
+        d.writeToFile(list, "/tmp/harrert_mapping_gobi_17_42");
         System.out.println("total " + (new Date().getTime() - start) + "ms");
     }
 }
