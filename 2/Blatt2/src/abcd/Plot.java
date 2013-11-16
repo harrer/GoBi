@@ -18,26 +18,57 @@ import java.util.Map;
  */
 public class Plot {
 
-    public void map_Test(String path_in, String path_out) throws IOException {
+    public void map_Test(String path_in, String path_out, int round) throws IOException {
         StringBuilder sb = new StringBuilder();
         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path_out)));
         String tab = "\t", newline = "\n";
         FileReader fr = new FileReader(path_in);
         BufferedReader br = new BufferedReader(fr);
-        HashMap<String, Integer> map = new HashMap();
+        HashMap<String, Double> map = new HashMap();
         String line;
         String[] split;
         while ((line = br.readLine()) != null) {
             split = line.split("\t");
-            if (split[3].equals("1")) {
-                if (map.containsKey(split[2])) {
-                    map.put(split[2], map.get(split[2]) + 1);
+            if (split.length == 7 && (Integer.parseInt(split[3]) <= round)) {
+                if (map.containsKey(split[5])) {
+                    if (Double.compare(Double.parseDouble(split[2]), map.get(split[5])) == -1) {
+                        map.put(split[5], Double.parseDouble(split[2]));
+                    }
                 } else {
-                    map.put(split[2], 1);
+                    map.put(split[5], Double.parseDouble(split[2]));
                 }
             }
         }
-        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+
+        HashMap<Double, Double> hMap = new HashMap();
+        for (Map.Entry<String, Double> entry : map.entrySet()) {
+            double e_value = entry.getValue();
+            if (hMap.containsKey(e_value)) {
+                hMap.put(e_value, hMap.get(e_value) + 1);
+            } else {
+                hMap.put(e_value, 1.0);
+            }
+
+        }
+
+        HashMap<Double, Double> cMap = new HashMap();
+        for (Map.Entry<Double, Double> entry : hMap.entrySet()) {
+            cMap.put(entry.getKey(), 0.0);
+        }
+
+        for (Map.Entry<Double, Double> e : hMap.entrySet()) {
+            double h = e.getKey();
+            for (Map.Entry<Double, Double> entry : hMap.entrySet()) {
+                double k = entry.getKey();
+                double v = entry.getValue();
+                if(Double.compare(k, h) <= 0){
+                    cMap.put(h, cMap.get(h) + v);
+                }
+            }
+
+        }
+
+        for (Map.Entry<Double, Double> entry : cMap.entrySet()) {
             sb.append(entry.getKey());
             sb.append(tab);
             sb.append(entry.getValue());
@@ -105,9 +136,9 @@ public class Plot {
 
     public static void main(String[] args) throws IOException {
         Plot plot = new Plot();
-        HashMap<String , Double> min_map = plot.read_minimal_E_values("/home/proj/biocluster/praktikum/genprakt-ws13/abgaben/assignment2/harrer/2_d_mapping");
-        HashMap<Double, Integer> count_map = plot.map_E_values(min_map);
-        plot.put_map_to_file(count_map, "/home/h/harrert/Desktop/e-values");
-//        plot.map_Test("/home/proj/biocluster/praktikum/genprakt-ws13/abgaben/assignment2/harrer/2_d_mapping", "/home/h/harrert/Desktop/e-values");
+//        HashMap<String, Double> min_map = plot.read_minimal_E_values("/home/proj/biocluster/praktikum/genprakt-ws13/abgaben/assignment2/harrer/2_d_mapping");
+//        HashMap<Double, Integer> count_map = plot.map_E_values(min_map);
+//        plot.put_map_to_file(count_map, "/home/h/harrert/Desktop/e-values");
+        plot.map_Test("/home/proj/biocluster/praktikum/genprakt-ws13/abgaben/assignment2/harrer/2_e_enriched", "/home/h/harrert/Desktop/e-values/e-values_1", 1);
     }
 }
