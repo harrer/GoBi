@@ -17,7 +17,7 @@ public class Enrich_Ensembl {
 
     public HashMap<String, String[]> read_mart_export() throws FileNotFoundException, IOException {
         HashMap<String, String[]> map = new HashMap();
-        FileReader fr = new FileReader("/home/h/harrert/Dropbox/UNI/GoBi/Blatt 2/mart_export_harrert.txt");
+        FileReader fr = new FileReader("/home/proj/biocluster/praktikum/genprakt-ws13/abgaben/assignment2/harrer/mart_export_harrert.txt");
         BufferedReader br = new BufferedReader(fr);
         String line;
         Pattern pattern = Pattern.compile("(ENSG\\d+)\\t(ENSP\\d+)\\t(NP_\\d+)");
