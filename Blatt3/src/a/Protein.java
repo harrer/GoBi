@@ -15,7 +15,7 @@ public class Protein {
         exon = new ArrayList();
     }
     
-    public Protein(Exon exon) {
+    public Protein(Exon exon, String id) {
         this.exon = new ArrayList();
         this.exon.add(exon);
     }
