@@ -34,7 +34,7 @@ public class Main {
                     g = new Gene(id[1], split[0], split[6]);
                     //gene.put(id[1], g);
                     gene_id = id[1];
-                } else {
+                } //else {
                     id = split_id[1].split("\"");
                     if (!id[1].equals(transcript_id)) {//new Transcript
                         transcript_id = id[1];
@@ -42,11 +42,14 @@ public class Main {
                     } else {
                         transcript.getProtein().addExon(new Exon(split_id[2].split("\"")[1], Long.parseLong(split[3]), Long.parseLong(split[4])));
                     }
-                }
+                //}
                 g.addTranscript(transcript_id, transcript);
-                gene.put(transcript_id, g);
+                gene.put(gene_id, g);
             }
         }
+//        Gene ge = gene.get("ENSG00000215522");
+//        Transcript tr = ge.getTranscript("ENST00000400492");
+//        Exon ex = gene.get("ENSG00000215522").getTranscript("ENST00000400492").getProtein().getExon(6);
         br.close();
         fr.close();
     }
