@@ -5,46 +5,42 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.ArrayList;
 
+public class AminoAcidType {
 
-public class AminoAcidType
-{
     public char oneLetter;
     public String threeLetter;
     public String name;
     public String label;
 
     String residueFormula;
-    String[] sideChainAtoms; 
+    String[] sideChainAtoms;
 
     //Ref: D.R.Lide Handbook of Chemistry and Physics
-
-
-
     public double pKa;// - log dissociation constant for the -COOH group
     public double pKb; // - log dissociation constant for -NH3+ group
     public double pKk; // - log dissocation constant for any other gorup
     public double pI; // pH for the isolectric pout /
 
-        
-    public static AminoAcidType NTERM=null;
-    public static AminoAcidType CTERM=null;
-
+    public static AminoAcidType NTERM = null;
+    public static AminoAcidType CTERM = null;
 
     ArrayList<String> codons = new ArrayList<>();
 
-    public  AminoAcidType()
-    {
+    public AminoAcidType() {
 
     }
-    private AminoAcidType(String threeLetter, char oneLetter)
-    {
-        this.threeLetter=threeLetter; this.oneLetter=oneLetter;
+
+    private AminoAcidType(String threeLetter, char oneLetter) {
+        this.threeLetter = threeLetter;
+        this.oneLetter = oneLetter;
     }
+
     //classifications hydrophob small etc, 
-    enum AA_PROPERTY
-    {
-        /** http://www.russelllab.org/aas/ */
+    enum AA_PROPERTY {
 
+        /**
+         * http://www.russelllab.org/aas/
+         */
         HIDROPHOBIC("Hydrophobic amino acids are those with side-chains that do not like to reside in an aqueous (i.e. water) environment. For this reason, one generally finds these amino acids buried within the hydrophobic core of the protein, or within the lipid portion of the membrane"),
         POLAR("Polar amino acids are those with side-chains that prefer to reside in an aqueous (i.e. water) environment. For this reason, one generally finds these amino acids exposed on the surface of a protein."),
         SMALL("tiny or small"),
@@ -53,50 +49,40 @@ public class AminoAcidType
         AROMATIC("A side chain is aromatic when it contains an aromatic ring system. The strict definition has to do with the number of electrons contained within the ring. Generally, aromatic ring systems are planar, and electons are shared over the whole ring structure."),
         NEGATIVE("Amino acids that are usually negative (i.e. de-protonated) at physiological pH:"),
         POSITIVE("Amino acids that are usually positive (i.e. protonated) at physiological pH:"),
-        CBRANCH("Whereas most amino acids contain only one non-hydrogen substituent attached to their C-beta carbon, C-beta branched amino acids contain two (two carbons in Valine or Isoleucine; one carbon and one oxygen in Theronine) . This means that there is a lot more bulkiness near to the protein backbone, and thus means that these amino acids are more restricted in the conformations the main-chain can adopt. Perhaps the most pronounced effect of this is that it is more difficult for these amino acids to adopt an alpha-helical conformation, though it is easy and even preferred for them to lie within beta-sheets.")
-        ;
+        CBRANCH("Whereas most amino acids contain only one non-hydrogen substituent attached to their C-beta carbon, C-beta branched amino acids contain two (two carbons in Valine or Isoleucine; one carbon and one oxygen in Theronine) . This means that there is a lot more bulkiness near to the protein backbone, and thus means that these amino acids are more restricted in the conformations the main-chain can adopt. Perhaps the most pronounced effect of this is that it is more difficult for these amino acids to adopt an alpha-helical conformation, though it is easy and even preferred for them to lie within beta-sheets.");
         String desc;
-        AA_PROPERTY(String d)
-        {
-            this.desc=d;
+
+        AA_PROPERTY(String d) {
+            this.desc = d;
         }
     }
 
-
-    
     public static final ArrayList<AminoAcidType> STANDARD_AAS = new ArrayList<>();
 
-    public static final  ArrayList<AminoAcidType> MODIFIED_AAS = new ArrayList<>();
-    
-    static final int LOOKUPSIZE='Z'-'A'+1;
+    public static final ArrayList<AminoAcidType> MODIFIED_AAS = new ArrayList<>();
+
+    static final int LOOKUPSIZE = 'Z' - 'A' + 1;
 
     static final AminoAcidType[] oneLetterLookup = new AminoAcidType[LOOKUPSIZE];
     public static final HashMap<String, AminoAcidType> threeLetterLookup = new HashMap<>();
 
-    static final int CODON_LOOKUPSIZE='Z'+1;
+    static final int CODON_LOOKUPSIZE = 'Z' + 1;
     static char[][][] codonLookup = new char[CODON_LOOKUPSIZE][CODON_LOOKUPSIZE][CODON_LOOKUPSIZE];
-      
-    static final TreeMap<String,Character> code = new TreeMap<>();
 
+    static final TreeMap<String, Character> code = new TreeMap<>();
 
-
-        
-    public static AminoAcidType get(char oneLetter)
-    {
-        if (oneLetter<'A' || oneLetter>'Z')
-        {
-            throw new RuntimeException("unknown amino acid type: "+oneLetter);
+    public static AminoAcidType get(char oneLetter) {
+        if (oneLetter < 'A' || oneLetter > 'Z') {
+            throw new RuntimeException("unknown amino acid type: " + oneLetter);
         }
-        return oneLetterLookup[oneLetter-'A'];
+        return oneLetterLookup[oneLetter - 'A'];
     }
 
-
-    static
-    {
+    static {
 
         STANDARD_AAS.add(new AminoAcidType("ALA", 'A'));
         STANDARD_AAS.add(new AminoAcidType("ARG", 'R'));
-          
+
         STANDARD_AAS.add(new AminoAcidType("ASN", 'N'));
         STANDARD_AAS.add(new AminoAcidType("ASP", 'D'));
         STANDARD_AAS.add(new AminoAcidType("CYS", 'C'));
@@ -104,7 +90,7 @@ public class AminoAcidType
         STANDARD_AAS.add(new AminoAcidType("GLN", 'Q'));
         STANDARD_AAS.add(new AminoAcidType("GLY", 'G'));
         STANDARD_AAS.add(new AminoAcidType("HIS", 'H'));
-        
+
         //MODIFIED_AAS.add(new AminoAcidType("HYP", 'O"), );
         STANDARD_AAS.add(new AminoAcidType("ILE", 'I'));
         STANDARD_AAS.add(new AminoAcidType("LEU", 'L'));
@@ -119,15 +105,11 @@ public class AminoAcidType
         STANDARD_AAS.add(new AminoAcidType("TYR", 'Y'));
         STANDARD_AAS.add(new AminoAcidType("TRY", 'W'));
 
-
-        for (AminoAcidType aat: STANDARD_AAS)
-        {
-            oneLetterLookup[aat.oneLetter-'A']=aat;
+        for (AminoAcidType aat : STANDARD_AAS) {
+            oneLetterLookup[aat.oneLetter - 'A'] = aat;
             threeLetterLookup.put(aat.threeLetter, aat);
         }
 
-
-        
         code.put("GCT", 'A');
         code.put("GCC", 'A');
         code.put("GCA", 'A');
@@ -194,40 +176,31 @@ public class AminoAcidType
         code.put("TGA", '*');
         code.put("TAA", '*');
 
-
-        for (int i=0; i<CODON_LOOKUPSIZE; i++)
-        {
-            for (int j=0; j<CODON_LOOKUPSIZE; j++)
-            {
-                for (int k=0; k<CODON_LOOKUPSIZE; k++)
-                {
-                    codonLookup[i][j][k]='X';
+        for (int i = 0; i < CODON_LOOKUPSIZE; i++) {
+            for (int j = 0; j < CODON_LOOKUPSIZE; j++) {
+                for (int k = 0; k < CODON_LOOKUPSIZE; k++) {
+                    codonLookup[i][j][k] = 'X';
                 }
             }
         }
-        for (Map.Entry<String, Character> e : code.entrySet())
-        {
+        for (Map.Entry<String, Character> e : code.entrySet()) {
             String codon = e.getKey();
-            
-            int index = e.getValue()-'A';
-            if (index<0 || index>=oneLetterLookup.length)
-            {
+
+            int index = e.getValue() - 'A';
+            if (index < 0 || index >= oneLetterLookup.length) {
                 continue;
             }
-            
-            codonLookup[codon.charAt(0)-'A'][codon.charAt(1)-'A'][codon.charAt(2)-'A']=e.getValue();
+
+            codonLookup[codon.charAt(0) - 'A'][codon.charAt(1) - 'A'][codon.charAt(2) - 'A'] = e.getValue();
         }
     }
 
-        
-    public static char get(String codon)
-    {
-        return codonLookup[codon.charAt(0)-'A'][codon.charAt(1)-'A'][codon.charAt(2)-'A'];
+    public static char get(String codon) {
+        return codonLookup[codon.charAt(0) - 'A'][codon.charAt(1) - 'A'][codon.charAt(2) - 'A'];
     }
 
-    public static char get(char[] array, int startpos)
-    {
-        return codonLookup[array[startpos]-'A'][array[startpos+1]-'A'][array[startpos+2]-'A'];
+    public static char get(char[] array, int startpos) {
+        return codonLookup[array[startpos] - 'A'][array[startpos + 1] - 'A'][array[startpos + 2] - 'A'];
     }
 
 }

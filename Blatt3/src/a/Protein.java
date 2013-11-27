@@ -27,10 +27,12 @@ public class Protein {
     public void addExon(Exon exon) {
         this.exon.add(exon);
     }
-    
-    
 
     public Exon getExon(int j) {
         return exon.get(j);
+    }
+    
+    public ArrayList<Exon> getAllExons(){
+        return exon;
     }
 }

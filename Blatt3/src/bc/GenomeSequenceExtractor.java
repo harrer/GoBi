@@ -28,10 +28,19 @@ public class GenomeSequenceExtractor {
         byte[] b = new byte[(int) (stop-start+1)];
         raf.seek(start-1);
         raf.read(b);
-        return new String(b);
+        String raw = new String(b);
+        String[] sa = raw.split("\n");//remove the newlines/linebreaks
+        StringBuilder sb = new StringBuilder();
+        for (String string : sa) {
+            sb.append(string);
+        }
+        return sb.toString();
     }
     
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        System.out.println(new GenomeSequenceExtractor().readExon(59930, 60200, "X"));
+        String s = new GenomeSequenceExtractor().readExon(59930, 60200, "X");
+        System.out.println(s);
+        String[] sa = s.split("\n");
+        System.out.println("");
     }
 }
