@@ -19,4 +19,14 @@ public class Exon {
     public String getExon() {
         return exon;
     }
+
+    public long getStart() {
+        return start;
+    }
+
+    public long getStop() {
+        return stop;
+    }
+    
+    
 }

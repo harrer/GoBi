@@ -12,9 +12,9 @@ import java.io.RandomAccessFile;
  */
 public class GenomeSequenceExtractor {
     
-    private final String path = "/home/proj/biosoft/GENOMIC/HUMAN/HUMAN_GENOME_FASTA/Homo_sapiens.GRCh37.63.dna.chromosome.";
+    private static final String path = "/home/proj/biosoft/GENOMIC/HUMAN/HUMAN_GENOME_FASTA/Homo_sapiens.GRCh37.63.dna.chromosome.";
     
-    public String readExon(long start, long stop, String chromosome) throws FileNotFoundException, IOException{
+    public static String readExon(long start, long stop, String chromosome) throws FileNotFoundException, IOException{
         String file = path+chromosome+".fa";
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
@@ -38,7 +38,7 @@ public class GenomeSequenceExtractor {
     }
     
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        String s = new GenomeSequenceExtractor().readExon(59930, 60200, "X");
+        String s = readExon(59930, 60200, "X");
         System.out.println(s);
         String[] sa = s.split("\n");
         System.out.println("");
