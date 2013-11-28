@@ -8,20 +8,15 @@ import java.util.ArrayList;
  */
 public class Protein {
     
-    ArrayList<Exon> exon;
-    String proteinId;
-
-    public Protein() {
-        exon = new ArrayList();
-    }
+    private final ArrayList<Exon> exon;
+    private final String proteinId;
+    private final String chromosome;
     
-    public Protein(Exon exon, String id) {
+    public Protein(Exon exon, String id, String chromosome) {
         this.exon = new ArrayList();
         this.exon.add(exon);
-    }
-    
-    public Protein(ArrayList<Exon> exon) {
-        this.exon = exon;
+        proteinId = id;
+        this.chromosome = chromosome;
     }
 
     public void addExon(Exon exon) {
@@ -34,5 +29,13 @@ public class Protein {
     
     public ArrayList<Exon> getAllExons(){
         return exon;
+    }
+
+    public String getChromosome() {
+        return chromosome;
+    }
+
+    public String getProteinId() {
+        return proteinId;
     }
 }

@@ -12,7 +12,7 @@ import java.util.HashMap;
  */
 public class Main {
 
-    HashMap<String, Gene> gene;
+    private final HashMap<String, Gene> gene;
 
     public Main() {
         gene = new HashMap();
@@ -27,22 +27,20 @@ public class Main {
         Transcript transcript = null;
         while ((line = br.readLine()) != null) {//read lines
             split = line.split("\t");
-            if (split[2].equals("CDS")) {//coding sequence
+            if (split[2].equals("CDS") && split[0].matches("\\d+|X|Y")) {//coding sequence and a chromosome 1-..., X,Y
                 split_id = split[8].split(";");
                 id = split_id[0].split("\"");//get gene_id
                 if (!id[1].equals(gene_id)) {//new gene
                     g = new Gene(id[1], split[0], split[6]);
-                    //gene.put(id[1], g);
                     gene_id = id[1];
-                } //else {
-                    id = split_id[1].split("\"");
-                    if (!id[1].equals(transcript_id)) {//new Transcript
-                        transcript_id = id[1];
-                        transcript = new Transcript(new Protein(new Exon(split_id[2].split("\"")[1], Long.parseLong(split[3]), Long.parseLong(split[4])), split_id[5].split("\"")[1]));
-                    } else {
-                        transcript.getProtein().addExon(new Exon(split_id[2].split("\"")[1], Long.parseLong(split[3]), Long.parseLong(split[4])));
-                    }
-                //}
+                }
+                id = split_id[1].split("\"");
+                if (!id[1].equals(transcript_id)) {//new Transcript
+                    transcript_id = id[1];
+                    transcript = new Transcript(new Protein(new Exon(split_id[2].split("\"")[1], Long.parseLong(split[3]), Long.parseLong(split[4])), split_id[5].split("\"")[1], split[0]));
+                } else {
+                    transcript.getProtein().addExon(new Exon(split_id[2].split("\"")[1], Long.parseLong(split[3]), Long.parseLong(split[4])));
+                }
                 g.addTranscript(transcript_id, transcript);
                 gene.put(gene_id, g);
             }
@@ -61,6 +59,12 @@ public class Main {
     public Gene get(String geneId) {
         return gene.get(geneId);
     }
+
+    public HashMap<String, Gene> getGene() {
+        return gene;
+    }
+    
+    
 
     public static void main(String[] args) throws IOException {
         Main m = new Main();

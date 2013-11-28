@@ -8,7 +8,7 @@ import java.util.HashMap;
  */
 public class Gene {
     
-    HashMap<String, Transcript> transcript;
+    private final HashMap<String, Transcript> transcript;
     private final String id;
     private final String chromosome;
     private final String strand;
@@ -26,5 +26,9 @@ public class Gene {
     
     public Transcript getTranscript(String transcriptId) {
         return transcript.get(transcriptId);
+    }
+
+    public HashMap<String, Transcript> getTranscripts() {
+        return transcript;
     }
 }
