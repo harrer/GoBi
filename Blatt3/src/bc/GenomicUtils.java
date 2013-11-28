@@ -5,58 +5,89 @@ package bc;
  * @author harrert
  */
 import a.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class GenomicUtils {
-    
-    public static String getProteinSequence(Protein protein) throws IOException{
+
+    public static String getProteinSequence(Protein protein, int headerOffset) throws IOException {
         ArrayList<Exon> exons = protein.getAllExons();
         StringBuilder sb = new StringBuilder();
         for (Exon exon : exons) {
-            String ex = GenomeSequenceExtractor.readExon(exon.getStart(), exon.getStop(), protein.getChromosome());
+            String ex = GenomeSequenceExtractor.readExon(exon.getStart(), exon.getStop(), protein.getChromosome(), headerOffset);
             sb.append(ex);
         }
         return translateSequence(sb.toString());
     }
-    
-    private static String translateSequence(String sequence) throws IOException{
+
+    public static String translateSequence(String sequence) throws IOException {
         StringBuilder sb = new StringBuilder();
-        int start=0;
-        while (!sequence.substring(start, start+3).equals("ATG")) {            
+        int start = 0;
+        while ((start + 3) < sequence.length() && !sequence.substring(start, start + 3).equals("ATG")) {
             start++;
         }
-        for (int i = start; i < sequence.length()-3; i+=3) {
-            sb.append(AminoAcidType.get(sequence.substring(i, i+3)));
-            if(AminoAcidType.get(sequence.substring(i, i+3)) == 'X'){
+        for (int i = start; i < sequence.length() - 3; i += 3) {
+            sb.append(AminoAcidType.get(sequence.substring(i, i + 3)));
+            if (AminoAcidType.get(sequence.substring(i, i + 3)) == 'X') {
                 break;
             }
         }
         return sb.toString();
     }
-    
-    public static String translateGenome(HashMap<String, Gene> genes, String outFile){
-        StringBuilder sb = new StringBuilder();
+
+    public static HashMap<String, String> translateGenome(HashMap<String, Gene> genes) throws IOException {
+        HashMap<String, String> proteinSequences = new HashMap();
+        HashMap<String, Integer> headerOffset = chromosomeHeaderOffset();
+        Double c=0.0, p=0.0;
         for (Map.Entry<String, Gene> entry : genes.entrySet()) {
-            String geneId = entry.getKey();
+            c++;
+            if(c/genes.size() >=p/100){
+                System.out.println(p.intValue()+"%");
+                p++;
+            }
             Gene gene = entry.getValue();
             for (Map.Entry<String, Transcript> transcript : gene.getTranscripts().entrySet()) {
-                String transcriptId = transcript.getKey();
                 Protein protein = transcript.getValue().getProtein();
-                sb.append(">").append(protein.getProteinId()).append(" ");
-                sb.append("chromosome:").append(protein.getChromosome());
+                proteinSequences.put(protein.getProteinId(), getProteinSequence(protein, headerOffset.get(protein.getChromosome())));
             }
-            
         }
+        return proteinSequences;
     }
-    
+
+    private static HashMap<String, Integer> chromosomeHeaderOffset() throws FileNotFoundException, IOException {
+        String path = "/home/proj/biosoft/GENOMIC/HUMAN/HUMAN_GENOME_FASTA/Homo_sapiens.GRCh37.63.dna.chromosome.";
+        HashMap<String, Integer> files = new HashMap();
+        FileReader fr;
+        BufferedReader br;
+        for (int i = 1; i <= 22; i++) {
+            fr = new FileReader(path + i + ".fa");
+            br = new BufferedReader(fr);
+            files.put("" + i, br.readLine().length() + 1);
+            br.close();
+            fr.close();
+        }
+        fr = new FileReader(path +"X.fa");
+        br = new BufferedReader(fr);
+        files.put("X", br.readLine().length()+1);
+        br.close();fr.close();
+        fr = new FileReader(path +"Y.fa");
+        br = new BufferedReader(fr);
+        files.put("Y", br.readLine().length()+1);
+        br.close();fr.close();
+        return files;
+    }
+
     public static void main(String[] args) throws IOException {
         Main m = new Main();
         m.parse_file("/home/proj/biosoft/GENOMIC/HUMAN/Homo_sapiens.GRCh37.63.gtf");
         HashMap<String, Gene> geneMap = m.getGene();
-        Protein protein = geneMap.get("ENSG00000089163").getTranscript("ENST00000202967").getProtein();
-        System.out.println(getProteinSequence(protein));
+//        Protein protein = geneMap.get("ENSG00000089163").getTranscript("ENST00000202967").getProtein();
+//        System.out.println(getProteinSequence(protein));
+        HashMap<String, String> translatedProteins = translateGenome(geneMap);
     }
 }
