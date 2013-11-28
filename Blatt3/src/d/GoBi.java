@@ -52,19 +52,16 @@ public class GoBi {
         long timeAfter = new Date().getTime();
         System.out.println("run: " + (timeAfter - timeBefore) + " ms");
     }
+    
+    public static HashMap<String, Double> runGotoh(String[] args,ArrayList<SeqPair> pairfile) throws ParamException, IOException{
+        HashMap<String, String> map = new Parser().parseParams(args);
+        return new Gotoh(map, pairfile).startAlignmentGlobal();
+    }
 
     /**
      * @param args the command line arguments
-     * @throws java.io.IOException
-     * @throws blatt1.ParamException
-     * @throws java.lang.InterruptedException
      */
-    public static void main(String[] args) throws IOException, ParamException, InterruptedException {
-        //matrix("dayhoff.mat");
-        //pairs("cathscop.outpairs", false);
-        //seqLib("domains.seqlib");
-        //above methods are TESTED!
-        HashMap<String, String> map = new Parser().parseParams(args);
-        Gotoh g = new Gotoh(map);
+    public static void main(String[] args) {
+        
     }
 }

@@ -156,9 +156,11 @@ public class Parser {
 //                continue;
 //            }
             String[] split = line.split(":");
-            map.put(split[0], split[1]);
-            if(Math.max(split[0].length(), split[1].length()) > max){
-                max = Math.max(split[0].length(), split[1].length());
+            if (split.length == 2) {
+                map.put(split[0], split[1]);
+                if (Math.max(split[0].length(), split[1].length()) > max) {
+                    max = Math.max(split[0].length(), split[1].length());
+                }
             }
         }
         map.put("_maxLength_", ""+max);
