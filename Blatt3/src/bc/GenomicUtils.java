@@ -6,9 +6,13 @@ package bc;
  */
 import a.*;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,9 +44,10 @@ public class GenomicUtils {
         return sb.toString();
     }
 
-    public static HashMap<String, String> translateGenome(HashMap<String, Gene> genes) throws IOException {
+    public static HashMap<String, String> translateGenome(HashMap<String, Gene> genes, String path) throws IOException {
         HashMap<String, String> proteinSequences = new HashMap();
         HashMap<String, Integer> headerOffset = chromosomeHeaderOffset();
+        StringBuilder sb = new StringBuilder();
         Double c=0.0, p=0.0;
         for (Map.Entry<String, Gene> entry : genes.entrySet()) {
             c++;
@@ -53,9 +58,13 @@ public class GenomicUtils {
             Gene gene = entry.getValue();
             for (Map.Entry<String, Transcript> transcript : gene.getTranscripts().entrySet()) {
                 Protein protein = transcript.getValue().getProtein();
-                proteinSequences.put(protein.getProteinId(), getProteinSequence(protein, headerOffset.get(protein.getChromosome())));
+                String seq = getProteinSequence(protein, headerOffset.get(protein.getChromosome()));
+                proteinSequences.put(protein.getProteinId(), seq);
+                sb.append(protein.getProteinId()).append(":").append(seq).append("\n");
             }
         }
+        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path)));
+        writer.write(sb.toString());
         return proteinSequences;
     }
 
@@ -81,6 +90,46 @@ public class GenomicUtils {
         br.close();fr.close();
         return files;
     }
+    
+    private static HashMap<String, String> readSequences(String path) throws FileNotFoundException, IOException{
+        FileReader fr = new FileReader(path);
+        BufferedReader br = new BufferedReader(fr);
+        HashMap<String, String> map = new HashMap();
+        String line;
+        String[] split;
+        while((line = br.readLine()) != null){
+            split = line.split(":");
+            
+            if(split.length == 2) {
+                map.put(split[0], split[1]);
+            }
+        }
+        br.close();
+        fr.close();
+        return map;
+    }
+    
+    private static HashMap<String, String> readReference(String path) throws FileNotFoundException, IOException{
+        FileReader fr = new FileReader(path);
+        BufferedReader br = new BufferedReader(fr);
+        HashMap<String, String> map = new HashMap();
+        String line;
+        String[] split;
+        String id="";
+        while((line = br.readLine()) != null){
+            if(line.startsWith(">")){
+                split = line.split(" ");
+                id = split[0].substring(1);
+                map.put(id, "");
+            }
+            else{
+                map.put(id, (map.get(id)+line));
+            }
+        }
+        br.close();
+        fr.close();
+        return map;
+    }
 
     public static void main(String[] args) throws IOException {
         Main m = new Main();
@@ -88,6 +137,9 @@ public class GenomicUtils {
         HashMap<String, Gene> geneMap = m.getGene();
 //        Protein protein = geneMap.get("ENSG00000089163").getTranscript("ENST00000202967").getProtein();
 //        System.out.println(getProteinSequence(protein));
-        HashMap<String, String> translatedProteins = translateGenome(geneMap);
+        HashMap<String, String> translatedProteins = translateGenome(geneMap,"/tmp/translated_harrert_16_55");
+//        HashMap<String, String> translatedProteins = readSequences("/tmp/translated_harrert_16_55");
+        HashMap<String, String> refSeqs = readReference("/home/proj/biosoft/GENOMIC/HUMAN/HUMAN_PEPTIDES/Homo_sapiens.GRCh37.63.pep.all.fa");
+        
     }
 }

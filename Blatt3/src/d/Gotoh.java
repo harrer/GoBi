@@ -1,4 +1,4 @@
-package blatt1;
+package d;
 
 import java.io.File;
 import java.io.FileWriter;
