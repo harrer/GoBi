@@ -112,12 +112,13 @@ public class Superposition {
         diagMatrix.assign(new double[][]{new double[]{1,0,0}, new double[]{0,1,0}, new double[]{0,0,d}});
         S = alg.mult(S, diagMatrix);
         double error = (S.get(0, 0) + S.get(1, 1) + S.get(2, 2));
-        S.
         return Math.sqrt((Math.abs(E0 - (2*error)))/L);
     }
     
-    private DoubleMatrix2D T(DoubleMatrix2D R, DoubleMatrix2D cent_p, cent_q){
+    private DoubleMatrix2D T(DoubleMatrix2D R, DoubleMatrix2D c_p, DoubleMatrix2D c_q){
         Algebra alg = new Algebra();
-        return alg.
+        c_q.assign(new double[][]{new double[]{-1*c_q.get(0,0)}, new double[]{-1*c_q.get(0,1)}, new double[]{-1*c_q.get(0,2)}});
+        DoubleMatrix2D T = alg.mult(c_q, R);
+        T.assign(new double[][]{new double[]{T.get(0, 0)-c_p.get(0, 0)}, new double[]{T.get(0, 1)-c_p.get(0, 1)}, new double[]{T.get(0, 2)-c_p.get(0, 2)}});
     }
 }
