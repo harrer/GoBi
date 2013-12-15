@@ -66,11 +66,11 @@ public class Superposition {
         };
     }
     
-    private double initError(DoubleMatrix2D p, DoubleMatrix2D q, DoubleMatrix2D centroid){
+    private double initError(DoubleMatrix2D cP, DoubleMatrix2D cQ){
         double error = 0;
-        Algebra alg = new Algebra();
-        DoubleMatrix2D cP = alg.mult(centroid, p);
-        DoubleMatrix2D cQ = alg.mult(centroid, q);
+//        Algebra alg = new Algebra();
+//        DoubleMatrix2D cP = alg.mult(centroid, p);
+//        DoubleMatrix2D cQ = alg.mult(centroid, q);
         for (int i = 0; i < cP.rows(); i++) {
             error += Math.pow(cP.get(i, 0),2);
             error += Math.pow(cP.get(i, 1),2);
@@ -91,8 +91,33 @@ public class Superposition {
     
     private DoubleMatrix2D rotate(DoubleMatrix2D covarMatrix){
         SingularValueDecomposition svd = new SingularValueDecomposition(covarMatrix);
-        svd.getS();
-        svd.getU();
-        svd.getV();
+        Algebra alg = new Algebra();
+        DoubleMatrix2D U = svd.getU();
+        DoubleMatrix2D V = svd.getV();
+        double d = alg.det(V) * alg.det(U);
+        DoubleMatrix2D diagMatrix = newMatrix();
+        diagMatrix.assign(new double[][]{new double[]{1,0,0}, new double[]{0,1,0}, new double[]{0,0,d}});
+        U = alg.mult(U, diagMatrix);
+        return alg.mult(U, alg.transpose(V));
+    }
+    
+    private double RMSD(DoubleMatrix2D covarMatrix, double E0, double L){
+        SingularValueDecomposition svd = new SingularValueDecomposition(covarMatrix);
+        Algebra alg = new Algebra();
+        DoubleMatrix2D S = svd.getS();
+        DoubleMatrix2D U = svd.getU();
+        DoubleMatrix2D V = svd.getV();
+        double d = alg.det(V) * alg.det(U);
+        DoubleMatrix2D diagMatrix = newMatrix();
+        diagMatrix.assign(new double[][]{new double[]{1,0,0}, new double[]{0,1,0}, new double[]{0,0,d}});
+        S = alg.mult(S, diagMatrix);
+        double error = (S.get(0, 0) + S.get(1, 1) + S.get(2, 2));
+        S.
+        return Math.sqrt((Math.abs(E0 - (2*error)))/L);
+    }
+    
+    private DoubleMatrix2D T(DoubleMatrix2D R, DoubleMatrix2D cent_p, cent_q){
+        Algebra alg = new Algebra();
+        return alg.
     }
 }
