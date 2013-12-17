@@ -66,6 +66,12 @@ public class Superposition {
         };
     }
     
+    private DoubleMatrix2D newMatrix(double[][] array){
+        DoubleMatrix2D m = this.newMatrix();
+        m.assign(array);
+        return m;
+    }
+    
     private double initError(DoubleMatrix2D cP, DoubleMatrix2D cQ){
         double error = 0;
 //        Algebra alg = new Algebra();
@@ -117,8 +123,17 @@ public class Superposition {
     
     private DoubleMatrix2D T(DoubleMatrix2D R, DoubleMatrix2D c_p, DoubleMatrix2D c_q){
         Algebra alg = new Algebra();
-        c_q.assign(new double[][]{new double[]{-1*c_q.get(0,0)}, new double[]{-1*c_q.get(0,1)}, new double[]{-1*c_q.get(0,2)}});
-        DoubleMatrix2D T = alg.mult(c_q, R);
+        DoubleMatrix2D T = alg.mult(R, c_q);
         T.assign(new double[][]{new double[]{T.get(0, 0)-c_p.get(0, 0)}, new double[]{T.get(0, 1)-c_p.get(0, 1)}, new double[]{T.get(0, 2)-c_p.get(0, 2)}});
+        return T;
+    }
+    
+    private DoubleMatrix2D move_Q_onto_P(DoubleMatrix2D Q, DoubleMatrix2D R, DoubleMatrix2D T){
+        for (int i = 0; i < Q.rows(); i++) {
+            for (int j = 0; j < 3; j++) {
+                Q.set(i, j, Q.get(i, 0) * R.get(0, j) + Q.get(i, 1) * R.get(1, j) + Q.get(i, 2) * R.get(2, j) + T.get(0, j));
+            }
+        }
+        return Q;
     }
 }
