@@ -15,23 +15,21 @@ import java.util.ArrayList;
 public class PDBParser {
 
     public static DoubleMatrix2D parseToMatrix(String file) throws IOException {
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(file));
-            String line;
-            int columns = 0;
-            ArrayList<Double[]> list = new ArrayList<>(1000);
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith("ATOM")) {
-                    columns++;
-                    String[] split = line.split("\\s+");
-                    list.add(new Double[]{Double.parseDouble(split[6]), Double.parseDouble(split[7]), Double.parseDouble(split[8])});
-                }
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String line;
+        int columns = 0;
+        ArrayList<Double[]> list = new ArrayList<>(1000);
+        while ((line = br.readLine()) != null) {
+            if (line.startsWith("ATOM")) {
+                columns++;
+                String[] split = line.split("\\s+");
+                list.add(new Double[]{Double.parseDouble(split[6]), Double.parseDouble(split[7]), Double.parseDouble(split[8])});
             }
-            return new DenseDoubleMatrix2D(list.toArray(new double[columns][3]));
-        } finally {
-            br.close();
         }
+        br.close();
+        double[][] da = list.toArray(new double[columns][3]);
+        System.out.println("");
+        return new DenseDoubleMatrix2D(da);
     }
 
     public static ArrayList<AminoAcid> parseAll(String file) throws FileNotFoundException, IOException {
@@ -69,7 +67,8 @@ public class PDBParser {
 
     public static void main(String[] args) throws IOException {
         String file = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1ev0B00.pdb";
-        //DoubleMatrix2D matrix = parseToMatrix(file);
-        ArrayList<AminoAcid> aaList = parseAll(file);
+        DoubleMatrix2D matrix = parseToMatrix(file);
+        System.out.println("");
+        //ArrayList<AminoAcid> aaList = parseAll(file);
     }
 }
