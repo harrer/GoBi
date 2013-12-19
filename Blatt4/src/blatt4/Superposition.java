@@ -4,6 +4,7 @@ import cern.colt.matrix.*;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.colt.matrix.linalg.Algebra;
 import cern.colt.matrix.linalg.SingularValueDecomposition;
+import java.io.IOException;
 
 /**
  *
@@ -12,7 +13,7 @@ import cern.colt.matrix.linalg.SingularValueDecomposition;
 public class Superposition {
     
     private DoubleMatrix2D getCentroid(DoubleMatrix2D matrix){
-        DoubleMatrix2D m = new DenseDoubleMatrix2D(1, 3);
+        DoubleMatrix2D m = new DenseDoubleMatrix2D(3, 1);
         double x=0,y=0,z=0;
         int n = matrix.rows();
         for (int i = 0; i < n; i++) {
@@ -24,12 +25,14 @@ public class Superposition {
         return m;
     }
     
-    private void translate(DoubleMatrix2D matrix, double[] centroid){
+    private DoubleMatrix2D translate(DoubleMatrix2D matrix, DoubleMatrix2D centroid){
+        DoubleMatrix2D out = new DenseDoubleMatrix2D(matrix.rows(), matrix.columns());
         for (int i = 0; i < matrix.rows(); i++) {
-            matrix.set(i, 0, matrix.get(i, 0)+centroid[0]);
-            matrix.set(i, 1, matrix.get(i, 1)+centroid[1]);
-            matrix.set(i, 2, matrix.get(i, 2)+centroid[2]);
+            out.set(i, 0, matrix.get(i, 0)+centroid.get(0, 0));
+            out.set(i, 1, matrix.get(i, 1)+centroid.get(1, 0));
+            out.set(i, 2, matrix.get(i, 2)+centroid.get(2, 0));
         }
+        return out;
     }
     
     private double initError(DoubleMatrix2D cP, DoubleMatrix2D cQ){
@@ -106,5 +109,18 @@ public class Superposition {
             distance += Math.sqrt(currentDist);
         }
         return distance;
+    }
+    
+    public static void main(String[] args) throws IOException {
+        Superposition s = new Superposition();
+        String path = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/";
+        DoubleMatrix2D P = PDBParser.parseToMatrix(path+"1ewrA01.pdb");
+        DoubleMatrix2D Q = PDBParser.parseToMatrix(path+"1exzB00.pdb");
+        DoubleMatrix2D centP = s.getCentroid(P);
+        DoubleMatrix2D cP = s.translate(P, centP);
+        DoubleMatrix2D cQ = s.translate(Q, s.getCentroid(Q));
+        System.out.println(s.initError(cP, cQ));
+        DoubleMatrix2D covar = s.covarMatrix(cP, cQ);
+        System.out.println("");
     }
 }
