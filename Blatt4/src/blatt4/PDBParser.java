@@ -17,58 +17,56 @@ public class PDBParser {
     public static DoubleMatrix2D parseToMatrix(String file) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
-        int columns = 0;
-        ArrayList<Double[]> list = new ArrayList<>(1000);
+        ArrayList<double[]> list = new ArrayList();
         while ((line = br.readLine()) != null) {
             if (line.startsWith("ATOM")) {
-                columns++;
                 String[] split = line.split("\\s+");
-                list.add(new Double[]{Double.parseDouble(split[6]), Double.parseDouble(split[7]), Double.parseDouble(split[8])});
+                list.add(new double[]{Double.parseDouble(split[6]), Double.parseDouble(split[7]), Double.parseDouble(split[8])});
             }
         }
+        //double[][] da = list.toArray(new double[list.size()][3]);
         br.close();
-        double[][] da = list.toArray(new double[columns][3]);
-        System.out.println("");
-        return new DenseDoubleMatrix2D(da);
+        return new DenseDoubleMatrix2D(list.toArray(new double[list.size()][3]));
     }
 
-    public static ArrayList<AminoAcid> parseAll(String file) throws FileNotFoundException, IOException {
-        FileReader fr = new FileReader(file);
-        BufferedReader br = new BufferedReader(fr);
+    public static ArrayList<AminoAcid> parseAll(String file) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
-        String[] split;
         int aaCount = -1, end = -2;
         ArrayList<AminoAcid> list = new ArrayList<>();
-        ArrayList<Double[]> posList = new ArrayList<>();
+        ArrayList<double[]> posList = new ArrayList<>();
         ArrayList<String> atomList = new ArrayList<>();
-        AminoAcid current = new AminoAcid(aaCount, -1, "");
+        AminoAcid current = new AminoAcid(aaCount, -1, "", "");
         while ((line = br.readLine()) != null) {
             if (line.startsWith("ATOM")) {
-                split = line.split("\\s+");
+                String[] split = line.split("\\s+");
                 if (Integer.parseInt(split[5]) != aaCount) {
                     current.setCoordinates(new DenseDoubleMatrix2D(posList.toArray(new double[][]{})));
                     current.setEndPos(end);
                     current.setAtomNames(atomList);
+                    atomList = new ArrayList();
                     list.add(current);
-                    current = new AminoAcid(Integer.parseInt(split[5]), Integer.parseInt(split[1]), split[3]);
-                    posList = new ArrayList<>();
+                    current = new AminoAcid(Integer.parseInt(split[5]), Integer.parseInt(split[1]), split[3], split[4]);
+                    posList = new ArrayList();
                     aaCount = Integer.parseInt(split[5]);
                 }
-                end = Integer.parseInt(split[0]);
+                end = Integer.parseInt(split[1]);
                 atomList.add(split[2]);
-                posList.add(new Double[]{Double.parseDouble(split[6]), Double.parseDouble(split[7]), Double.parseDouble(split[8])});
+                posList.add(new double[]{Double.parseDouble(split[6]), Double.parseDouble(split[7]), Double.parseDouble(split[8])});
             }
         }
+        current.setCoordinates(new DenseDoubleMatrix2D(posList.toArray(new double[][]{})));
+        current.setEndPos(end);
+        current.setAtomNames(atomList);
+        list.add(current);
         list.remove(0);
-        fr.close();
         br.close();
         return list;
     }
 
     public static void main(String[] args) throws IOException {
-        String file = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1ev0B00.pdb";
-        DoubleMatrix2D matrix = parseToMatrix(file);
-        System.out.println("");
-        //ArrayList<AminoAcid> aaList = parseAll(file);
+        String file = "/home/tobias/Documents/GoBi/Blatt4/1ev0B00.pdb"; //"/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1ev0B00.pdb";
+        //DoubleMatrix2D matrix = parseToMatrix(file);
+        ArrayList<AminoAcid> aaList = parseAll(file);
     }
 }

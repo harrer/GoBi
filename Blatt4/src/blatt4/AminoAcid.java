@@ -15,12 +15,13 @@ public class AminoAcid {
     private final String name;
     private DoubleMatrix2D coordinates;
     private ArrayList<String> atomNames;
-    private String domain;
+    private final String domain;
     
-    public AminoAcid(int number, int startPos, String name){
+    public AminoAcid(int number, int startPos, String name, String domain){
         this.number = number;
         this.startPos = startPos;
         this.name = name;
+        this.domain = domain;
     }
 
     public void setEndPos(int endPos) {
@@ -33,9 +34,5 @@ public class AminoAcid {
 
     public void setAtomNames(ArrayList<String> atomNames) {
         this.atomNames = atomNames;
-    }
-
-    public void setDomain(String domain) {
-        this.domain = domain;
     }
 }
