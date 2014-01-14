@@ -111,6 +111,18 @@ public class Superposition {
         return distance;
     }
     
+    public double gdt_ts(double l, DoubleMatrix2D covarMatrix, double E0, double L){
+        return (P(1,covarMatrix,E0,L) + P(2,covarMatrix,E0,L) + P(3,covarMatrix,E0,L) + P(4,covarMatrix,E0,L))/(4*l);
+    }
+    
+    private double P(int x, DoubleMatrix2D covarMatrix, double E0, double L){
+        int c=0;
+        if(RMSD(covarMatrix, E0, L) <= x) {
+            c++;
+        }
+        return c;
+    }
+    
     public static void main(String[] args) throws IOException {
         Superposition s = new Superposition();
         String path = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/";
