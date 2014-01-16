@@ -89,6 +89,8 @@ public class PDBParser {
     public static void main(String[] args) throws IOException {
         String file = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1ev0B00.pdb"; //"/home/tobias/Documents/GoBi/Blatt4/1ev0B00.pdb";
 //        DoubleMatrix2D[] matrix = parseToMatrix(file, true, 10);
-        ArrayList<AminoAcid> aaList = parseAll(file);
+        //"/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1ev0B00.pdb"; //"/home/tobias/Documents/GoBi/Blatt4/1ev0B00.pdb";
+//        DoubleMatrix2D[] matrix = parseToMatrix(file, true, 10);
+//        ArrayList<AminoAcid> aaList = parseAll(file);
     }
 }
