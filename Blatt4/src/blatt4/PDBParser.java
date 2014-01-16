@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class PDBParser {
 
-    public static DoubleMatrix2D[] parseToMatrix(String file, boolean backboneOnly, int positions) throws IOException {
+    public static DoubleMatrix2D[] parseToMatrix(String file, boolean backboneOnly) throws IOException {//, int positions
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         ArrayList<double[]> list = new ArrayList();
@@ -32,23 +32,23 @@ public class PDBParser {
         //double[][] da = list.toArray(new double[list.size()][3]);
         br.close();
         double[][] dOut = list.toArray(new double[list.size()][3]);
-        if(list.size()<=positions){
+        //if(list.size()<=positions){
             return new DoubleMatrix2D[]{new DenseDoubleMatrix2D(dOut)};
-        }
-        else{
-            int lists = list.size()/positions + 1;
-            DoubleMatrix2D[] out = new DoubleMatrix2D[lists];
-            for (int i = 0; i < lists; i++) {
-                double[][] d2 = new double[positions][3];
-                for (int j = 0; j < d2.length; j++) {
-                    if((i*positions + j) < list.size()){
-                        d2[j] = dOut[i*positions + j];
-                    }
-                }
-                out[i] = new DenseDoubleMatrix2D(d2);
-            }
-            return out;
-        }
+        //}
+//        else{
+//            int lists = list.size()/positions + 1;
+//            DoubleMatrix2D[] out = new DoubleMatrix2D[lists];
+//            for (int i = 0; i < lists; i++) {
+//                double[][] d2 = new double[positions][3];
+//                for (int j = 0; j < d2.length; j++) {
+//                    if((i*positions + j) < list.size()){
+//                        d2[j] = dOut[i*positions + j];
+//                    }
+//                }
+//                out[i] = new DenseDoubleMatrix2D(d2);
+//            }
+//            return out;
+//        }
     }
 
     public static ArrayList<AminoAcid> parseAll(String file) throws IOException {
@@ -88,7 +88,7 @@ public class PDBParser {
 
     public static void main(String[] args) throws IOException {
         String file = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1ev0B00.pdb"; //"/home/tobias/Documents/GoBi/Blatt4/1ev0B00.pdb";
-        DoubleMatrix2D[] matrix = parseToMatrix(file, true, 10);
+//        DoubleMatrix2D[] matrix = parseToMatrix(file, true, 10);
         ArrayList<AminoAcid> aaList = parseAll(file);
     }
 }

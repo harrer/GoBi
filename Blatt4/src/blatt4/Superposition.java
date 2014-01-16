@@ -126,8 +126,8 @@ public class Superposition {
     public static void main(String[] args) throws IOException {
         Superposition s = new Superposition();
         String path = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/";
-        DoubleMatrix2D P = PDBParser.parseToMatrix(path+"1ewrA01.pdb");
-        DoubleMatrix2D Q = PDBParser.parseToMatrix(path+"1exzB00.pdb");
+        DoubleMatrix2D P = PDBParser.parseToMatrix(path+"1ewrA01.pdb",true,857);
+        DoubleMatrix2D Q = PDBParser.parseToMatrix(path+"1exzB00.pdb",true);
         DoubleMatrix2D centP = s.getCentroid(P);
         DoubleMatrix2D cP = s.translate(P, centP);
         DoubleMatrix2D cQ = s.translate(Q, s.getCentroid(Q));
