@@ -35,4 +35,34 @@ public class AminoAcid {
     public void setAtomNames(ArrayList<String> atomNames) {
         this.atomNames = atomNames;
     }
+
+    public ArrayList<String> getAtomNames() {
+        return atomNames;
+    }
+
+    public DoubleMatrix2D getCoordinates() {
+        return coordinates;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public int getEndPos() {
+        return endPos;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public int getStartPos() {
+        return startPos;
+    }
+    
+    
 }

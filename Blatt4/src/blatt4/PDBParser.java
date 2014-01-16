@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class PDBParser {
 
-    public static DoubleMatrix2D[] parseToMatrix(String file, boolean backboneOnly) throws IOException {//, int positions
+    public static DoubleMatrix2D parseToMatrix(String file, boolean backboneOnly) throws IOException {//, int positions
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         ArrayList<double[]> list = new ArrayList();
@@ -22,10 +22,10 @@ public class PDBParser {
                 String[] split = line.split("\\s+");
                 if (backboneOnly) {
                     if (split[2].equalsIgnoreCase("N") || split[2].equalsIgnoreCase("CA") || split[2].equalsIgnoreCase("C")) {
-                        list.add(new double[]{Double.parseDouble(split[6]), Double.parseDouble(split[7]), Double.parseDouble(split[8])});
+                        list.add(new double[]{Double.parseDouble(split[5]), Double.parseDouble(split[6]), Double.parseDouble(split[7])});
                     }
                 } else {
-                    list.add(new double[]{Double.parseDouble(split[6]), Double.parseDouble(split[7]), Double.parseDouble(split[8])});
+                    list.add(new double[]{Double.parseDouble(split[5]), Double.parseDouble(split[6]), Double.parseDouble(split[7])});
                 }
             }
         }
@@ -33,7 +33,7 @@ public class PDBParser {
         br.close();
         double[][] dOut = list.toArray(new double[list.size()][3]);
         //if(list.size()<=positions){
-            return new DoubleMatrix2D[]{new DenseDoubleMatrix2D(dOut)};
+            return new DenseDoubleMatrix2D(dOut);
         //}
 //        else{
 //            int lists = list.size()/positions + 1;

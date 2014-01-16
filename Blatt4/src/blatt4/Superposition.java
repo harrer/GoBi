@@ -55,6 +55,7 @@ public class Superposition {
     
     private DoubleMatrix2D covarMatrix(DoubleMatrix2D p, DoubleMatrix2D q){
         Algebra alg = new Algebra();
+        //return alg.mult(alg.transpose(p), q);
         return alg.mult(alg.transpose(p), q);
     }
     
@@ -125,14 +126,17 @@ public class Superposition {
     
     public static void main(String[] args) throws IOException {
         Superposition s = new Superposition();
-        String path = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/";
-        DoubleMatrix2D P = PDBParser.parseToMatrix(path+"1ewrA01.pdb",true,857);
-        DoubleMatrix2D Q = PDBParser.parseToMatrix(path+"1exzB00.pdb",true);
+//        String path = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/";
+        DoubleMatrix2D P = PDBParser.parseToMatrix("/home/h/harrert/Dokumente/GoBi/1c25000.pdb",true);//"1ewrA01.pdb"
+        DoubleMatrix2D Q = PDBParser.parseToMatrix("/home/h/harrert/Dokumente/GoBi/1a5t001.pdb",true);//path+"1exzB00.pdb"
         DoubleMatrix2D centP = s.getCentroid(P);
         DoubleMatrix2D cP = s.translate(P, centP);
         DoubleMatrix2D cQ = s.translate(Q, s.getCentroid(Q));
         System.out.println(s.initError(cP, cQ));
         DoubleMatrix2D covar = s.covarMatrix(cP, cQ);
+        DoubleMatrix2D r = s.rotate(covar);
+        DoubleMatrix2D t = s.T(r, cP, cQ);
+        DoubleMatrix2D QontoP = s.move_Q_onto_P(Q, r, t);
         System.out.println("");
     }
 }
