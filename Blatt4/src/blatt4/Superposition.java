@@ -5,6 +5,9 @@ import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.colt.matrix.linalg.Algebra;
 import cern.colt.matrix.linalg.SingularValueDecomposition;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 /**
  *
@@ -86,14 +89,14 @@ public class Superposition {
     private DoubleMatrix2D T(DoubleMatrix2D R, DoubleMatrix2D c_p, DoubleMatrix2D c_q){
         Algebra alg = new Algebra();
         DoubleMatrix2D T = alg.mult(R, c_q);
-        T.assign(new double[][]{new double[]{T.get(0, 0)-c_p.get(0, 0)}, new double[]{T.get(0, 1)-c_p.get(0, 1)}, new double[]{T.get(0, 2)-c_p.get(0, 2)}});
+        T.assign(new double[][]{new double[]{T.get(0, 0)-c_p.get(0, 0)}, new double[]{T.get(1, 0)-c_p.get(1, 0)}, new double[]{T.get(2, 0)-c_p.get(2, 0)}});
         return T;
     }
     
     private DoubleMatrix2D move_Q_onto_P(DoubleMatrix2D Q, DoubleMatrix2D R, DoubleMatrix2D T){
         for (int i = 0; i < Q.rows(); i++) {
             for (int j = 0; j < 3; j++) {
-                Q.set(i, j, Q.get(i, 0) * R.get(0, j) + Q.get(i, 1) * R.get(1, j) + Q.get(i, 2) * R.get(2, j) + T.get(0, j));
+                Q.set(i, j, Q.get(i, 0) * R.get(0, j) + Q.get(i, 1) * R.get(1, j) + Q.get(i, 2) * R.get(2, j) + T.get(j, 0));
             }
         }
         return Q;
@@ -130,13 +133,28 @@ public class Superposition {
         DoubleMatrix2D P = PDBParser.parseToMatrix("/home/h/harrert/Dokumente/GoBi/1c25000.pdb",true);//"1ewrA01.pdb"
         DoubleMatrix2D Q = PDBParser.parseToMatrix("/home/h/harrert/Dokumente/GoBi/1a5t001.pdb",true);//path+"1exzB00.pdb"
         DoubleMatrix2D centP = s.getCentroid(P);
+        DoubleMatrix2D centQ = s.getCentroid(Q);
         DoubleMatrix2D cP = s.translate(P, centP);
         DoubleMatrix2D cQ = s.translate(Q, s.getCentroid(Q));
         System.out.println(s.initError(cP, cQ));
         DoubleMatrix2D covar = s.covarMatrix(cP, cQ);
-        DoubleMatrix2D r = s.rotate(covar);
-        DoubleMatrix2D t = s.T(r, cP, cQ);
-        DoubleMatrix2D QontoP = s.move_Q_onto_P(Q, r, t);
-        System.out.println("");
+        DoubleMatrix2D R = s.rotate(covar);
+        DoubleMatrix2D t = s.T(R, centP, centQ);
+        DoubleMatrix2D QontoP = s.move_Q_onto_P(Q, R, t);
+        System.out.println(matrixToString(QontoP));
+        System.out.println(s.readOffRMSD(P, Q));
+    }
+    
+    private static String matrixToString(DoubleMatrix2D matrix){
+        StringBuilder sb = new StringBuilder();
+        DecimalFormat dec = new DecimalFormat("#0.000",new DecimalFormatSymbols(Locale.US));
+        double[][] da = matrix.toArray();
+        for (double[] ds : da) {
+            for (double d : ds) {
+                sb.append(dec.format(d)).append("\t");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }
