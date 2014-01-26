@@ -9,8 +9,7 @@ import java.util.HashMap;
 
 public class Parser {
 
-    private final String path = "/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/";
-    //private final String path = "/home/tobias/Desktop/";
+    private final String path = "/Users/Tobias/Desktop/pdb/";///home/proj/biosoft/praktikum/genprakt-ws13/assignment1/";
 
     public int[][] parseMatrix(String matrixName, boolean mirror) throws FileNotFoundException, IOException {
         String line;

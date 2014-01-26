@@ -12,6 +12,9 @@ public class AminoAcid {
     private final int number;
     private final int startPos;
     private int endPos;
+    private int cAlpha;
+    private int C;
+    private int N;
     private final String name;
     private DoubleMatrix2D coordinates;
     private ArrayList<String> atomNames;
@@ -36,6 +39,18 @@ public class AminoAcid {
         this.atomNames = atomNames;
     }
 
+    public void setcAlpha(int cAlpha) {
+        this.cAlpha = cAlpha;
+    }
+
+    public void setC(int C) {
+        this.C = C;
+    }
+
+    public void setN(int N) {
+        this.N = N;
+    }
+    
     public ArrayList<String> getAtomNames() {
         return atomNames;
     }

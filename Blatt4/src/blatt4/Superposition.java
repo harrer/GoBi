@@ -1,9 +1,11 @@
 package blatt4;
 
 import cern.colt.matrix.*;
+import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.colt.matrix.linalg.Algebra;
 import cern.colt.matrix.linalg.SingularValueDecomposition;
+import cern.jet.math.Functions;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -15,8 +17,23 @@ import java.util.Locale;
  */
 public class Superposition {
     
-    private DoubleMatrix2D getCentroid(DoubleMatrix2D matrix){
-        DoubleMatrix2D m = new DenseDoubleMatrix2D(3, 1);
+    public Superposition(DoubleMatrix2D P, DoubleMatrix2D Q){
+        DoubleMatrix1D centP = getCentroid(P);
+        DoubleMatrix1D centQ = getCentroid(Q);
+        DoubleMatrix2D cP = translate(P, centP);
+        DoubleMatrix2D cQ = translate(Q, centQ);
+//        System.out.println(initError(cP, cQ));
+        DoubleMatrix2D covar = covarMatrix(cP, cQ);
+        DoubleMatrix2D R = rotate(covar);
+        DoubleMatrix1D t = T(R, centP, centQ);
+        Q = move_Q_onto_P(Q, R, t);
+        System.out.println(matrixToString(Q));
+        System.out.println("read off RMSD: "+readOffRMSD(P, Q));
+        System.out.println(RMSD(covar, initError(cP, cQ), P.rows()));
+    }
+    
+    private DoubleMatrix1D getCentroid(DoubleMatrix2D matrix){
+        DoubleMatrix1D m = new DenseDoubleMatrix1D(3);
         double x=0,y=0,z=0;
         int n = matrix.rows();
         for (int i = 0; i < n; i++) {
@@ -24,16 +41,16 @@ public class Superposition {
             y += matrix.get(i, 1);
             z += matrix.get(i, 2);
         }
-        m.assign(new double[][]{new double[]{x/n}, new double[]{y/n}, new double[]{z/n}});
+        m.assign(new double[]{x/n, y/n, z/n});
         return m;
     }
     
-    private DoubleMatrix2D translate(DoubleMatrix2D matrix, DoubleMatrix2D centroid){
+    private DoubleMatrix2D translate(DoubleMatrix2D matrix, DoubleMatrix1D centroid){
         DoubleMatrix2D out = new DenseDoubleMatrix2D(matrix.rows(), matrix.columns());
         for (int i = 0; i < matrix.rows(); i++) {
-            out.set(i, 0, matrix.get(i, 0)+centroid.get(0, 0));
-            out.set(i, 1, matrix.get(i, 1)+centroid.get(1, 0));
-            out.set(i, 2, matrix.get(i, 2)+centroid.get(2, 0));
+            out.set(i, 0, matrix.get(i, 0)+centroid.get(0));
+            out.set(i, 1, matrix.get(i, 1)+centroid.get(1));
+            out.set(i, 2, matrix.get(i, 2)+centroid.get(2));
         }
         return out;
     }
@@ -86,33 +103,36 @@ public class Superposition {
         return Math.sqrt((Math.abs(E0 - (2*error)))/L);
     }
     
-    private DoubleMatrix2D T(DoubleMatrix2D R, DoubleMatrix2D c_p, DoubleMatrix2D c_q){
+    private DoubleMatrix1D T(DoubleMatrix2D R, DoubleMatrix1D c_p, DoubleMatrix1D c_q){
+        DoubleMatrix1D t;
         Algebra alg = new Algebra();
-        DoubleMatrix2D T = alg.mult(R, c_q);
-        T.assign(new double[][]{new double[]{T.get(0, 0)-c_p.get(0, 0)}, new double[]{T.get(1, 0)-c_p.get(1, 0)}, new double[]{T.get(2, 0)-c_p.get(2, 0)}});
-        return T;
+        Functions f = Functions.functions;
+        t = alg.mult(R, c_q);
+        t.assign(f.neg);
+        t.assign(c_p, f.plus);
+//        DoubleMatrix1D T = alg.mult(R, c_q);
+        t.assign(new double[]{t.get(0)-c_p.get(0), t.get(1)-c_p.get(1), t.get(2)-c_p.get(2)});
+        return t;
     }
     
-    private DoubleMatrix2D move_Q_onto_P(DoubleMatrix2D Q, DoubleMatrix2D R, DoubleMatrix2D T){
+    private DoubleMatrix2D move_Q_onto_P(DoubleMatrix2D Q, DoubleMatrix2D R, DoubleMatrix1D T){
+        int r = Q.rows();
         for (int i = 0; i < Q.rows(); i++) {
             for (int j = 0; j < 3; j++) {
-                Q.set(i, j, Q.get(i, 0) * R.get(0, j) + Q.get(i, 1) * R.get(1, j) + Q.get(i, 2) * R.get(2, j) + T.get(j, 0));
+                Q.set(i, j, Q.get(i, 0) * R.get(0, j) + Q.get(i, 1) * R.get(1, j) + Q.get(i, 2) * R.get(2, j) + T.get(j));
             }
         }
         return Q;
     }
     
-    private double readOffRMSD(DoubleMatrix2D P, DoubleMatrix2D Q){
+    private double readOffRMSD(DoubleMatrix2D P, DoubleMatrix2D QontoP){
         double distance = 0;
-        double currentDist;
         for (int i = 0; i < P.rows(); i++) {
-            currentDist = 0;
             for (int j = 0; j < 3; j++) {
-                currentDist += Math.pow(P.get(i, j) - Q.get(i, j), 2);
+                distance += Math.pow(P.get(i, j) - QontoP.get(i, j), 2);
             }
-            distance += Math.sqrt(currentDist);
         }
-        return distance;
+        return Math.sqrt(distance/P.rows());
     }
     
     public double gdt_ts(double l, DoubleMatrix2D covarMatrix, double E0, double L){
@@ -128,21 +148,13 @@ public class Superposition {
     }
     
     public static void main(String[] args) throws IOException {
-        Superposition s = new Superposition();
+        DoubleMatrix2D m = new DenseDoubleMatrix2D(new double[][]{new double[]{1,2,3}, new double[]{4,5,6}, new double[]{7,8,9}});
+        System.out.println(m.get(1, 0)); //Zeilen X Spalten
+//        Superposition s = new Superposition();
 //        String path = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/";
-        DoubleMatrix2D P = PDBParser.parseToMatrix("/home/h/harrert/Dokumente/GoBi/1c25000.pdb",true);//"1ewrA01.pdb"
-        DoubleMatrix2D Q = PDBParser.parseToMatrix("/home/h/harrert/Dokumente/GoBi/1a5t001.pdb",true);//path+"1exzB00.pdb"
-        DoubleMatrix2D centP = s.getCentroid(P);
-        DoubleMatrix2D centQ = s.getCentroid(Q);
-        DoubleMatrix2D cP = s.translate(P, centP);
-        DoubleMatrix2D cQ = s.translate(Q, s.getCentroid(Q));
-        System.out.println(s.initError(cP, cQ));
-        DoubleMatrix2D covar = s.covarMatrix(cP, cQ);
-        DoubleMatrix2D R = s.rotate(covar);
-        DoubleMatrix2D t = s.T(R, centP, centQ);
-        DoubleMatrix2D QontoP = s.move_Q_onto_P(Q, R, t);
-        System.out.println(matrixToString(QontoP));
-        System.out.println(s.readOffRMSD(P, Q));
+//        DoubleMatrix2D P = PDBParser.parseToMatrix("/Users/Tobias/Desktop/1c25000.pdb",true);//"1ewrA01.pdb"/home/h/harrert/Dokumente/GoBi/
+//        DoubleMatrix2D Q = PDBParser.parseToMatrix("/Users/Tobias/Desktop/1a5t001.pdb",true);//path+"1exzB00.pdb"
+        //System.out.println(s.readOffRMSD(P, Q));
     }
     
     private static String matrixToString(DoubleMatrix2D matrix){
