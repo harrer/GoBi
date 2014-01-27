@@ -38,8 +38,8 @@ public class TenLongSegments {
     public static void main(String[] args) throws IOException {
         String file = "/Users/Tobias/Dropbox/UNI/GoBi/Blatt 4/1r5ra00.backbone";
         ArrayList<DoubleMatrix2D> m = tenLongSegments(file);
-        DoubleMatrix2D P = m.get(0);
-        DoubleMatrix2D Q = m.get(3);
+        DoubleMatrix2D P = m.get(10);
+        DoubleMatrix2D Q = m.get(93);
         Superposition s = new Superposition(P, Q);
     }
     

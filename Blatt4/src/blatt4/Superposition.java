@@ -22,12 +22,10 @@ public class Superposition {
         DoubleMatrix1D centQ = getCentroid(Q);
         DoubleMatrix2D cP = translate(P, centP);
         DoubleMatrix2D cQ = translate(Q, centQ);
-//        System.out.println(initError(cP, cQ));
         DoubleMatrix2D covar = covarMatrix(cP, cQ);
         DoubleMatrix2D R = rotate(covar);
         DoubleMatrix1D t = T(R, centP, centQ);
         Q = move_Q_onto_P(Q, R, t);
-//        System.out.println(matrixToString(Q));
         System.out.println("read off RMSD: "+readOffRMSD(P, Q));
         System.out.println("calcRMSD: "+RMSD(covar, initError(cP, cQ), P.rows()));
     }
@@ -110,19 +108,20 @@ public class Superposition {
         t = alg.mult(R, c_q);
         t.assign(f.neg);
         t.assign(c_p, f.plus);
-//        DoubleMatrix1D T = alg.mult(R, c_q);
-        t.assign(new double[]{t.get(0)-c_p.get(0), t.get(1)-c_p.get(1), t.get(2)-c_p.get(2)});
         return t;
     }
     
     private DoubleMatrix2D move_Q_onto_P(DoubleMatrix2D Q, DoubleMatrix2D R, DoubleMatrix1D T){
+        R = R.viewDice();
         int r = Q.rows();
+        double[][] q_on_p = new double[r][3];
         for (int i = 0; i < Q.rows(); i++) {
-            for (int j = 0; j < 3; j++) {
-                Q.set(i, j, Q.get(i, 0) * R.get(0, j) + Q.get(i, 1) * R.get(1, j) + Q.get(i, 2) * R.get(2, j) + T.get(j));
-            }
+                double x = Q.get(i, 0) * R.get(0, 0) + Q.get(i, 1) * R.get(1, 0) + Q.get(i, 2) * R.get(2, 0) + T.get(0);
+                double y = Q.get(i, 0) * R.get(0, 1) + Q.get(i, 1) * R.get(1, 1) + Q.get(i, 2) * R.get(2, 1) + T.get(1);
+                double z = Q.get(i, 0) * R.get(0, 2) + Q.get(i, 1) * R.get(1, 2) + Q.get(i, 2) * R.get(2, 2) + T.get(2);
+                q_on_p[i] = new double[]{x,y,z};
         }
-        return Q;
+        return new DenseDoubleMatrix2D(q_on_p);
     }
     
     private double readOffRMSD(DoubleMatrix2D P, DoubleMatrix2D QontoP){
