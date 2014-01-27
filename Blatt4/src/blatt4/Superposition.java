@@ -27,9 +27,9 @@ public class Superposition {
         DoubleMatrix2D R = rotate(covar);
         DoubleMatrix1D t = T(R, centP, centQ);
         Q = move_Q_onto_P(Q, R, t);
-        System.out.println(matrixToString(Q));
+//        System.out.println(matrixToString(Q));
         System.out.println("read off RMSD: "+readOffRMSD(P, Q));
-        System.out.println(RMSD(covar, initError(cP, cQ), P.rows()));
+        System.out.println("calcRMSD: "+RMSD(covar, initError(cP, cQ), P.rows()));
     }
     
     private DoubleMatrix1D getCentroid(DoubleMatrix2D matrix){
@@ -48,9 +48,9 @@ public class Superposition {
     private DoubleMatrix2D translate(DoubleMatrix2D matrix, DoubleMatrix1D centroid){
         DoubleMatrix2D out = new DenseDoubleMatrix2D(matrix.rows(), matrix.columns());
         for (int i = 0; i < matrix.rows(); i++) {
-            out.set(i, 0, matrix.get(i, 0)+centroid.get(0));
-            out.set(i, 1, matrix.get(i, 1)+centroid.get(1));
-            out.set(i, 2, matrix.get(i, 2)+centroid.get(2));
+            out.set(i, 0, matrix.get(i, 0)-centroid.get(0));
+            out.set(i, 1, matrix.get(i, 1)-centroid.get(1));
+            out.set(i, 2, matrix.get(i, 2)-centroid.get(2));
         }
         return out;
     }
