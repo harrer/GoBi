@@ -8,8 +8,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import blatt1.*;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  *
@@ -17,29 +22,41 @@ import java.util.HashMap;
  */
 public class PDBParser {
 
-    private final static HashMap<String, Character> STANDARD_AAS = new HashMap<>();
+    private final static HashMap<String, String> STANDARD_AAS = new HashMap<>();
 
     public PDBParser() {
-        STANDARD_AAS.put("ALA", 'A');
-        STANDARD_AAS.put("ARG", 'R');
-        STANDARD_AAS.put("ASN", 'N');
-        STANDARD_AAS.put("ASP", 'D');
-        STANDARD_AAS.put("CYS", 'C');
-        STANDARD_AAS.put("GLU", 'E');
-        STANDARD_AAS.put("GLN", 'Q');
-        STANDARD_AAS.put("GLY", 'G');
-        STANDARD_AAS.put("HIS", 'H');
-        STANDARD_AAS.put("ILE", 'I');
-        STANDARD_AAS.put("LEU", 'L');
-        STANDARD_AAS.put("LYS", 'K');
-        STANDARD_AAS.put("MET", 'M');
-        STANDARD_AAS.put("PHE", 'F');
-        STANDARD_AAS.put("PRO", 'P');
-        STANDARD_AAS.put("SER", 'S');
-        STANDARD_AAS.put("THR", 'T');
-        STANDARD_AAS.put("VAL", 'V');
-        STANDARD_AAS.put("TYR", 'Y');
-        STANDARD_AAS.put("TRP", 'W');
+        STANDARD_AAS.put("ALA", "A");
+        STANDARD_AAS.put("ARG", "R");
+        STANDARD_AAS.put("ASN", "N");
+        STANDARD_AAS.put("ASP", "D");
+        STANDARD_AAS.put("CYS", "C");
+        STANDARD_AAS.put("GLU", "E");
+        STANDARD_AAS.put("GLN", "Q");
+        STANDARD_AAS.put("GLY", "G");
+        STANDARD_AAS.put("HIS", "H");
+        STANDARD_AAS.put("ILE", "I");
+        STANDARD_AAS.put("LEU", "L");
+        STANDARD_AAS.put("LYS", "K");
+        STANDARD_AAS.put("MET", "M");
+        STANDARD_AAS.put("PHE", "F");
+        STANDARD_AAS.put("PRO", "P");
+        STANDARD_AAS.put("SER", "S");
+        STANDARD_AAS.put("THR", "T");
+        STANDARD_AAS.put("VAL", "V");
+        STANDARD_AAS.put("TYR", "Y");
+        STANDARD_AAS.put("TRP", "W");
+        int s = STANDARD_AAS.size();
+        HashMap<String, String> tmp = new HashMap(STANDARD_AAS.size());
+        for (Map.Entry<String, String> entry : STANDARD_AAS.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            tmp.put(value, key);
+        }
+        for (Map.Entry<String, String> entry : tmp.entrySet()) {
+            String k = entry.getKey();
+            String v = entry.getValue();
+            STANDARD_AAS.put(k, v);
+        }
     }
 
     public static DoubleMatrix2D parseToMatrix(String file, boolean[] allignedPositions) throws IOException {//, int positions
@@ -121,6 +138,31 @@ public class PDBParser {
         br.close();
         return sb.toString();
     }
+    
+    public static String matrixToPDB(DoubleMatrix2D matrix, String sequence, String path_out, String name) throws FileNotFoundException{
+        StringBuilder sb = new StringBuilder("REMARK\nREMARK Protein ");
+        DecimalFormat dec = new DecimalFormat("#0.000",new DecimalFormatSymbols(Locale.US));
+        sb.append(name).append("\nREMARK File written by harrert\nREMARK\n");
+        for (int i = 0; i < matrix.rows(); i++) {
+            sb.append("ATOM   ").append(i).append("   CA   ").append(STANDARD_AAS.get(sequence.substring(i, i+1))).append("   B   ").append(i);
+            sb.append("   ").append(dec.format(matrix.get(i, 0))).append("   ").append(dec.format(matrix.get(i, 1))).append("   ").append(dec.format(matrix.get(i, 2))).append("\n");
+        }
+        sb.append("TER");
+        PrintWriter writer = new PrintWriter(path_out+name);
+        writer.write(sb.toString());
+        writer.close();
+        return sb.toString();
+    }
+    
+    public static String alignedSequence(String sequence, boolean[] alignedPositions){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < sequence.length(); i++) {
+            if(alignedPositions[i]){
+                sb.append(sequence.charAt(i));
+            }
+        }
+        return sb.toString();
+    }
 
     private static HashMap<String, String> params(String matrix, String go, String ge, String mode) {
         HashMap<String, String> params = new HashMap<>();
@@ -142,16 +184,17 @@ public class PDBParser {
     public static void main(String[] args) throws IOException {
         long timeBefore = new Date().getTime();
         PDBParser p = new PDBParser();
-        String file = "/Users/Tobias/Desktop/pdb/1wq2B00.pdb";//"/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1ev0B00.pdb"; "/home/tobias/Documents/GoBi/Blatt4/1ev0B00.pdb";
-        String file2 = "/Users/Tobias/Desktop/pdb/1lddB00.pdb";
-        String seq1 = pdbToSequence(file), seq2 = pdbToSequence(file2);
+        String file_p = "/Users/Tobias/Desktop/pdb/1wq2B00.pdb";//"/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1ev0B00.pdb"; "/home/tobias/Documents/GoBi/Blatt4/1ev0B00.pdb";
+        String file_q = "/Users/Tobias/Desktop/pdb/1lddB00.pdb";
+        String seq1 = pdbToSequence(file_p), seq2 = pdbToSequence(file_q);
         Gotoh g = new Gotoh(params("dayhoff", "-12", "-1", "freeshift"));
         g.setSequences(seq1, seq2);
         String[] ali = g.backtrackingFreeshift(g.fillMatrixFreeshift());
         boolean[] b = alignedPositions(ali);
-        DoubleMatrix2D matrix = parseToMatrix(file,b);
-        DoubleMatrix2D matrix2 = parseToMatrix(file2,b);
-        Superposition s = new Superposition(matrix, matrix2);
+        DoubleMatrix2D P = parseToMatrix(file_p,b);
+        DoubleMatrix2D Q = parseToMatrix(file_q,b);
+        Object[] superposition = new Superposition().superimpose(P, Q);
+        matrixToPDB((DoubleMatrix2D)superposition[0], alignedSequence(seq2, b), "/Users/Tobias/Desktop/", "out.pdb");
         System.out.println(new Date().getTime() - timeBefore + " ms");
     }
 }
