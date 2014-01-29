@@ -174,8 +174,8 @@ public class PDBParser {
         return params;
     }
 
-    private static Boolean[] alignedPositions(String[] alignment, boolean upperSequence) {
-        ArrayList<Boolean> b = new ArrayList<>();
+    private static Boolean[] alignedPositions(String[] alignment, boolean upperSequence, int seqLength) {
+        boolean[] b = new boolean[seqLength];
         if (upperSequence) {
             for (int i = 0; i < alignment[0].length(); i++) {
                 if ((alignment[0].charAt(i) != '-') && (alignment[1].charAt(i) != '-')) {
@@ -210,8 +210,8 @@ public class PDBParser {
             String seq1 = pdbToSequence(file_p), seq2 = pdbToSequence(file_q);
             g.setSequences(seq1, seq2);
             String[] ali = g.backtrackingFreeshift(g.fillMatrixFreeshift());
-            DoubleMatrix2D P = parseToMatrix(file_p, alignedPositions(ali, true));
-            DoubleMatrix2D Q = parseToMatrix(file_q, alignedPositions(ali, false));
+            DoubleMatrix2D P = parseToMatrix(file_p, alignedPositions(ali, true, seq1.length()));
+            DoubleMatrix2D Q = parseToMatrix(file_q, alignedPositions(ali, false, seq2.length()));
             Superposition s = new Superposition();
             Object[] superposition = s.superimpose(P, Q);
             ArrayList<Double> rTmp = (rmsd_map.containsKey(1.0 * P.rows())) ? rmsd_map.get(1.0 * P.rows()) : new ArrayList<Double>();
