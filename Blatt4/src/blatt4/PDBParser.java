@@ -193,9 +193,9 @@ public class PDBParser {
                 }
             }
         }
-        for (int i = 0; i < alignment[0].length() - b.size(); i++) {
-            b.add(Boolean.FALSE);
-        }
+//        for (int i = 0; i < alignment[0].length() - b.size(); i++) {
+//            b.add(Boolean.FALSE);
+//        }
         return b.toArray(new Boolean[]{});
     }
 
