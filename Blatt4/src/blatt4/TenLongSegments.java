@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -36,7 +37,7 @@ public class TenLongSegments {
         return tenLongs;
     }
     
-    public static ArrayList[] readcInpairs(String file) throws FileNotFoundException, IOException{
+    public static HashMap<String, String> readcInpairs(String file) throws FileNotFoundException, IOException{
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line, s = "";
         String[] split;
@@ -48,16 +49,22 @@ public class TenLongSegments {
             pairsList.add(new String[]{split[0], split[1]});
         }
         br.close();
-        return new ArrayList[]{bList, pairsList};
+        HashMap<String, String> out = new HashMap();
+        for (int i=0; i<bList.size(); i++) {
+            if(bList.get(i)){
+                out.put(pairsList.get(i)[0], pairsList.get(i)[1]);
+            }
+        }
+        return out;//return new ArrayList[]{bList, pairsList};
     }
     
     public static void main(String[] args) throws IOException {
-        readcInpairs("/Users/Tobias/Desktop/cathscop.inpairs");
-        String file = "/Users/Tobias/Dropbox/UNI/GoBi/Blatt 4/1r5ra00.backbone";
-        ArrayList<DoubleMatrix2D> m = tenLongSegments(file);
-        DoubleMatrix2D P = m.get(10);
-        DoubleMatrix2D Q = m.get(93);
-        Object[] s = new Superposition().superimpose(P, Q);
+        HashMap<String, String> inpairs = readcInpairs("/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/cathscop.inpairs");//"/Users/Tobias/Desktop/cathscop.inpairs";
+//        String file = "/Users/Tobias/Dropbox/UNI/GoBi/Blatt 4/1r5ra00.backbone";
+//        ArrayList<DoubleMatrix2D> m = tenLongSegments(file);
+//        DoubleMatrix2D P = m.get(10);
+//        DoubleMatrix2D Q = m.get(93);
+//        Object[] s = new Superposition().superimpose(P, Q);
     }
     
 }

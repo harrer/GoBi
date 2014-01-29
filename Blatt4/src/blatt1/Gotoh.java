@@ -48,7 +48,7 @@ public class Gotoh {
                 max.setMax(seq1.length(), i, A[seq1.length()][i]);
             }
         }
-        System.out.println("Score: "+max.getMax()[2]/10.0);
+//        System.out.println("Score: "+max.getMax()[2]/10.0);
         return max;
     }
 
@@ -65,7 +65,7 @@ public class Gotoh {
                 }
             }
         }
-        System.out.println("Score: "+max/10.0);
+//        System.out.println("Score: "+max/10.0);
         return new AlignmentMax(max_i, max_j, max, mode);
     }
 
@@ -78,7 +78,7 @@ public class Gotoh {
                 A[i][j] = Math.max(A[i - 1][j - 1] + getCost(seq1.charAt(i - 1), seq2.charAt(j - 1)), a);
             }
         }
-        System.out.println("Score: "+A[seq1.length()][seq2.length()]/10.0);
+//        System.out.println("Score: "+A[seq1.length()][seq2.length()]/10.0);
         return A[seq1.length()][seq2.length()];
     }
     

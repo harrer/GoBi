@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import blatt1.*;
+import static blatt4.TenLongSegments.readcInpairs;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
@@ -59,7 +60,7 @@ public class PDBParser {
         }
     }
 
-    public static DoubleMatrix2D parseToMatrix(String file, boolean[] allignedPositions) throws IOException {//, int positions
+    public static DoubleMatrix2D parseToMatrix(String file, Boolean[] allignedPositions) throws IOException {//, int positions
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         int aaCount = -1;
@@ -138,26 +139,26 @@ public class PDBParser {
         br.close();
         return sb.toString();
     }
-    
-    public static String matrixToPDB(DoubleMatrix2D matrix, String sequence, String path_out, String name) throws FileNotFoundException{
+
+    public static String matrixToPDB(DoubleMatrix2D matrix, String sequence, String path_out, String name) throws FileNotFoundException {
         StringBuilder sb = new StringBuilder("REMARK\nREMARK Protein ");
-        DecimalFormat dec = new DecimalFormat("#0.000",new DecimalFormatSymbols(Locale.US));
+        DecimalFormat dec = new DecimalFormat("#0.000", new DecimalFormatSymbols(Locale.US));
         sb.append(name).append("\nREMARK File written by harrert\nREMARK\n");
         for (int i = 0; i < matrix.rows(); i++) {
-            sb.append("ATOM   ").append(i).append("   CA   ").append(STANDARD_AAS.get(sequence.substring(i, i+1))).append("   B   ").append(i);
+            sb.append("ATOM   ").append(i).append("   CA   ").append(STANDARD_AAS.get(sequence.substring(i, i + 1))).append("   B   ").append(i);
             sb.append("   ").append(dec.format(matrix.get(i, 0))).append("   ").append(dec.format(matrix.get(i, 1))).append("   ").append(dec.format(matrix.get(i, 2))).append("\n");
         }
         sb.append("TER");
-        PrintWriter writer = new PrintWriter(path_out+name);
+        PrintWriter writer = new PrintWriter(path_out + name);
         writer.write(sb.toString());
         writer.close();
         return sb.toString();
     }
-    
-    public static String alignedSequence(String sequence, boolean[] alignedPositions){
+
+    public static String alignedSequence(String sequence, boolean[] alignedPositions) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < sequence.length(); i++) {
-            if(alignedPositions[i]){
+            if (alignedPositions[i]) {
                 sb.append(sequence.charAt(i));
             }
         }
@@ -173,28 +174,65 @@ public class PDBParser {
         return params;
     }
 
-    private static boolean[] alignedPositions(String[] alignment) {
-        boolean[] b = new boolean[alignment[0].length()];
-        for (int i = 0; i < alignment[0].length(); i++) {
-            b[i] = ((alignment[0].charAt(i) != '-') && (alignment[1].charAt(i) != '-'));
+    private static Boolean[] alignedPositions(String[] alignment, boolean upperSequence) {
+        ArrayList<Boolean> b = new ArrayList<>();
+        if (upperSequence) {
+            for (int i = 0; i < alignment[0].length(); i++) {
+                if ((alignment[0].charAt(i) != '-') && (alignment[1].charAt(i) != '-')) {
+                    b.add(Boolean.TRUE);
+                } else if ((alignment[0].charAt(i) != '-') && (alignment[1].charAt(i) == '-')) {
+                    b.add(Boolean.FALSE);
+                }
+            }
+        } else {
+            for (int i = 0; i < alignment[0].length(); i++) {
+                if ((alignment[0].charAt(i) != '-') && (alignment[1].charAt(i) != '-')) {
+                    b.add(Boolean.TRUE);
+                } else if ((alignment[1].charAt(i) != '-') && (alignment[0].charAt(i) == '-')) {
+                    b.add(Boolean.FALSE);
+                }
+            }
         }
-        return b;
+        for (int i = 0; i < alignment[0].length() - b.size(); i++) {
+            b.add(Boolean.FALSE);
+        }
+        return b.toArray(new Boolean[]{});
+    }
+
+    public static Object[] start(HashMap<String, String> readcInpairs) throws IOException {
+        HashMap<Double, ArrayList<Double>> rmsd_map = new HashMap<>();
+        HashMap<Double, ArrayList<Double>> gtdTS_map = new HashMap<>();
+        Gotoh g = new Gotoh(params("dayhoff", "-12", "-1", "freeshift"));
+        String pdbPath = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/";
+        for (Map.Entry<String, String> entry : readcInpairs.entrySet()) {
+            String file_p = pdbPath + entry.getKey() + ".pdb";
+            String file_q = pdbPath + entry.getValue() + ".pdb";
+            String seq1 = pdbToSequence(file_p), seq2 = pdbToSequence(file_q);
+            g.setSequences(seq1, seq2);
+            String[] ali = g.backtrackingFreeshift(g.fillMatrixFreeshift());
+            DoubleMatrix2D P = parseToMatrix(file_p, alignedPositions(ali, true));
+            DoubleMatrix2D Q = parseToMatrix(file_q, alignedPositions(ali, false));
+            Superposition s = new Superposition();
+            Object[] superposition = s.superimpose(P, Q);
+            ArrayList<Double> rTmp = (rmsd_map.containsKey(1.0 * P.rows())) ? rmsd_map.get(1.0 * P.rows()) : new ArrayList<Double>();
+            rTmp.add((Double) superposition[2]);
+            ArrayList<Double> gTmp = (gtdTS_map.containsKey(1.0 * P.rows())) ? gtdTS_map.get(1.0 * P.rows()) : new ArrayList<Double>();
+            gTmp.add((Double) superposition[3]);
+            rmsd_map.put(1.0 * P.rows(), rTmp);
+            gtdTS_map.put(1.0 * P.rows(), gTmp);
+        }
+        return new Object[]{rmsd_map, gtdTS_map};
     }
 
     public static void main(String[] args) throws IOException {
         long timeBefore = new Date().getTime();
         PDBParser p = new PDBParser();
-        String file_p = "/Users/Tobias/Desktop/pdb/1wq2B00.pdb";//"/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1ev0B00.pdb"; "/home/tobias/Documents/GoBi/Blatt4/1ev0B00.pdb";
-        String file_q = "/Users/Tobias/Desktop/pdb/1lddB00.pdb";
-        String seq1 = pdbToSequence(file_p), seq2 = pdbToSequence(file_q);
-        Gotoh g = new Gotoh(params("dayhoff", "-12", "-1", "freeshift"));
-        g.setSequences(seq1, seq2);
-        String[] ali = g.backtrackingFreeshift(g.fillMatrixFreeshift());
-        boolean[] b = alignedPositions(ali);
-        DoubleMatrix2D P = parseToMatrix(file_p,b);
-        DoubleMatrix2D Q = parseToMatrix(file_q,b);
-        Object[] superposition = new Superposition().superimpose(P, Q);
-        matrixToPDB((DoubleMatrix2D)superposition[0], alignedSequence(seq2, b), "/Users/Tobias/Desktop/", "out.pdb");
+//        String file_p = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1wq2B00.pdb";// "/home/tobias/Documents/GoBi/Blatt4/1ev0B00.pdb";
+//        String file_q = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1lddB00.pdb";//"/Users/Tobias/Desktop/pdb/1wq2B00.pdb";
+//        System.out.println("gdt-ts: "+s.gdt_ts(P, (DoubleMatrix2D)superposition[0]));
+//        matrixToPDB((DoubleMatrix2D)superposition[0], alignedSequence(seq2, b), "/Users/Tobias/Desktop/", "out.pdb");
+        HashMap<String, String> inpairs = readcInpairs("/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/cathscop.inpairs");
+        Object[] sp = start(inpairs);
         System.out.println(new Date().getTime() - timeBefore + " ms");
     }
 }

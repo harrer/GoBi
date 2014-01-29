@@ -26,7 +26,7 @@ public class Superposition {
         DoubleMatrix2D R = rotate(covar);
         DoubleMatrix1D t = T(R, centP, centQ);
         Q = move_Q_onto_P(Q, R, t);
-        return new Object[]{Q, readOffRMSD(P, Q), RMSD(covar, initError(cP, cQ), P.rows())};
+        return new Object[]{Q, readOffRMSD(P, Q), RMSD(covar, initError(cP, cQ), P.rows()), gdt_ts(P, Q)};
     }
     
     private DoubleMatrix1D getCentroid(DoubleMatrix2D matrix){
@@ -133,16 +133,20 @@ public class Superposition {
         return Math.sqrt(distance/P.rows());
     }
     
-    public double gdt_ts(double l, DoubleMatrix2D covarMatrix, double E0, double L){
-        return (P(1,covarMatrix,E0,L) + P(2,covarMatrix,E0,L) + P(3,covarMatrix,E0,L) + P(4,covarMatrix,E0,L))/(4*l);
-    }
-    
-    private double P(int x, DoubleMatrix2D covarMatrix, double E0, double L){
-        int c=0;
-        if(RMSD(covarMatrix, E0, L) <= x) {
-            c++;
+    public double gdt_ts(DoubleMatrix2D P, DoubleMatrix2D Q){
+        int p1=0, p2=0, p4=0, p8=0;
+        for (int i = 0; i < P.rows(); i++) {
+            double distance = 0;
+            for (int j = 0; j < 3; j++) {
+                distance += Math.pow(P.get(i, j) - Q.get(i, j), 2);
+            }
+            distance = Math.sqrt(distance);
+            p1 = (distance<=1)? p1+1: p1;
+            p2 = (distance<=2)? p2+1: p2;
+            p4 = (distance<=4)? p4+1: p4;
+            p8 = (distance<=8)? p8+1: p8;
         }
-        return c;
+        return (p1+p2+p4+p8)/(4.0*P.rows());
     }
     
     public static void main(String[] args) throws IOException {
