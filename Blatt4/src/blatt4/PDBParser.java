@@ -60,7 +60,7 @@ public class PDBParser {
         }
     }
 
-    public static DoubleMatrix2D parseToMatrix(String file, Boolean[] allignedPositions) throws IOException {//, int positions
+    public static DoubleMatrix2D parseToMatrix(String file, boolean[] allignedPositions) throws IOException {//, int positions
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         int aaCount = -1;
@@ -174,29 +174,34 @@ public class PDBParser {
         return params;
     }
 
-    private static Boolean[] alignedPositions(String[] alignment, boolean upperSequence, int seqLength) {
+    private static boolean[] alignedPositions(String[] alignment, boolean upperSequence, int seqLength) {
         boolean[] b = new boolean[seqLength];
+        int c = 0;
         if (upperSequence) {
             for (int i = 0; i < alignment[0].length(); i++) {
                 if ((alignment[0].charAt(i) != '-') && (alignment[1].charAt(i) != '-')) {
-                    b.add(Boolean.TRUE);
+                    b[c] = true;
+                    c++;
                 } else if ((alignment[0].charAt(i) != '-') && (alignment[1].charAt(i) == '-')) {
-                    b.add(Boolean.FALSE);
+                    b[c] = false;
+                    c++;
                 }
             }
         } else {
             for (int i = 0; i < alignment[0].length(); i++) {
                 if ((alignment[0].charAt(i) != '-') && (alignment[1].charAt(i) != '-')) {
-                    b.add(Boolean.TRUE);
+                    b[c] = true;
+                    c++;
                 } else if ((alignment[1].charAt(i) != '-') && (alignment[0].charAt(i) == '-')) {
-                    b.add(Boolean.FALSE);
+                    b[c] = false;
+                    c++;
                 }
             }
         }
 //        for (int i = 0; i < alignment[0].length() - b.size(); i++) {
 //            b.add(Boolean.FALSE);
 //        }
-        return b.toArray(new Boolean[]{});
+        return b;
     }
 
     public static Object[] start(HashMap<String, String> readcInpairs) throws IOException {
