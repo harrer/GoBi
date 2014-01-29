@@ -208,7 +208,7 @@ public class PDBParser {
         HashMap<Double, ArrayList<Double>> rmsd_map = new HashMap<>();
         HashMap<Double, ArrayList<Double>> gtdTS_map = new HashMap<>();
         Gotoh g = new Gotoh(params("dayhoff", "-12", "-1", "freeshift"));
-        String pdbPath = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/";
+        String pdbPath = "/Users/Tobias/Desktop/pdb/";//"/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/";
         for (Map.Entry<String, String> entry : readcInpairs.entrySet()) {
             String file_p = pdbPath + entry.getKey() + ".pdb";
             String file_q = pdbPath + entry.getValue() + ".pdb";
@@ -229,15 +229,28 @@ public class PDBParser {
         return new Object[]{rmsd_map, gtdTS_map};
     }
 
+    public static void superimpose(String p, String q) throws IOException {
+        Gotoh g = new Gotoh(params("dayhoff", "-12", "-1", "freeshift"));
+        String seq1 = pdbToSequence(p), seq2 = pdbToSequence(q);
+        g.setSequences(seq1, seq2);
+        String[] ali = g.backtrackingFreeshift(g.fillMatrixFreeshift());
+        DoubleMatrix2D P = parseToMatrix(p, alignedPositions(ali, true, seq1.length()));
+        DoubleMatrix2D Q = parseToMatrix(q, alignedPositions(ali, false, seq2.length()));
+        Superposition s = new Superposition();
+        Object[] superposition = s.superimpose(P, Q);
+        matrixToPDB(Q, seq2, "/Users/Tobias/Desktop/", "1ca_sImposed.pdb");
+    }
+
     public static void main(String[] args) throws IOException {
         long timeBefore = new Date().getTime();
         PDBParser p = new PDBParser();
-//        String file_p = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1wq2B00.pdb";// "/home/tobias/Documents/GoBi/Blatt4/1ev0B00.pdb";
-//        String file_q = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1lddB00.pdb";//"/Users/Tobias/Desktop/pdb/1wq2B00.pdb";
+        String file_p = "/Users/Tobias/Desktop/pdb/1tfxC00.pdb";//"/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1wq2B00.pdb";// "/home/tobias/Documents/GoBi/Blatt4/1ev0B00.pdb";
+        String file_q = "/Users/Tobias/Desktop/pdb/1ca0I00.pdb";//"/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1lddB00.pdb";
+        superimpose(file_p, file_q);
 //        System.out.println("gdt-ts: "+s.gdt_ts(P, (DoubleMatrix2D)superposition[0]));
 //        matrixToPDB((DoubleMatrix2D)superposition[0], alignedSequence(seq2, b), "/Users/Tobias/Desktop/", "out.pdb");
-        HashMap<String, String> inpairs = readcInpairs("/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/cathscop.inpairs");
-        Object[] sp = start(inpairs);
+//        HashMap<String, String> inpairs = readcInpairs("/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/cathscop.inpairs");
+//        Object[] sp = start(inpairs);
         System.out.println(new Date().getTime() - timeBefore + " ms");
     }
 }
