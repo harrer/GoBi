@@ -37,29 +37,32 @@ public class TenLongSegments {
         return tenLongs;
     }
     
-    public static HashMap<String, String> readcInpairs(String file) throws FileNotFoundException, IOException{
+    public static ArrayList<String[]> readcInpairs(String file) throws FileNotFoundException, IOException{
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line, s = "";
         String[] split;
+        int c = 0;
         ArrayList<Boolean> bList = new ArrayList<>();
         ArrayList<String[]> pairsList = new ArrayList<>();
         while((line = br.readLine()) != null){
             split = line.split("\\s");
             bList.add(split[2].equalsIgnoreCase(split[3]));
+            if(split[2].equalsIgnoreCase(split[3])){c++;}
             pairsList.add(new String[]{split[0], split[1]});
         }
+//        System.out.println(c+" matches");
         br.close();
-        HashMap<String, String> out = new HashMap();
+        ArrayList<String[]> out = new ArrayList<>();
         for (int i=0; i<bList.size(); i++) {
             if(bList.get(i)){
-                out.put(pairsList.get(i)[0], pairsList.get(i)[1]);
+                out.add(new String[]{pairsList.get(i)[0], pairsList.get(i)[1]});
             }
         }
         return out;//return new ArrayList[]{bList, pairsList};
     }
     
     public static void main(String[] args) throws IOException {
-        HashMap<String, String> inpairs = readcInpairs("/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/cathscop.inpairs");//"/Users/Tobias/Desktop/cathscop.inpairs";
+//        HashMap<String, String> inpairs = readcInpairs("/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/cathscop.inpairs");//"/Users/Tobias/Desktop/cathscop.inpairs";
 //        String file = "/Users/Tobias/Dropbox/UNI/GoBi/Blatt 4/1r5ra00.backbone";
 //        ArrayList<DoubleMatrix2D> m = tenLongSegments(file);
 //        DoubleMatrix2D P = m.get(10);

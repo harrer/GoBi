@@ -63,13 +63,16 @@ public class PDBParser {
     public static DoubleMatrix2D parseToMatrix(String file, boolean[] allignedPositions) throws IOException {//, int positions
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
-        int aaCount = -1;
+        int aaCount = -1, cc = -1;
         ArrayList<double[]> list = new ArrayList();
         while ((line = br.readLine()) != null) {
             if (line.startsWith("ATOM")) {
                 String[] split = line.split("\\s+");
-                int cc = Integer.parseInt(split[5]);
-                if (allignedPositions[cc] && split[2].equalsIgnoreCase("CA")) {//split[2].equalsIgnoreCase("N") || split[2].equalsIgnoreCase("CA") || split[2].equalsIgnoreCase("C")
+                if (cc != Integer.parseInt(split[5])) {
+                    aaCount++;
+                    cc = Integer.parseInt(split[5]);
+                }
+                if (allignedPositions[aaCount] && split[2].equalsIgnoreCase("CA")) {//split[2].equalsIgnoreCase("N") || split[2].equalsIgnoreCase("CA") || split[2].equalsIgnoreCase("C")
                     list.add(new double[]{Double.parseDouble(split[5]), Double.parseDouble(split[6]), Double.parseDouble(split[7])});
                 }
             }
@@ -203,30 +206,105 @@ public class PDBParser {
 //        }
         return b;
     }
-
-    public static Object[] start(HashMap<String, String> readcInpairs) throws IOException {
-        HashMap<Double, ArrayList<Double>> rmsd_map = new HashMap<>();
-        HashMap<Double, ArrayList<Double>> gtdTS_map = new HashMap<>();
-        Gotoh g = new Gotoh(params("dayhoff", "-12", "-1", "freeshift"));
-        String pdbPath = "/Users/Tobias/Desktop/pdb/";//"/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/";
-        for (Map.Entry<String, String> entry : readcInpairs.entrySet()) {
-            String file_p = pdbPath + entry.getKey() + ".pdb";
-            String file_q = pdbPath + entry.getValue() + ".pdb";
-            String seq1 = pdbToSequence(file_p), seq2 = pdbToSequence(file_q);
-            g.setSequences(seq1, seq2);
-            String[] ali = g.backtrackingFreeshift(g.fillMatrixFreeshift());
-            DoubleMatrix2D P = parseToMatrix(file_p, alignedPositions(ali, true, seq1.length()));
-            DoubleMatrix2D Q = parseToMatrix(file_q, alignedPositions(ali, false, seq2.length()));
-            Superposition s = new Superposition();
-            Object[] superposition = s.superimpose(P, Q);
-            ArrayList<Double> rTmp = (rmsd_map.containsKey(1.0 * P.rows())) ? rmsd_map.get(1.0 * P.rows()) : new ArrayList<Double>();
-            rTmp.add((Double) superposition[2]);
-            ArrayList<Double> gTmp = (gtdTS_map.containsKey(1.0 * P.rows())) ? gtdTS_map.get(1.0 * P.rows()) : new ArrayList<Double>();
-            gTmp.add((Double) superposition[3]);
-            rmsd_map.put(1.0 * P.rows(), rTmp);
-            gtdTS_map.put(1.0 * P.rows(), gTmp);
+    
+    private static String hashMapToFile(HashMap<Double, ArrayList<Double>> map, String outPath) throws FileNotFoundException{
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<Double, ArrayList<Double>> entry : map.entrySet()) {
+            Double identity = entry.getKey();
+            ArrayList<Double> arrayList = entry.getValue();
+            sb.append(identity).append("\t");
+            for (Double d : arrayList) {
+                sb.append(d).append(';');
+            }
+            sb.append("\n");
         }
-        return new Object[]{rmsd_map, gtdTS_map};
+        PrintWriter writer = new PrintWriter(outPath);
+        writer.write(sb.toString());
+        writer.close();
+        return sb.toString();
+    }
+    
+    private double checkScoreFreeshift(String s1, String s2){
+        int left = 0, right = s1.length()-1, score = 0;
+        if(s1.startsWith("-")){
+            while(s1.charAt(left) == '-'){
+                left++;
+            }
+        }
+        else if(s2.startsWith("-")){
+            while(s2.charAt(left) == '-'){
+                left++;
+            }
+        }
+        if(s2.endsWith("-")){
+                while(s2.charAt(right) == '-'){
+                    right--;
+                }
+            }
+            else if(s1.endsWith("-")){
+                while(s1.charAt(right) == '-'){
+                    right--;
+                }
+            }
+        for (int i = left; i <= right; i++) {
+            if(s1.charAt(i) == '-' || s2.charAt(i) == '-'){
+                int k=1;
+                while((i+k)<s1.length() && (s1.charAt(i+k) == '-' || s2.charAt(i+k) == '-')){
+                    k++;
+                }
+                score += g(k);
+                i += (k-1);
+            }
+            else{
+                score += getCost(s1.charAt(i), s2.charAt(i));
+            }
+        }
+        return score/10.0;
+    }
+    
+    private static double seqIdentity(String[] ali){//soll exakt identische AA / Anzahl alinierter, siehe checkscore
+        int id = 0, firstMatch = -1;
+        boolean flag = false;
+        for (int i = 0; i < ali.length; i++) {
+            id = ((ali[0].charAt(i) != '-') && (ali[1].charAt(i) != '-'))? id+1: id;
+            if(!flag && (ali[0].charAt(i) != '-') && (ali[1].charAt(i) != '-')){
+                flag = true;
+                firstMatch = i;
+            }
+            if()
+        }
+    }
+
+    public static String start(ArrayList<String[]> readcInpairs, String outFile) throws IOException {
+        StringBuilder sb = new StringBuilder("P\tQ\tidentity\tRMSD\tgtd-ts");
+        Gotoh g = new Gotoh(params("dayhoff", "-12", "-1", "freeshift"));
+        String pdbPath = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/";//"/Users/Tobias/Desktop/pdb/"
+        int errCount = 0, count=0, p=0;
+        Superposition s = new Superposition();
+        for (String[] seq : readcInpairs) {
+            count++;
+            if(count>=(p*558)){System.out.println(p+"%"); p++;}
+            String file_p = pdbPath + seq[0] + ".pdb";
+            String file_q = pdbPath + seq[1] + ".pdb";
+            try {
+                String seq1 = pdbToSequence(file_p), seq2 = pdbToSequence(file_q);
+                g.setSequences(seq1, seq2);
+                String[] ali = g.backtrackingFreeshift(g.fillMatrixFreeshift());
+                DoubleMatrix2D P = parseToMatrix(file_p, alignedPositions(ali, true, seq1.length()));
+                DoubleMatrix2D Q = parseToMatrix(file_q, alignedPositions(ali, false, seq2.length()));
+                Object[] superposition = s.superimpose(P, Q);
+                double identity = seqIdentity(ali);
+                sb.append(seq[0]).append('\t').append(seq[1]).append('\t').append(identity).append('\t').append(superposition[2]).append('\t').append(superposition[3]).append('\n');
+            } catch (Exception e) {
+                //System.out.println(entry.getKey() + ", " + entry.getValue());
+                errCount++;
+            }
+        }
+//        System.out.println(errCount+" errors on "+count);
+        PrintWriter writer = new PrintWriter(outFile);
+        writer.write(sb.toString());
+        writer.close();
+        return sb.toString();
     }
 
     public static void superimpose(String p, String q) throws IOException {
@@ -238,19 +316,22 @@ public class PDBParser {
         DoubleMatrix2D Q = parseToMatrix(q, alignedPositions(ali, false, seq2.length()));
         Superposition s = new Superposition();
         Object[] superposition = s.superimpose(P, Q);
-        matrixToPDB(Q, seq2, "/Users/Tobias/Desktop/", "1ca_sImposed.pdb");
+        matrixToPDB(Q, seq2, "/home/h/harrert/Desktop/", "1k9c_on_1jhn.pdb");
     }
 
     public static void main(String[] args) throws IOException {
         long timeBefore = new Date().getTime();
         PDBParser p = new PDBParser();
-        String file_p = "/Users/Tobias/Desktop/pdb/1tfxC00.pdb";//"/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1wq2B00.pdb";// "/home/tobias/Documents/GoBi/Blatt4/1ev0B00.pdb";
-        String file_q = "/Users/Tobias/Desktop/pdb/1ca0I00.pdb";//"/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1lddB00.pdb";
-        superimpose(file_p, file_q);
+        String file_p = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1jhnA02.pdb";//"/home/tobias/Documents/GoBi/Blatt4/1ev0B00.pdb";
+        String file_q = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1k9cA00.pdb";//"/Users/Tobias/Desktop/pdb/1lddB00.pdb";
+//        superimpose(file_p, file_q);
 //        System.out.println("gdt-ts: "+s.gdt_ts(P, (DoubleMatrix2D)superposition[0]));
 //        matrixToPDB((DoubleMatrix2D)superposition[0], alignedSequence(seq2, b), "/Users/Tobias/Desktop/", "out.pdb");
-//        HashMap<String, String> inpairs = readcInpairs("/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/cathscop.inpairs");
-//        Object[] sp = start(inpairs);
+        ArrayList<String[]> inpairs = readcInpairs("/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/cathscop.inpairs");
+        String s = start(inpairs, "/home/h/harrert/Desktop/inpairs_mapping.txt");
+//        hashMapToFile((HashMap<Double, ArrayList<Double>>) sp[0], "/home/h/harrert/Desktop/rmsd_map.txt");
+//        hashMapToFile((HashMap<Double, ArrayList<Double>>) sp[1], "/home/h/harrert/Desktop/gtdTS_map.txt");
+//        superimpose(file_p, file_q);
         System.out.println(new Date().getTime() - timeBefore + " ms");
     }
 }

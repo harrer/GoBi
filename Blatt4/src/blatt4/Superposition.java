@@ -110,7 +110,7 @@ public class Superposition {
         return t;
     }
     
-    private DoubleMatrix2D move_Q_onto_P(DoubleMatrix2D Q, DoubleMatrix2D R, DoubleMatrix1D T){
+    private DoubleMatrix2D move_Q_onto_P(DoubleMatrix2D Q, DoubleMatrix2D R, DoubleMatrix1D T){// hier kann gesamte pdb Koordinaten verwendet werden
         R = R.viewDice();
         int r = Q.rows();
         double[][] q_on_p = new double[r][3];
@@ -146,7 +146,7 @@ public class Superposition {
             p4 = (distance<=4)? p4+1: p4;
             p8 = (distance<=8)? p8+1: p8;
         }
-        return (p1+p2+p4+p8)/(4.0*P.rows());
+        return (p1+p2+p4+p8)/(4.0*P.rows());//Länge soll durchscnttl. Länge der beiden Sequnezen sein
     }
     
     public static void main(String[] args) throws IOException {
