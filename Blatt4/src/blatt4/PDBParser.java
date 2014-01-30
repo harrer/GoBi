@@ -206,8 +206,8 @@ public class PDBParser {
 //        }
         return b;
     }
-    
-    private static String hashMapToFile(HashMap<Double, ArrayList<Double>> map, String outPath) throws FileNotFoundException{
+
+    private static String hashMapToFile(HashMap<Double, ArrayList<Double>> map, String outPath) throws FileNotFoundException {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<Double, ArrayList<Double>> entry : map.entrySet()) {
             Double identity = entry.getKey();
@@ -223,67 +223,46 @@ public class PDBParser {
         writer.close();
         return sb.toString();
     }
-    
-    private double checkScoreFreeshift(String s1, String s2){
-        int left = 0, right = s1.length()-1, score = 0;
-        if(s1.startsWith("-")){
-            while(s1.charAt(left) == '-'){
+
+    private static double seqIdentity(String[] ali) {//soll exakt identische AA / Anzahl alinierter, siehe checkscore
+        int id = 0;
+        int left = 0, right = ali[0].length() - 1, score = 0;
+        if (ali[0].startsWith("-")) {
+            while (ali[0].charAt(left) == '-') {
+                left++;
+            }
+        } else if (ali[1].startsWith("-")) {
+            while (ali[1].charAt(left) == '-') {
                 left++;
             }
         }
-        else if(s2.startsWith("-")){
-            while(s2.charAt(left) == '-'){
-                left++;
+        if (ali[1].endsWith("-")) {
+            while (ali[1].charAt(right) == '-') {
+                right--;
+            }
+        } else if (ali[0].endsWith("-")) {
+            while (ali[0].charAt(right) == '-') {
+                right--;
             }
         }
-        if(s2.endsWith("-")){
-                while(s2.charAt(right) == '-'){
-                    right--;
-                }
-            }
-            else if(s1.endsWith("-")){
-                while(s1.charAt(right) == '-'){
-                    right--;
-                }
-            }
         for (int i = left; i <= right; i++) {
-            if(s1.charAt(i) == '-' || s2.charAt(i) == '-'){
-                int k=1;
-                while((i+k)<s1.length() && (s1.charAt(i+k) == '-' || s2.charAt(i+k) == '-')){
-                    k++;
-                }
-                score += g(k);
-                i += (k-1);
-            }
-            else{
-                score += getCost(s1.charAt(i), s2.charAt(i));
-            }
+            id = ((ali[0].charAt(i) != '-') && (ali[1].charAt(i) != '-')) ? id + 1 : id;
         }
-        return score/10.0;
-    }
-    
-    private static double seqIdentity(String[] ali){//soll exakt identische AA / Anzahl alinierter, siehe checkscore
-        int id = 0, firstMatch = -1;
-        boolean flag = false;
-        for (int i = 0; i < ali.length; i++) {
-            id = ((ali[0].charAt(i) != '-') && (ali[1].charAt(i) != '-'))? id+1: id;
-            if(!flag && (ali[0].charAt(i) != '-') && (ali[1].charAt(i) != '-')){
-                flag = true;
-                firstMatch = i;
-            }
-            if()
-        }
+        return 1.0*id/(right-left+1);
     }
 
     public static String start(ArrayList<String[]> readcInpairs, String outFile) throws IOException {
         StringBuilder sb = new StringBuilder("P\tQ\tidentity\tRMSD\tgtd-ts");
         Gotoh g = new Gotoh(params("dayhoff", "-12", "-1", "freeshift"));
         String pdbPath = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/";//"/Users/Tobias/Desktop/pdb/"
-        int errCount = 0, count=0, p=0;
+        int errCount = 0, count = 0, p = 0;
         Superposition s = new Superposition();
         for (String[] seq : readcInpairs) {
             count++;
-            if(count>=(p*558)){System.out.println(p+"%"); p++;}
+            if (count >= (p * 558)) {
+                System.out.println(p + "%");
+                p++;
+            }
             String file_p = pdbPath + seq[0] + ".pdb";
             String file_q = pdbPath + seq[1] + ".pdb";
             try {
@@ -329,8 +308,6 @@ public class PDBParser {
 //        matrixToPDB((DoubleMatrix2D)superposition[0], alignedSequence(seq2, b), "/Users/Tobias/Desktop/", "out.pdb");
         ArrayList<String[]> inpairs = readcInpairs("/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/cathscop.inpairs");
         String s = start(inpairs, "/home/h/harrert/Desktop/inpairs_mapping.txt");
-//        hashMapToFile((HashMap<Double, ArrayList<Double>>) sp[0], "/home/h/harrert/Desktop/rmsd_map.txt");
-//        hashMapToFile((HashMap<Double, ArrayList<Double>>) sp[1], "/home/h/harrert/Desktop/gtdTS_map.txt");
 //        superimpose(file_p, file_q);
         System.out.println(new Date().getTime() - timeBefore + " ms");
     }
