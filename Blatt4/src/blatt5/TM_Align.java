@@ -56,7 +56,7 @@ public class TM_Align {
     }
 
     public static String start(ArrayList<String[]> readcInpairs, String outFile) throws IOException {
-        StringBuilder sb = new StringBuilder("P\tQ\tGotoh\tTMalign");
+        StringBuilder sb = new StringBuilder("P\tQ\tGotoh\tTMalign\n");
         Gotoh g = new Gotoh(params("dayhoff", "-12", "-1", "freeshift"));
         String pdbPath = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/";//"/Users/Tobias/Desktop/pdb/"
         String tm_path = "/home/proj/biosoft/PROTEINS/CATHSCOP/TMALIGN/";
