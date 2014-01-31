@@ -17,7 +17,7 @@ import java.util.Locale;
  */
 public class Superposition {
     
-    public  Object[] superimpose(DoubleMatrix2D P, DoubleMatrix2D Q, DoubleMatrix2D Q_full){
+    public  Object[] superimpose(DoubleMatrix2D P, DoubleMatrix2D Q, DoubleMatrix2D Q_full, boolean full){
         DoubleMatrix1D centP = getCentroid(P);
         DoubleMatrix1D centQ = getCentroid(Q);
         DoubleMatrix2D cP = translate(P, centP);
@@ -25,7 +25,7 @@ public class Superposition {
         DoubleMatrix2D covar = covarMatrix(cP, cQ);
         DoubleMatrix2D R = rotate(covar);
         DoubleMatrix1D t = T(R, centP, centQ);
-        Q = move_Q_onto_P(Q_full, R, t);
+        Q = full ? move_Q_onto_P(Q_full, R, t) : move_Q_onto_P(Q, R, t);
         return new Object[]{Q, readOffRMSD(P, Q), RMSD(covar, initError(cP, cQ), P.rows()), gdt_ts(P, Q)};
     }
     

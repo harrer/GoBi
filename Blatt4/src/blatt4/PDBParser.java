@@ -127,7 +127,7 @@ public class PDBParser {
         return list;
     }
 
-    private static String pdbToSequence(String file) throws FileNotFoundException, IOException {
+    public static String pdbToSequence(String file) throws FileNotFoundException, IOException {
         StringBuilder sb = new StringBuilder();
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
@@ -201,7 +201,7 @@ public class PDBParser {
         return sb.toString();
     }
 
-    private static HashMap<String, String> params(String matrix, String go, String ge, String mode) {
+    public static HashMap<String, String> params(String matrix, String go, String ge, String mode) {
         HashMap<String, String> params = new HashMap<>();
         params.put("-m", matrix);//"BlakeCohenMatrix|dayhoff|THREADERSimilarityMatrix|blosum50|pam250"
         params.put("-go", go);
@@ -210,7 +210,7 @@ public class PDBParser {
         return params;
     }
 
-    private static boolean[] alignedPositions(String[] alignment, boolean upperSequence, int seqLength) {
+    public static boolean[] alignedPositions(String[] alignment, boolean upperSequence, int seqLength) {
         boolean[] b = new boolean[seqLength];
         int c = 0;
         if (upperSequence) {
@@ -311,7 +311,7 @@ public class PDBParser {
         DoubleMatrix2D Q = parseToMatrix(q, alignedPositions(ali, false, seq2.length()), true);
         DoubleMatrix2D Q_full = parseToMatrix(q, null , false);
         Superposition s = new Superposition();
-        Object[] superposition = s.superimpose(P, Q, Q_full);
+        Object[] superposition = s.superimpose(P, Q, Q_full,true);
         ArrayList list = pdbToList(q);
         matrixToPDB((DoubleMatrix2D) superposition[0], list, seq2, "/Users/Tobias/Desktop/", "1ca0_on_1tfx.pdb");
     }
