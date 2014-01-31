@@ -63,11 +63,12 @@ public class TenLongSegments {
     
     public static void main(String[] args) throws IOException {
 //        HashMap<String, String> inpairs = readcInpairs("/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/cathscop.inpairs");//"/Users/Tobias/Desktop/cathscop.inpairs";
-//        String file = "/Users/Tobias/Dropbox/UNI/GoBi/Blatt 4/1r5ra00.backbone";
-//        ArrayList<DoubleMatrix2D> m = tenLongSegments(file);
-//        DoubleMatrix2D P = m.get(10);
-//        DoubleMatrix2D Q = m.get(93);
-//        Object[] s = new Superposition().superimpose(P, Q);
+        String file = "/Users/Tobias/Dropbox/UNI/GoBi/Blatt 4/1r5ra00.backbone";
+        ArrayList<DoubleMatrix2D> m = tenLongSegments(file);
+        DoubleMatrix2D P = m.get(43);
+        DoubleMatrix2D Q = m.get(49);
+        //Object[] s = new Superposition().superimpose(P, Q);
+        System.out.println("");
     }
     
 }

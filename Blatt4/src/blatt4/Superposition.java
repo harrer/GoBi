@@ -17,7 +17,7 @@ import java.util.Locale;
  */
 public class Superposition {
     
-    public  Object[] superimpose(DoubleMatrix2D P, DoubleMatrix2D Q, DoubleMatrix2D P_full, DoubleMatrix2D Q_full){
+    public  Object[] superimpose(DoubleMatrix2D P, DoubleMatrix2D Q, DoubleMatrix2D Q_full){
         DoubleMatrix1D centP = getCentroid(P);
         DoubleMatrix1D centQ = getCentroid(Q);
         DoubleMatrix2D cP = translate(P, centP);
