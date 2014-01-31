@@ -60,7 +60,7 @@ public class PDBParser {
         }
     }
 
-    public static DoubleMatrix2D parseToMatrix(String file, boolean[] allignedPositions) throws IOException {//, int positions
+    public static DoubleMatrix2D parseToMatrix(String file, boolean[] allignedPositions, boolean CA_only) throws IOException {//, int positions
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         int aaCount = -1, cc = -1;
@@ -72,7 +72,10 @@ public class PDBParser {
                     aaCount++;
                     cc = Integer.parseInt(split[5]);
                 }
-                if (allignedPositions[aaCount] && split[2].equalsIgnoreCase("CA")) {//split[2].equalsIgnoreCase("N") || split[2].equalsIgnoreCase("CA") || split[2].equalsIgnoreCase("C")
+                if (CA_only && allignedPositions[aaCount] && split[2].equalsIgnoreCase("CA")) {//split[2].equalsIgnoreCase("N") || split[2].equalsIgnoreCase("CA") || split[2].equalsIgnoreCase("C")
+                    list.add(new double[]{Double.parseDouble(split[5]), Double.parseDouble(split[6]), Double.parseDouble(split[7])});
+                }
+                else if(!CA_only){
                     list.add(new double[]{Double.parseDouble(split[5]), Double.parseDouble(split[6]), Double.parseDouble(split[7])});
                 }
             }
@@ -269,9 +272,11 @@ public class PDBParser {
                 String seq1 = pdbToSequence(file_p), seq2 = pdbToSequence(file_q);
                 g.setSequences(seq1, seq2);
                 String[] ali = g.backtrackingFreeshift(g.fillMatrixFreeshift());
-                DoubleMatrix2D P = parseToMatrix(file_p, alignedPositions(ali, true, seq1.length()));
-                DoubleMatrix2D Q = parseToMatrix(file_q, alignedPositions(ali, false, seq2.length()));
-                Object[] superposition = s.superimpose(P, Q);
+                DoubleMatrix2D P = parseToMatrix(file_p, alignedPositions(ali, true, seq1.length()), true);
+                DoubleMatrix2D P_full = parseToMatrix(file_p, alignedPositions(ali, true, seq1.length()), false);
+                DoubleMatrix2D Q = parseToMatrix(file_q, alignedPositions(ali, false, seq2.length()), true);
+                DoubleMatrix2D Q_full = parseToMatrix(file_q, alignedPositions(ali, false, seq2.length()), false);
+                Object[] superposition = s.superimpose(P, Q, P_full, Q_full);
                 double identity = seqIdentity(ali);
                 sb.append(seq[0]).append('\t').append(seq[1]).append('\t').append(identity).append('\t').append(superposition[2]).append('\t').append(superposition[3]).append('\n');
             } catch (Exception e) {
@@ -291,24 +296,26 @@ public class PDBParser {
         String seq1 = pdbToSequence(p), seq2 = pdbToSequence(q);
         g.setSequences(seq1, seq2);
         String[] ali = g.backtrackingFreeshift(g.fillMatrixFreeshift());
-        DoubleMatrix2D P = parseToMatrix(p, alignedPositions(ali, true, seq1.length()));
-        DoubleMatrix2D Q = parseToMatrix(q, alignedPositions(ali, false, seq2.length()));
+        DoubleMatrix2D P = parseToMatrix(p, alignedPositions(ali, true, seq1.length()), true);
+        DoubleMatrix2D Q = parseToMatrix(q, alignedPositions(ali, false, seq2.length()), true);
+        DoubleMatrix2D P_full = parseToMatrix(q, alignedPositions(ali, false, seq1.length()), false);
+        DoubleMatrix2D Q_full = parseToMatrix(q, alignedPositions(ali, false, seq2.length()), false);
         Superposition s = new Superposition();
-        Object[] superposition = s.superimpose(P, Q);
-        matrixToPDB(Q, seq2, "/home/h/harrert/Desktop/", "1k9c_on_1jhn.pdb");
+        Object[] superposition = s.superimpose(P, Q, P_full, Q_full);
+        matrixToPDB(Q_full, seq2, "/home/h/harrert/Desktop/", "1k9c_on_1jhn.pdb");
     }
 
     public static void main(String[] args) throws IOException {
         long timeBefore = new Date().getTime();
         PDBParser p = new PDBParser();
-        String file_p = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1jhnA02.pdb";//"/home/tobias/Documents/GoBi/Blatt4/1ev0B00.pdb";
-        String file_q = "/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/1k9cA00.pdb";//"/Users/Tobias/Desktop/pdb/1lddB00.pdb";
+        String file_p = "//Users/Tobias/Desktop/pdb/1jhnA02.pdb";//"/home/tobias/Documents/GoBi/Blatt4/1ev0B00.pdb";
+        String file_q = "/Users/Tobias/Desktop/pdb/1k9cA00.pdb";//"/Users/Tobias/Desktop/pdb/1lddB00.pdb";/home/proj/biosoft/PROTEINS/CATHSCOP/STRUCTURES/
 //        superimpose(file_p, file_q);
 //        System.out.println("gdt-ts: "+s.gdt_ts(P, (DoubleMatrix2D)superposition[0]));
 //        matrixToPDB((DoubleMatrix2D)superposition[0], alignedSequence(seq2, b), "/Users/Tobias/Desktop/", "out.pdb");
-        ArrayList<String[]> inpairs = readcInpairs("/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/cathscop.inpairs");
-        String s = start(inpairs, "/home/h/harrert/Desktop/inpairs_mapping.txt");
-//        superimpose(file_p, file_q);
+//        ArrayList<String[]> inpairs = readcInpairs("/home/proj/biosoft/praktikum/genprakt-ws13/assignment1/cathscop.inpairs");
+  //      String s = start(inpairs, "/home/h/harrert/Desktop/inpairs_mapping.txt");
+        superimpose(file_p, file_q);
         System.out.println(new Date().getTime() - timeBefore + " ms");
     }
 }
