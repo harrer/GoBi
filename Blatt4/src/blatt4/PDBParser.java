@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class PDBParser {
 
-    private final static HashMap<String, String> STANDARD_AAS = new HashMap<>();
+    public final static HashMap<String, String> STANDARD_AAS = new HashMap<>();
 
     public PDBParser() {
         STANDARD_AAS.put("ALA", "A");
