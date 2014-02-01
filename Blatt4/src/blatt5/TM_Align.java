@@ -65,12 +65,12 @@ public class TM_Align {
         for (String[] seq : readcInpairs) {
             count++;
             if (count >= (p * 558)) {
-                System.out.println(p + "%");
+                System.out.println(p + "%, err: "+errCount+" / "+ count);
                 p++;
             }
             String file_p = pdbPath + seq[0] + ".pdb";
             String file_q = pdbPath + seq[1] + ".pdb";
-//            try {
+            try {
                 String seq1 = pdbToSequence(file_p), seq2 = pdbToSequence(file_q);
                 g.setSequences(seq1, seq2);
                 String[] ali = g.backtrackingFreeshift(g.fillMatrixFreeshift());
@@ -82,10 +82,10 @@ public class TM_Align {
                 Q = parseToMatrix(file_q, tm_alignedPos(ali, false, Integer.parseInt(ali[1])), true);
                 Object[] superpos_tm = s.superimpose(P, Q, null, false);
                 sb.append(seq[0]).append('\t').append(seq[1]).append('\t').append(superpos_gotoh[3]).append('\t').append(superpos_tm[3]).append('\n');
-//            } catch (Exception e) {
-//                //System.out.println(entry.getKey() + ", " + entry.getValue());
-//                errCount++;
-//            }
+            } catch (Exception e) {
+                //System.out.println(entry.getKey() + ", " + entry.getValue());
+                errCount++;
+            }
         }
         System.out.println(errCount + " errors on " + count);
         PrintWriter writer = new PrintWriter(outFile);
