@@ -67,7 +67,7 @@ public class Multiple_Superposition {
         boolean[] upper = new boolean[((String) t[0]).length()], lower;
         StringBuilder p = new StringBuilder(), q = new StringBuilder();
         for (String[] s : targets) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec("echo \"as bbd\" ").getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec("./home/proj/biosoft/PROTEINS/software/TMalign "+template).getInputStream()));
             String[] ali = tm_parser(br);
             br.close();
             for (int i = 0; i < ali[0].length(); i++) {
