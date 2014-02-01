@@ -1,6 +1,7 @@
 package blatt5;
 
 import blatt4.PDBParser;
+import blatt4.Superposition;
 import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import java.io.BufferedReader;
@@ -15,11 +16,11 @@ import java.util.ArrayList;
  */
 public class Multiple_Superposition {
     
-    public static String[] tm_parser(String file) {
-        String[] lines = file.split("\n");
+    public static String[] tm_parser(BufferedReader br) throws IOException {
+        String line;
         ArrayList<String> list = new ArrayList();
         boolean read = false;
-        for (String line : lines) {
+        while ((line = br.readLine()) != null) {
             if (line.startsWith("Chain")) {
                 list.add(line.split("\\s+")[3]);
             }
@@ -45,15 +46,17 @@ public class Multiple_Superposition {
         return list;
     }
 
-    public static Object[] readPDB(String file) throws IOException {
+    public static Object[] readPDB(String file, ArrayList<Boolean> aligned) throws IOException {
         PDBParser pdbParser = new PDBParser();
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         StringBuilder sb = new StringBuilder();
         ArrayList<Double[]> coordinates = new ArrayList();
+        int c = -1;
         while ((line = br.readLine()) != null) {
+            c++;
             String[] split = line.split("\\s+");
-            if (split[2].equalsIgnoreCase("CA")) {
+            if (aligned.get(c).booleanValue() && split[2].equalsIgnoreCase("CA")) {
                 sb.append(PDBParser.STANDARD_AAS.get(split[3]));
                 coordinates.add(new Double[]{Double.parseDouble(split[6]), Double.parseDouble(split[7]), Double.parseDouble(split[8])});
             }
@@ -62,24 +65,37 @@ public class Multiple_Superposition {
     }
 
     public static ArrayList<DoubleMatrix2D> multi_superpose(String template, ArrayList<String[]> targets) throws IOException {
-        Object[] t = readPDB(template);
-        int up = -1, low = -1;
-        boolean[] upper = new boolean[((String) t[0]).length()], lower;
-        StringBuilder p = new StringBuilder(), q = new StringBuilder();
+        ArrayList<Boolean> upper = new ArrayList<>(), lower = new ArrayList<>();
+        ArrayList<DoubleMatrix2D> list = new ArrayList();
+        String pdbPath = "/home/proj/biosoft/PROTEINS/PDB_REP_CHAINS/STRUCTURES/";
         for (String[] s : targets) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec("./home/proj/biosoft/PROTEINS/software/TMalign "+template).getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec("./home/proj/biosoft/PROTEINS/software/TMalign "+pdbPath+template+".pdb "+pdbPath+s+".pdb").getInputStream()));
             String[] ali = tm_parser(br);
             br.close();
             for (int i = 0; i < ali[0].length(); i++) {
-                if (ali[0].charAt(i)) {
-                    
+                if (ali[0].charAt(i) != '-') {
+                    if((ali[1].charAt(i) == ':') || (ali[1].charAt(i) == '.')){
+                        upper.add(Boolean.TRUE);
+                    }
+                    else{
+                        upper.add(Boolean.FALSE);
+                    }
                 }
-                if ((ali[1].charAt(i) == ':') || (ali[1].charAt(i) == '.')) {
-                    p.append(ali[0].charAt(i));
-                    q.append(ali[2].charAt(i));
+                if (ali[2].charAt(i) != '-') {
+                    if((ali[1].charAt(i) == ':') || (ali[1].charAt(i) == '.')){
+                        lower.add(Boolean.TRUE);
+                    }
+                    else{
+                        lower.add(Boolean.FALSE);
+                    }
                 }
+                DoubleMatrix2D P = (DenseDoubleMatrix2D) readPDB(template, upper)[1];
+                DoubleMatrix2D Q = (DenseDoubleMatrix2D) readPDB(template, lower)[1];
+                Object [] sp = Superposition.superimpose(P, Q, null, false);
+                list.add((DoubleMatrix2D) sp[0]);
             }
         }
+        return list;
     }
 
     public static void combinedPDB(ArrayList<String[]> simList) {
@@ -104,7 +120,7 @@ public class Multiple_Superposition {
     }
 
     public static void main(String[] args) throws IOException {
-        read_SimList("/Users/Tobias/Desktop/1bj4.A.simlist");
-        readPDB("/Users/Tobias/Desktop/pdb/1r5rA00.pdb");
+        ArrayList<DoubleMatrix2D> list = multi_superpose("1bj4.A", read_SimList("/Users/Tobias/Desktop/1bj4.A.simlist"));
+        
     }
 }
