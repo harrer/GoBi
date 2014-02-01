@@ -69,7 +69,7 @@ public class Multiple_Superposition {
         ArrayList<DoubleMatrix2D> list = new ArrayList();
         String pdbPath = "/home/proj/biosoft/PROTEINS/PDB_REP_CHAINS/STRUCTURES/";
         for (String[] s : targets) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec("./home/proj/biosoft/PROTEINS/software/TMalign "+pdbPath+template+".pdb "+pdbPath+s+".pdb").getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec("cd /home/proj/biosoft/PROTEINS/software/; ./TMalign "+pdbPath+template+".pdb "+pdbPath+s+".pdb").getInputStream()));
             String[] ali = tm_parser(br);
             br.close();
             for (int i = 0; i < ali[0].length(); i++) {
