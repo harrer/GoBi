@@ -21,12 +21,12 @@ public class Multiple_Superposition {
         ArrayList<String[]> list = new ArrayList();
         while ((line = br.readLine()) != null) {
             split = line.split("\\s+");
-            list.add(new String[]{split[1],split[5],split[8],split[10],split[12]});//Q, Q.length, ali.length, tm_score, rmsd
+            list.add(new String[]{split[1], split[5], split[8], split[10], split[12]});//Q, Q.length, ali.length, tm_score, rmsd
         }
         return list;
     }
-    
-    public static Object[] readPDB(String file) throws IOException{
+
+    public static Object[] readPDB(String file) throws IOException {
         PDBParser pdbParser = new PDBParser();
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
@@ -34,23 +34,45 @@ public class Multiple_Superposition {
         ArrayList<Double[]> coordinates = new ArrayList();
         while ((line = br.readLine()) != null) {
             String[] split = line.split("\\s+");
-            if(split[2].equalsIgnoreCase("CA")){
+            if (split[2].equalsIgnoreCase("CA")) {
                 sb.append(PDBParser.STANDARD_AAS.get(split[3]));
-                coordinates.add(new Double[]{Double.parseDouble(split[6]),Double.parseDouble(split[7]),Double.parseDouble(split[8])});
+                coordinates.add(new Double[]{Double.parseDouble(split[6]), Double.parseDouble(split[7]), Double.parseDouble(split[8])});
             }
         }
         return new Object[]{sb.toString(), new DenseDoubleMatrix2D(coordinates.toArray(new double[][]{}))};
     }
-    
-    public static ArrayList<DoubleMatrix2D> multi_superpose(String template, ArrayList<String[]> targets) throws IOException{
+
+    public static ArrayList<DoubleMatrix2D> multi_superpose(String template, ArrayList<String[]> targets) throws IOException {
         String[] ali = TM_Align.tm_parser("");
         int upper = -1, lower = -1;
         StringBuilder p = new StringBuilder(), q = new StringBuilder();
         for (int i = 0; i < ali[0].length(); i++) {
-            if(ali[0].charAt(i))
-            if((ali[1].charAt(i) == ':') || (ali[1].charAt(i) == '.')){
-                p.append(ali[0].charAt(i));
-                q.append(ali[2].charAt(i));
+            if (ali[0].charAt(i)) {
+                if ((ali[1].charAt(i) == ':') || (ali[1].charAt(i) == '.')) {
+                    p.append(ali[0].charAt(i));
+                    q.append(ali[2].charAt(i));
+                }
+            }
+        }
+    }
+
+    public static void combinedPDB(ArrayList<String[]> simList) {
+        double max = -1;
+        int maxPos = -1;
+        for (int i = 0; i < simList.size(); i++) {
+            double d = Double.parseDouble(simList.get(i)[3]);
+            if (d > max) {
+                max = d;
+                maxPos = i;
+            }
+        }
+        double max2 = -1;
+        int maxPos2 = -1;
+        for (int i = 0; i < simList.size(); i++) {
+            double d = Double.parseDouble(simList.get(i)[3]);
+            if (d > max2 && i != maxPos) {
+                max2 = d;
+                maxPos2 = i;
             }
         }
     }
