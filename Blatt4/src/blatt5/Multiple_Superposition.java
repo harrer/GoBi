@@ -6,6 +6,7 @@ import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
@@ -13,6 +14,24 @@ import java.util.ArrayList;
  * @author Tobias
  */
 public class Multiple_Superposition {
+    
+    public static String[] tm_parser(String file) {
+        String[] lines = file.split("\n");
+        ArrayList<String> list = new ArrayList();
+        boolean read = false;
+        for (String line : lines) {
+            if (line.startsWith("Chain")) {
+                list.add(line.split("\\s+")[3]);
+            }
+            if (line.startsWith("(\":\"")) {
+                read = true;
+            }
+            if (read) {
+                list.add(line);
+            }
+        }
+        return list.toArray(new String[]{});
+    }
 
     public static ArrayList<String[]> read_SimList(String file) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(file));
@@ -43,11 +62,18 @@ public class Multiple_Superposition {
     }
 
     public static ArrayList<DoubleMatrix2D> multi_superpose(String template, ArrayList<String[]> targets) throws IOException {
-        String[] ali = TM_Align.tm_parser("");
-        int upper = -1, lower = -1;
+        Object[] t = readPDB(template);
+        int up = -1, low = -1;
+        boolean[] upper = new boolean[((String) t[0]).length()], lower;
         StringBuilder p = new StringBuilder(), q = new StringBuilder();
-        for (int i = 0; i < ali[0].length(); i++) {
-            if (ali[0].charAt(i)) {
+        for (String[] s : targets) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec("echo \"as bbd\" ").getInputStream()));
+            String[] ali = tm_parser(br);
+            br.close();
+            for (int i = 0; i < ali[0].length(); i++) {
+                if (ali[0].charAt(i)) {
+                    
+                }
                 if ((ali[1].charAt(i) == ':') || (ali[1].charAt(i) == '.')) {
                     p.append(ali[0].charAt(i));
                     q.append(ali[2].charAt(i));
