@@ -146,7 +146,7 @@ public class PDBParser {
         return sb.toString();
     }
     
-    private static ArrayList<String[]> pdbToList(String path) throws IOException{
+    public static ArrayList<String[]> pdbToList(String path) throws IOException{
         BufferedReader br = new BufferedReader(new FileReader(path));
         String line;
         ArrayList<String[]> list = new ArrayList();
@@ -163,14 +163,16 @@ public class PDBParser {
         DecimalFormat dec = new DecimalFormat("#0.000", new DecimalFormatSymbols(Locale.US));
         sb.append(name).append("\nREMARK File written by harrert\nREMARK\n");
         for (int i = 0; i < matrix.rows(); i++) {
-            sb.append("ATOM    ");
-            if(i<10){sb.append("  ");}
-            else if(i<100){sb.append(" ");}
+            sb.append("ATOM   ");
+            if(i<10){sb.append("   ");}
+            else if(i<100){sb.append("  ");}
+            else if(i<1000){sb.append(" ");}
             sb.append(i).append("  ").append(list.get(i)[2]).append(" ");
             if(list.get(i)[2].length()==2){sb.append(" ");}
             else if(list.get(i)[2].length()==1){sb.append("  ");}
-            sb.append(list.get(i)[3]).append(" ").append(list.get(i)[4]).append("  ");
-            if(list.get(i)[5].length()==1){sb.append(" ");}
+            sb.append(list.get(i)[3]).append(" ").append(list.get(i)[4]).append(" ");
+            if(list.get(i)[5].length()==1){sb.append("  ");}
+            else if(list.get(i)[5].length()==2){sb.append(" ");}
             sb.append(list.get(i)[5]).append("     ");
             if(matrix.get(i, 0)>0){sb.append(" ");}
             if(matrix.get(i, 0)<10.0 && matrix.get(i, 0)>-10.0){sb.append(" ");}
