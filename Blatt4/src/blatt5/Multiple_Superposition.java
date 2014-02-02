@@ -140,7 +140,7 @@ public class Multiple_Superposition {
     }
 
     public static void main(String[] args) throws IOException {
-//        ArrayList<DoubleMatrix2D> list = multi_superpose("1bj4.A", read_SimList("/home/proj/biosoft/PROTEINS/PDB_REP_CHAINS/TMSIM/1bj4.A.simlist"));
-        combinedPDB(read_SimList("/Users/Tobias/Desktop/1bj4.A.simlist"));
+        ArrayList<DoubleMatrix2D> list = multi_superpose("1bj4.A", read_SimList("/home/proj/biosoft/PROTEINS/PDB_REP_CHAINS/TMSIM/1bj4.A.simlist"));
+//        combinedPDB(read_SimList("/Users/Tobias/Desktop/1bj4.A.simlist"));
     }
 }
